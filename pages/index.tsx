@@ -35,17 +35,17 @@ export default function Home() {
   });
 
   const getDayName = (date: Date) => {
-    const days = ["Yak", "Du", "Se", "Cho", "Pay", "Ju", "Sha"];
+    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     return days[date.getDay()];
   };
 
   return (
     <>
       <Head>
-        <title>KickUp - Futbol va Futsal O'yinlar Platformasi</title>
+        <title>KickUp - Football and Futsal Games Platform</title>
         <meta
           name="description"
-          content="Futbol va futsal o'yinlarini tashkil qiluvchi platforma. Maydonlar, o'yinlar va jamoalar toping."
+          content="Platform for organizing football and futsal games. Find fields, games and teams."
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
@@ -77,7 +77,7 @@ export default function Home() {
                 </Box>
               </Box>
               <Typography variant="h3" className={styles.heroTitle}>
-                Hurmat qiling, rag'batlantiring va birga zavqlaning
+                Respect, encourage, and enjoy together
               </Typography>
             </Box>
           </Container>
@@ -94,7 +94,7 @@ export default function Home() {
                       <MenuIcon sx={{ fontSize: 32, color: '#0ea5e9' }} />
                     </Box>
                     <Typography variant="body1" className={styles.featureBlockText}>
-                      Barcha menyu
+                      All Menu
                     </Typography>
                   </CardContent>
                 </Card>
@@ -107,7 +107,7 @@ export default function Home() {
                       <LocalFloristIcon sx={{ fontSize: 32, color: '#10b981' }} />
                     </Box>
                     <Typography variant="body1" className={styles.featureBlockText}>
-                      Boshlang'ich
+                      Beginner
                     </Typography>
                   </CardContent>
                 </Card>
@@ -120,7 +120,7 @@ export default function Home() {
                       <BoltIcon sx={{ fontSize: 32, color: '#f59e0b' }} />
                     </Box>
                     <Typography variant="body1" className={styles.featureBlockText}>
-                      Jamoa ligasi
+                      Team League
                     </Typography>
                   </CardContent>
                 </Card>
@@ -133,7 +133,7 @@ export default function Home() {
                       <PlayArrowIcon sx={{ fontSize: 32, color: '#8b5cf6' }} />
                     </Box>
                     <Typography variant="body1" className={styles.featureBlockText}>
-                      Boshlash
+                      Get Started
                     </Typography>
                   </CardContent>
                 </Card>
@@ -172,7 +172,7 @@ export default function Home() {
                 component={Link}
                 href="/fields"
               >
-                Tez-tez boradigan maydonni tanlang
+                Choose your frequently visited field
               </Button>
             </Box>
           </Container>

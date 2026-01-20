@@ -39,9 +39,9 @@ export default function Layout({ children }: LayoutProps) {
   };
 
   const navItems = [
-    { label: "Ijtimoiy o'yin", href: '/games' },
-    { label: 'Jamoa', href: '/teams' },
-    { label: 'Maydon band qilish', href: '/fields' },
+    { label: 'Social Match', href: '/games' },
+    { label: 'Team', href: '/teams' },
+    { label: 'Field Reservation', href: '/fields' },
   ];
 
   const drawer = (
@@ -62,8 +62,8 @@ export default function Layout({ children }: LayoutProps) {
           </ListItem>
         ))}
         <ListItem disablePadding>
-          <ListItemButton component={Link} href="/login" sx={{ textAlign: 'center' }}>
-            <ListItemText primary="Kirish" />
+            <ListItemButton component={Link} href="/login" sx={{ textAlign: 'center' }}>
+            <ListItemText primary="Login" />
           </ListItemButton>
         </ListItem>
         <ListItem disablePadding>
@@ -72,7 +72,7 @@ export default function Layout({ children }: LayoutProps) {
             href="/register"
             sx={{ textAlign: 'center', bgcolor: 'primary.main', color: 'white', '&:hover': { bgcolor: 'primary.dark' } }}
           >
-            <ListItemText primary="Ro'yxatdan o'tish" />
+            <ListItemText primary="Sign Up" />
           </ListItemButton>
         </ListItem>
       </List>
@@ -117,7 +117,7 @@ export default function Layout({ children }: LayoutProps) {
           </Box>
           <Box className={styles.searchAndActions}>
             <TextField
-              placeholder="Hudud, maydon, jamoa nomi bo'yicha qidirish"
+              placeholder="Search by region, field, team name"
               variant="outlined"
               size="small"
               className={styles.searchBar}
@@ -169,7 +169,7 @@ export default function Layout({ children }: LayoutProps) {
               href="/login"
               sx={{ color: 'white' }}
             >
-              Kirish
+              Login
             </Button>
             <Button
               component={Link}
@@ -177,7 +177,7 @@ export default function Layout({ children }: LayoutProps) {
               variant="contained"
               sx={{ bgcolor: 'white', color: 'primary.main', '&:hover': { bgcolor: 'grey.100' } }}
             >
-              Ro'yxatdan o'tish
+              Sign Up
             </Button>
           </Box>
         </Toolbar>
@@ -213,7 +213,7 @@ export default function Layout({ children }: LayoutProps) {
             ))}
             <ListItem disablePadding className={styles.drawerListItem}>
               <ListItemButton component={Link} href="/login" className={styles.drawerListItemButton}>
-                <ListItemText primary="Kirish" />
+                <ListItemText primary="Login" />
               </ListItemButton>
             </ListItem>
             <ListItem disablePadding className={styles.drawerListItem}>
@@ -222,7 +222,7 @@ export default function Layout({ children }: LayoutProps) {
                 href="/register"
                 className={`${styles.drawerListItemButton} ${styles.drawerAuthButton}`}
               >
-                <ListItemText primary="Ro'yxatdan o'tish" />
+                <ListItemText primary="Sign Up" />
               </ListItemButton>
             </ListItem>
           </List>
