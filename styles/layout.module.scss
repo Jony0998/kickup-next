@@ -1,0 +1,106 @@
+// Layout styles
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main {
+  flex-grow: 1;
+}
+
+// AppBar styles
+.appBar {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  
+  .toolbar {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+.logoContainer {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+  margin-right: 32px;
+  
+  &:hover {
+    opacity: 0.9;
+  }
+}
+
+.logoIcon {
+  margin-right: 8px;
+}
+
+.logoText {
+  font-weight: 700;
+}
+
+.navButtons {
+  display: flex;
+  flex-grow: 1;
+  gap: 8px;
+  
+  @media (max-width: 960px) {
+    display: none;
+  }
+}
+
+.authButtons {
+  display: flex;
+  gap: 8px;
+  
+  @media (max-width: 960px) {
+    display: none;
+  }
+}
+
+.menuButton {
+  @media (min-width: 960px) {
+    display: none;
+  }
+}
+
+// Drawer styles
+.drawer {
+  @media (min-width: 960px) {
+    display: none;
+  }
+  
+  .drawerPaper {
+    box-sizing: border-box;
+    width: 240px;
+  }
+}
+
+.drawerContent {
+  text-align: center;
+  
+  .drawerTitle {
+    margin-top: 16px;
+    margin-bottom: 16px;
+  }
+  
+  .drawerList {
+    .drawerListItem {
+      padding: 0;
+      
+      .drawerListItemButton {
+        text-align: center;
+      }
+    }
+  }
+}
+
+.drawerAuthButton {
+  background-color: var(--mui-palette-primary-main);
+  color: white;
+  
+  &:hover {
+    background-color: var(--mui-palette-primary-dark);
+  }
+}
+

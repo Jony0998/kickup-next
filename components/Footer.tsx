@@ -1,98 +1,83 @@
-import { Box, Container, Grid, Typography, Link as MuiLink } from '@mui/material';
+import { Box, Typography, Link as MuiLink } from '@mui/material';
 import Link from 'next/link';
 import SportsSoccerIcon from '@mui/icons-material/SportsSoccer';
+import styles from '@/styles/footer.module.scss';
 
 export default function Footer() {
   return (
-    <Box
-      component="footer"
-      sx={{
-        bgcolor: 'grey.900',
-        color: 'grey.300',
-        py: 6,
-        mt: 'auto',
-      }}
-    >
-      <Container maxWidth="lg">
-        <Grid container spacing={4}>
-          <Grid item xs={12} sm={6} md={3}>
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-              <SportsSoccerIcon sx={{ mr: 1, color: 'primary.main' }} />
-              <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'white' }}>
+    <Box component="footer" className={styles.footer}>
+      <Box className={styles.container}>
+        <Box className={styles.grid}>
+          <Box>
+            <Box className={styles.logoSection}>
+              <SportsSoccerIcon className={styles.logoIcon} />
+              <Typography variant="h6" className={styles.logoText}>
                 KickUp
               </Typography>
             </Box>
             <Typography variant="body2">
               Futbol va futsal o'yinlarini tashkil qiluvchi platforma
             </Typography>
-          </Grid>
+          </Box>
 
-          <Grid item xs={12} sm={6} md={3}>
-            <Typography variant="h6" sx={{ color: 'white', mb: 2, fontWeight: 600 }}>
+          <Box>
+            <Typography variant="h6" className={styles.sectionTitle}>
               Platforma
             </Typography>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-              <MuiLink component={Link} href="/fields" color="inherit" sx={{ '&:hover': { color: 'white' } }}>
+            <Box className={styles.linkList}>
+              <MuiLink component={Link} href="/fields" className={styles.link}>
                 Maydonlar
               </MuiLink>
-              <MuiLink component={Link} href="/games" color="inherit" sx={{ '&:hover': { color: 'white' } }}>
+              <MuiLink component={Link} href="/games" className={styles.link}>
                 O'yinlar
               </MuiLink>
-              <MuiLink component={Link} href="/create-game" color="inherit" sx={{ '&:hover': { color: 'white' } }}>
+              <MuiLink component={Link} href="/create-game" className={styles.link}>
                 O'yin yaratish
               </MuiLink>
             </Box>
-          </Grid>
+          </Box>
 
-          <Grid item xs={12} sm={6} md={3}>
-            <Typography variant="h6" sx={{ color: 'white', mb: 2, fontWeight: 600 }}>
+          <Box>
+            <Typography variant="h6" className={styles.sectionTitle}>
               Foydalanuvchi
             </Typography>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-              <MuiLink component={Link} href="/login" color="inherit" sx={{ '&:hover': { color: 'white' } }}>
+            <Box className={styles.linkList}>
+              <MuiLink component={Link} href="/login" className={styles.link}>
                 Kirish
               </MuiLink>
-              <MuiLink component={Link} href="/register" color="inherit" sx={{ '&:hover': { color: 'white' } }}>
+              <MuiLink component={Link} href="/register" className={styles.link}>
                 Ro'yxatdan o'tish
               </MuiLink>
-              <MuiLink component={Link} href="/profile" color="inherit" sx={{ '&:hover': { color: 'white' } }}>
+              <MuiLink component={Link} href="/profile" className={styles.link}>
                 Profil
               </MuiLink>
             </Box>
-          </Grid>
+          </Box>
 
-          <Grid item xs={12} sm={6} md={3}>
-            <Typography variant="h6" sx={{ color: 'white', mb: 2, fontWeight: 600 }}>
+          <Box>
+            <Typography variant="h6" className={styles.sectionTitle}>
               Aloqa
             </Typography>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-              <MuiLink href="#" color="inherit" sx={{ '&:hover': { color: 'white' } }}>
+            <Box className={styles.linkList}>
+              <MuiLink href="#" className={styles.link}>
                 Yordam
               </MuiLink>
-              <MuiLink href="#" color="inherit" sx={{ '&:hover': { color: 'white' } }}>
+              <MuiLink href="#" className={styles.link}>
                 Qoidalar
               </MuiLink>
-              <MuiLink href="#" color="inherit" sx={{ '&:hover': { color: 'white' } }}>
+              <MuiLink href="#" className={styles.link}>
                 Biz haqimizda
               </MuiLink>
             </Box>
-          </Grid>
-        </Grid>
+          </Box>
+        </Box>
 
-        <Box
-          sx={{
-            mt: 4,
-            pt: 4,
-            borderTop: '1px solid',
-            borderColor: 'grey.800',
-            textAlign: 'center',
-          }}
-        >
+        <Box className={styles.divider}>
           <Typography variant="body2">
             &copy; 2024 KickUp. Barcha huquqlar himoyalangan.
           </Typography>
         </Box>
-      </Container>
+      </Box>
     </Box>
   );
 }

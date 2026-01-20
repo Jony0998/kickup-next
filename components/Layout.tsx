@@ -5,7 +5,6 @@ import {
   Typography,
   Button,
   Box,
-  Container,
   IconButton,
   Drawer,
   List,
@@ -20,6 +19,7 @@ import SportsSoccerIcon from '@mui/icons-material/SportsSoccer';
 import Link from 'next/link';
 import { useState } from 'react';
 import Footer from './Footer';
+import styles from '@/styles/layout.module.scss';
 
 interface LayoutProps {
   children: ReactNode;
@@ -76,35 +76,30 @@ export default function Layout({ children }: LayoutProps) {
   );
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      <AppBar position="sticky" elevation={2}>
-        <Toolbar>
+    <Box className={styles.layout}>
+      <AppBar position="sticky" elevation={2} className={styles.appBar}>
+        <Toolbar className={styles.toolbar}>
           <IconButton
             color="inherit"
             aria-label="open drawer"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { md: 'none' } }}
+            className={styles.menuButton}
+            sx={{ mr: 2 }}
           >
             <MenuIcon />
           </IconButton>
           <Box
             component={Link}
             href="/"
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              textDecoration: 'none',
-              color: 'inherit',
-              mr: 4,
-            }}
+            className={styles.logoContainer}
           >
-            <SportsSoccerIcon sx={{ mr: 1 }} />
-            <Typography variant="h6" component="div" sx={{ fontWeight: 'bold' }}>
+            <SportsSoccerIcon className={styles.logoIcon} />
+            <Typography variant="h6" component="div" className={styles.logoText}>
               KickUp
             </Typography>
           </Box>
-          <Box sx={{ display: { xs: 'none', md: 'flex' }, flexGrow: 1, gap: 2 }}>
+          <Box className={styles.navButtons}>
             {navItems.map((item) => (
               <Button
                 key={item.label}
@@ -116,7 +111,7 @@ export default function Layout({ children }: LayoutProps) {
               </Button>
             ))}
           </Box>
-          <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1 }}>
+          <Box className={styles.authButtons}>
             <Button
               component={Link}
               href="/login"
@@ -141,17 +136,46 @@ export default function Layout({ children }: LayoutProps) {
         open={mobileOpen}
         onClose={handleDrawerToggle}
         ModalProps={{
-          keepMounted: true, // Better open performance on mobile.
+          keepMounted: true,
         }}
-        sx={{
-          display: { xs: 'block', md: 'none' },
-          '& .MuiDrawer-paper': { boxSizing: 'border-box', width: 240 },
-        }}
+        className={styles.drawer}
+        classes={{ paper: styles.drawerPaper }}
       >
-        {drawer}
+        <Box onClick={handleDrawerToggle} className={styles.drawerContent}>
+          <Typography variant="h6" className={styles.drawerTitle}>
+            KickUp
+          </Typography>
+          <List className={styles.drawerList}>
+            {navItems.map((item) => (
+              <ListItem key={item.label} disablePadding className={styles.drawerListItem}>
+                <ListItemButton
+                  component={Link}
+                  href={item.href}
+                  className={styles.drawerListItemButton}
+                >
+                  <ListItemText primary={item.label} />
+                </ListItemButton>
+              </ListItem>
+            ))}
+            <ListItem disablePadding className={styles.drawerListItem}>
+              <ListItemButton component={Link} href="/login" className={styles.drawerListItemButton}>
+                <ListItemText primary="Kirish" />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding className={styles.drawerListItem}>
+              <ListItemButton
+                component={Link}
+                href="/register"
+                className={`${styles.drawerListItemButton} ${styles.drawerAuthButton}`}
+              >
+                <ListItemText primary="Ro'yxatdan o'tish" />
+              </ListItemButton>
+            </ListItem>
+          </List>
+        </Box>
       </Drawer>
 
-      <Box component="main" sx={{ flexGrow: 1 }}>
+      <Box component="main" className={styles.main}>
         {children}
       </Box>
 
