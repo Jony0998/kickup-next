@@ -1,111 +1,276 @@
-// Home page styles
+// Home page styles - Plab platform style
+
+// Hero Section
 .hero {
   background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
   color: white;
-  padding-top: 48px;
-  padding-bottom: 48px;
+  padding-top: 60px;
+  padding-bottom: 80px;
+  position: relative;
+  overflow: hidden;
 
   @media (min-width: 960px) {
-    padding-top: 96px;
-    padding-bottom: 96px;
+    padding-top: 100px;
+    padding-bottom: 120px;
   }
 }
 
 .heroContent {
   text-align: center;
+  position: relative;
+  z-index: 2;
+}
+
+.heroIllustration {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  height: 300px;
+  margin: 0 auto 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  @media (min-width: 960px) {
+    height: 400px;
+    margin-bottom: 60px;
+  }
+}
+
+.heroPeople {
+  display: flex;
+  gap: 40px;
+  align-items: flex-end;
+  position: relative;
+}
+
+.person {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.personHead {
+  width: 60px;
+  height: 60px;
+  background: white;
+  border-radius: 50%;
+  margin-bottom: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.personBody {
+  width: 80px;
+  height: 120px;
+  background: white;
+  border-radius: 40px 40px 20px 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 30px;
+    background: #0ea5e9;
+    border-radius: 20px;
+  }
+}
+
+.heroBubbles {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bubble {
+  width: 50px;
+  height: 50px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  animation: float 3s ease-in-out infinite;
+
+  &:nth-child(2) {
+    animation-delay: 1s;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 .heroTitle {
   font-weight: 700;
-  margin-bottom: 24px;
-  font-size: 2.5rem;
+  font-size: 1.75rem;
+  line-height: 1.4;
+  max-width: 800px;
+  margin: 0 auto;
 
   @media (min-width: 960px) {
-    font-size: 3.75rem;
+    font-size: 2.5rem;
   }
 }
 
-.heroSubtitle {
-  margin-bottom: 32px;
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 1.25rem;
+// Feature Blocks
+.featureBlocks {
+  padding: 32px 0;
+  background: white;
 
   @media (min-width: 960px) {
-    font-size: 1.5rem;
+    padding: 48px 0;
   }
 }
 
-.heroButtons {
+.featureBlock {
+  height: 100%;
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+  border: 1px solid #e5e7eb;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.featureBlockContent {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  justify-content: center;
-
-  @media (min-width: 600px) {
-    flex-direction: row;
-  }
-}
-
-.features {
-  padding-top: 64px;
-  padding-bottom: 64px;
-  background-color: #f8fafc;
-
-  @media (min-width: 960px) {
-    padding-top: 96px;
-    padding-bottom: 96px;
-  }
-}
-
-.featuresTitle {
+  align-items: center;
+  padding: 24px 16px !important;
   text-align: center;
-  margin-bottom: 64px;
-  font-weight: 700;
+  gap: 12px;
 }
 
-.featureCard {
-  padding: 32px;
-}
-
-.featureIcon {
-  width: 56px;
-  height: 56px;
-  background-color: #e0f2fe;
-  border-radius: 8px;
+.featureBlockIcon {
+  width: 64px;
+  height: 64px;
+  background: #f3f4f6;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 24px;
+  margin-bottom: 8px;
 }
 
-.featureTitle {
+.featureBlockText {
   font-weight: 600;
-  margin-bottom: 16px;
+  color: #1f2937;
 }
 
-.cta {
-  padding-top: 64px;
-  padding-bottom: 64px;
-  background-color: #0ea5e9;
-  color: white;
+// Calendar Section
+.calendarSection {
+  padding: 32px 0;
+  background: #f9fafb;
 
   @media (min-width: 960px) {
-    padding-top: 96px;
-    padding-bottom: 96px;
+    padding: 48px 0;
   }
 }
 
-.ctaContent {
-  text-align: center;
+.calendarDates {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 16px 0;
+  margin-bottom: 24px;
+  -webkit-overflow-scrolling: touch;
+
+  &::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 2px;
+  }
 }
 
-.ctaTitle {
+.dateChip {
+  min-width: 70px;
+  height: 70px;
+  border-radius: 12px !important;
+  background: white !important;
+  border: 2px solid #e5e7eb !important;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: #0ea5e9 !important;
+    transform: translateY(-2px);
+  }
+}
+
+.dateChipActive {
+  background: #0ea5e9 !important;
+  border-color: #0ea5e9 !important;
+  color: white !important;
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+
+  .dateNumber,
+  .dateDay {
+    color: white !important;
+  }
+}
+
+.dateChip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+}
+
+.dateNumber {
   font-weight: 700;
-  margin-bottom: 16px;
+  font-size: 1.25rem;
+  line-height: 1.2;
+  color: #1f2937;
 }
 
-.ctaSubtitle {
-  margin-bottom: 32px;
-  color: rgba(255, 255, 255, 0.9);
+.dateDay {
+  font-size: 0.75rem;
+  color: #6b7280;
+  text-transform: uppercase;
 }
 
+.favoriteFieldButton {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+}
+
+.favoriteFieldBtn {
+  background: #10b981 !important;
+  color: white !important;
+  padding: 12px 24px !important;
+  border-radius: 12px !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3) !important;
+
+  &:hover {
+    background: #059669 !important;
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4) !important;
+  }
+}

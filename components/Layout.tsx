@@ -16,6 +16,10 @@ import {
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import SportsSoccerIcon from '@mui/icons-material/SportsSoccer';
+import SearchIcon from '@mui/icons-material/Search';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { TextField, InputAdornment } from '@mui/material';
 import Link from 'next/link';
 import { useState } from 'react';
 import Footer from './Footer';
@@ -35,9 +39,9 @@ export default function Layout({ children }: LayoutProps) {
   };
 
   const navItems = [
-    { label: 'Maydonlar', href: '/fields' },
-    { label: "O'yinlar", href: '/games' },
-    { label: "O'yin yaratish", href: '/create-game' },
+    { label: "Ijtimoiy o'yin", href: '/games' },
+    { label: 'Jamoa', href: '/teams' },
+    { label: 'Maydon band qilish', href: '/fields' },
   ];
 
   const drawer = (
@@ -110,6 +114,54 @@ export default function Layout({ children }: LayoutProps) {
                 {item.label}
               </Button>
             ))}
+          </Box>
+          <Box className={styles.searchAndActions}>
+            <TextField
+              placeholder="Hudud, maydon, jamoa nomi bo'yicha qidirish"
+              variant="outlined"
+              size="small"
+              className={styles.searchBar}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon sx={{ color: 'rgba(255, 255, 255, 0.7)' }} />
+                  </InputAdornment>
+                ),
+              }}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                  color: 'white',
+                  '& fieldset': {
+                    borderColor: 'rgba(255, 255, 255, 0.3)',
+                  },
+                  '&:hover fieldset': {
+                    borderColor: 'rgba(255, 255, 255, 0.5)',
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: 'rgba(255, 255, 255, 0.7)',
+                  },
+                },
+                '& .MuiInputBase-input::placeholder': {
+                  color: 'rgba(255, 255, 255, 0.7)',
+                  opacity: 1,
+                },
+              }}
+            />
+            <IconButton
+              component={Link}
+              href="/calendar"
+              sx={{ color: 'white', ml: 1 }}
+            >
+              <CalendarTodayIcon />
+            </IconButton>
+            <IconButton
+              component={Link}
+              href="/profile"
+              sx={{ color: 'white', ml: 1 }}
+            >
+              <AccountCircleIcon />
+            </IconButton>
           </Box>
           <Box className={styles.authButtons}>
             <Button

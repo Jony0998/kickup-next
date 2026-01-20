@@ -49,6 +49,27 @@
   }
 }
 
+.searchAndActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: 16px;
+  
+  @media (max-width: 1200px) {
+    display: none;
+  }
+}
+
+.searchBar {
+  min-width: 300px;
+  max-width: 400px;
+  
+  @media (max-width: 1400px) {
+    min-width: 250px;
+    max-width: 300px;
+  }
+}
+
 .authButtons {
   display: flex;
   gap: 8px;
