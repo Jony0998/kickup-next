@@ -1,3 +1,5 @@
+'use client';
+
 import { ReactNode } from 'react';
 import {
   AppBar,
@@ -138,8 +140,10 @@ export default function Layout({ children }: LayoutProps) {
         ModalProps={{
           keepMounted: true,
         }}
-        className={styles.drawer}
-        classes={{ paper: styles.drawerPaper }}
+        sx={{
+          display: { xs: 'block', md: 'none' },
+          '& .MuiDrawer-paper': { boxSizing: 'border-box', width: 240 },
+        }}
       >
         <Box onClick={handleDrawerToggle} className={styles.drawerContent}>
           <Typography variant="h6" className={styles.drawerTitle}>
