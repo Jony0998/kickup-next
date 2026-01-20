@@ -1,0 +1,111 @@
+// Home page styles
+.hero {
+  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+  color: white;
+  padding-top: 48px;
+  padding-bottom: 48px;
+
+  @media (min-width: 960px) {
+    padding-top: 96px;
+    padding-bottom: 96px;
+  }
+}
+
+.heroContent {
+  text-align: center;
+}
+
+.heroTitle {
+  font-weight: 700;
+  margin-bottom: 24px;
+  font-size: 2.5rem;
+
+  @media (min-width: 960px) {
+    font-size: 3.75rem;
+  }
+}
+
+.heroSubtitle {
+  margin-bottom: 32px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.25rem;
+
+  @media (min-width: 960px) {
+    font-size: 1.5rem;
+  }
+}
+
+.heroButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  justify-content: center;
+
+  @media (min-width: 600px) {
+    flex-direction: row;
+  }
+}
+
+.features {
+  padding-top: 64px;
+  padding-bottom: 64px;
+  background-color: #f8fafc;
+
+  @media (min-width: 960px) {
+    padding-top: 96px;
+    padding-bottom: 96px;
+  }
+}
+
+.featuresTitle {
+  text-align: center;
+  margin-bottom: 64px;
+  font-weight: 700;
+}
+
+.featureCard {
+  padding: 32px;
+}
+
+.featureIcon {
+  width: 56px;
+  height: 56px;
+  background-color: #e0f2fe;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.featureTitle {
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.cta {
+  padding-top: 64px;
+  padding-bottom: 64px;
+  background-color: #0ea5e9;
+  color: white;
+
+  @media (min-width: 960px) {
+    padding-top: 96px;
+    padding-bottom: 96px;
+  }
+}
+
+.ctaContent {
+  text-align: center;
+}
+
+.ctaTitle {
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.ctaSubtitle {
+  margin-bottom: 32px;
+  color: rgba(255, 255, 255, 0.9);
+}
+

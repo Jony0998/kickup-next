@@ -1,10 +1,10 @@
 import Head from "next/head";
 import Link from "next/link";
 import { Box, Container, Typography, Button, Grid, Card, CardContent } from "@mui/material";
-import SportsSoccerIcon from "@mui/icons-material/SportsSoccer";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import GroupsIcon from "@mui/icons-material/Groups";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import styles from "@/styles/home.module.scss";
 
 export default function Home() {
   return (
@@ -21,45 +21,24 @@ export default function Home() {
 
       <Box>
         {/* Hero Section */}
-        <Box
-          sx={{
-            background: 'linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)',
-            color: 'white',
-            py: { xs: 8, md: 12 },
-          }}
-        >
+        <Box className={styles.hero}>
           <Container maxWidth="lg">
-            <Box sx={{ textAlign: 'center' }}>
+            <Box className={styles.heroContent}>
               <Typography
                 variant="h2"
                 component="h1"
-                sx={{
-                  fontWeight: 700,
-                  mb: 3,
-                  fontSize: { xs: '2.5rem', md: '3.75rem' },
-                }}
+                className={styles.heroTitle}
               >
                 Futbol o'yinlarini toping va qo'shiling
               </Typography>
               <Typography
                 variant="h5"
-                sx={{
-                  mb: 4,
-                  color: 'rgba(255, 255, 255, 0.9)',
-                  fontSize: { xs: '1.25rem', md: '1.5rem' },
-                }}
+                className={styles.heroSubtitle}
               >
                 Maydonlar, o'yinlar va yangi jamoalar toping. Futbol sevuvchilar
                 uchun platforma
               </Typography>
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: { xs: 'column', sm: 'row' },
-                  gap: 2,
-                  justifyContent: 'center',
-                }}
-              >
+              <Box className={styles.heroButtons}>
                 <Button
                   component={Link}
                   href="/games"
@@ -96,34 +75,23 @@ export default function Home() {
         </Box>
 
         {/* Features Section */}
-        <Box sx={{ py: { xs: 8, md: 12 }, bgcolor: 'grey.50' }}>
+        <Box className={styles.features}>
           <Container maxWidth="lg">
             <Typography
               variant="h3"
               component="h2"
-              sx={{ textAlign: 'center', mb: 8, fontWeight: 700 }}
+              className={styles.featuresTitle}
             >
               Nima uchun KickUp?
             </Typography>
             <Grid container spacing={4}>
               <Grid item xs={12} md={4}>
                 <Card elevation={2}>
-                  <CardContent sx={{ p: 4 }}>
-                    <Box
-                      sx={{
-                        width: 56,
-                        height: 56,
-                        bgcolor: 'primary.50',
-                        borderRadius: 2,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        mb: 3,
-                      }}
-                    >
+                  <CardContent className={styles.featureCard}>
+                    <Box className={styles.featureIcon}>
                       <LocationOnIcon sx={{ fontSize: 32, color: 'primary.main' }} />
                     </Box>
-                    <Typography variant="h5" sx={{ fontWeight: 600, mb: 2 }}>
+                    <Typography variant="h5" className={styles.featureTitle}>
                       Maydonlar topish
                     </Typography>
                     <Typography variant="body1" color="text.secondary">
@@ -136,22 +104,11 @@ export default function Home() {
 
               <Grid item xs={12} md={4}>
                 <Card elevation={2}>
-                  <CardContent sx={{ p: 4 }}>
-                    <Box
-                      sx={{
-                        width: 56,
-                        height: 56,
-                        bgcolor: 'primary.50',
-                        borderRadius: 2,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        mb: 3,
-                      }}
-                    >
+                  <CardContent className={styles.featureCard}>
+                    <Box className={styles.featureIcon}>
                       <GroupsIcon sx={{ fontSize: 32, color: 'primary.main' }} />
                     </Box>
-                    <Typography variant="h5" sx={{ fontWeight: 600, mb: 2 }}>
+                    <Typography variant="h5" className={styles.featureTitle}>
                       Jamoalar tuzish
                     </Typography>
                     <Typography variant="body1" color="text.secondary">
@@ -164,22 +121,11 @@ export default function Home() {
 
               <Grid item xs={12} md={4}>
                 <Card elevation={2}>
-                  <CardContent sx={{ p: 4 }}>
-                    <Box
-                      sx={{
-                        width: 56,
-                        height: 56,
-                        bgcolor: 'primary.50',
-                        borderRadius: 2,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        mb: 3,
-                      }}
-                    >
+                  <CardContent className={styles.featureCard}>
+                    <Box className={styles.featureIcon}>
                       <CheckCircleIcon sx={{ fontSize: 32, color: 'primary.main' }} />
                     </Box>
-                    <Typography variant="h5" sx={{ fontWeight: 600, mb: 2 }}>
+                    <Typography variant="h5" className={styles.featureTitle}>
                       Oson boshqarish
                     </Typography>
                     <Typography variant="body1" color="text.secondary">
@@ -193,23 +139,17 @@ export default function Home() {
         </Box>
 
         {/* CTA Section */}
-        <Box
-          sx={{
-            py: { xs: 8, md: 12 },
-            bgcolor: 'primary.main',
-            color: 'white',
-          }}
-        >
+        <Box className={styles.cta}>
           <Container maxWidth="md">
-            <Box sx={{ textAlign: 'center' }}>
+            <Box className={styles.ctaContent}>
               <Typography
                 variant="h3"
                 component="h2"
-                sx={{ fontWeight: 700, mb: 2 }}
+                className={styles.ctaTitle}
               >
                 Hozir boshlang va o'yinlarda qatnashing
               </Typography>
-              <Typography variant="h6" sx={{ mb: 4, color: 'rgba(255,255,255,0.9)' }}>
+              <Typography variant="h6" className={styles.ctaSubtitle}>
                 Ro'yxatdan o'ting va birinchi o'yiningizni toping
               </Typography>
               <Button
