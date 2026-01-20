@@ -9,49 +9,45 @@ import {
   Card,
   CardContent,
   Chip,
-  Tabs,
-  Tab,
   IconButton,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
-import GroupsIcon from "@mui/icons-material/Groups";
-import PersonIcon from "@mui/icons-material/Person";
-import AddIcon from "@mui/icons-material/Add";
+import MenuIcon from "@mui/icons-material/Menu";
+import SportsSoccerIcon from "@mui/icons-material/SportsSoccer";
+import LocalFloristIcon from "@mui/icons-material/LocalFlorist";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
-import SupportAgentIcon from "@mui/icons-material/SupportAgent";
+import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import FilterListIcon from "@mui/icons-material/FilterList";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import WbTwilightIcon from "@mui/icons-material/WbTwilight";
+import LocalOfferIcon from "@mui/icons-material/LocalOffer";
+import WcIcon from "@mui/icons-material/Wc";
+import TrendingUpIcon from "@mui/icons-material/TrendingUp";
+import HomeIcon from "@mui/icons-material/Home";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import styles from "@/styles/home.module.scss";
 
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
-}
-
-function TabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && <Box sx={{ pt: 3 }}>{children}</Box>}
-    </div>
-  );
-}
-
 export default function Home() {
-  const [tabValue, setTabValue] = React.useState(0);
-  const [scheduleTab, setScheduleTab] = React.useState(0);
+  // Generate dates for calendar (14 days)
+  const today = new Date();
+  const dates = Array.from({ length: 14 }, (_, i) => {
+    const date = new Date(today);
+    date.setDate(today.getDate() + i);
+    return date;
+  });
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
-    setTabValue(newValue);
+  const getDayName = (date: Date) => {
+    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    return days[date.getDay()];
   };
 
-  const handleScheduleTabChange = (event: React.SyntheticEvent, newValue: number) => {
-    setScheduleTab(newValue);
+  const getShortDayName = (date: Date) => {
+    const days = ["S", "M", "T", "W", "T", "F", "S"];
+    return days[date.getDay()];
   };
 
   return (
@@ -67,176 +63,188 @@ export default function Home() {
       </Head>
 
       <Box className={styles.homePage}>
-        {/* Action Buttons Section */}
+        {/* Banner/Carousel Section */}
+        <Box className={styles.bannerSection}>
+          <Container maxWidth="lg">
+            <Box className={styles.bannerContent}>
+              <Typography variant="h4" className={styles.bannerTitle}>
+                Find Your Perfect Match
+              </Typography>
+              <Typography variant="body1" className={styles.bannerSubtitle}>
+                Join social matches, create teams, and book fields
+              </Typography>
+            </Box>
+          </Container>
+        </Box>
+
+        {/* Quick Menu Buttons */}
         <Container maxWidth="lg">
-          <Box className={styles.actionButtons}>
-            <Card className={styles.actionCard} component={Link} href="/team-league">
-              <CardContent className={styles.actionCardContent}>
-                <Box className={`${styles.actionIcon} ${styles.teamLeagueIcon}`}>
-                  <EmojiEventsIcon sx={{ fontSize: 32, color: '#10b981' }} />
-                </Box>
-                <Typography variant="body2" className={styles.actionText}>
+          <Box className={styles.quickMenu}>
+            <Card className={styles.quickMenuItem} component={Link} href="/menu">
+              <CardContent className={styles.quickMenuContent}>
+                <MenuIcon sx={{ fontSize: 32, color: '#0ea5e9' }} />
+                <Typography variant="body2" className={styles.quickMenuText}>
+                  All Menu
+                </Typography>
+              </CardContent>
+            </Card>
+
+            <Card className={styles.quickMenuItem} component={Link} href="/football-match">
+              <CardContent className={styles.quickMenuContent}>
+                <SportsSoccerIcon sx={{ fontSize: 32, color: '#0ea5e9' }} />
+                <Typography variant="body2" className={styles.quickMenuText}>
+                  Football Match
+                </Typography>
+              </CardContent>
+            </Card>
+
+            <Card className={styles.quickMenuItem} component={Link} href="/beginner">
+              <CardContent className={styles.quickMenuContent}>
+                <LocalFloristIcon sx={{ fontSize: 32, color: '#10b981' }} />
+                <Typography variant="body2" className={styles.quickMenuText}>
+                  Beginner
+                </Typography>
+              </CardContent>
+            </Card>
+
+            <Card className={styles.quickMenuItem} component={Link} href="/team-league">
+              <CardContent className={styles.quickMenuContent}>
+                <EmojiEventsIcon sx={{ fontSize: 32, color: '#10b981' }} />
+                <Typography variant="body2" className={styles.quickMenuText}>
                   Team League
                 </Typography>
               </CardContent>
             </Card>
 
-            <Card className={styles.actionCard} component={Link} href="/recruit-teammates">
-              <CardContent className={styles.actionCardContent}>
-                <Box className={`${styles.actionIcon} ${styles.recruitTeammatesIcon}`}>
-                  <GroupsIcon sx={{ fontSize: 32, color: '#0ea5e9' }} />
-                </Box>
-                <Typography variant="body2" className={styles.actionText}>
-                  Recruit Teammates
-                </Typography>
-              </CardContent>
-            </Card>
-
-            <Card className={styles.actionCard} component={Link} href="/recruit-guests">
-              <CardContent className={styles.actionCardContent}>
-                <Box className={`${styles.actionIcon} ${styles.recruitGuestsIcon}`}>
-                  <PersonIcon sx={{ fontSize: 32, color: '#10b981' }} />
-                </Box>
-                <Typography variant="body2" className={styles.actionText}>
-                  Recruit Guests
-                </Typography>
-              </CardContent>
-            </Card>
-
-            <Card className={styles.actionCard} component={Link} href="/create-team">
-              <CardContent className={styles.actionCardContent}>
-                <Box className={`${styles.actionIcon} ${styles.createTeamIcon}`}>
-                  <AddIcon sx={{ fontSize: 32, color: '#0ea5e9' }} />
-                </Box>
-                <Typography variant="body2" className={styles.actionText}>
-                  Create Team
+            <Card className={styles.quickMenuItem} component={Link} href="/get-started">
+              <CardContent className={styles.quickMenuContent}>
+                <PlayArrowIcon sx={{ fontSize: 32, color: '#f59e0b' }} />
+                <Typography variant="body2" className={styles.quickMenuText}>
+                  Get Started
                 </Typography>
               </CardContent>
             </Card>
           </Box>
         </Container>
 
-        {/* Promotional Banner - Team League */}
-        <Box className={styles.promoBanner}>
-          <Container maxWidth="lg">
-            <Box className={styles.promoContent}>
-              <Box className={styles.promoHeader}>
-                <Box className={styles.promoIcon}>
-                  <EmojiEventsIcon sx={{ fontSize: 40, color: 'white' }} />
+        {/* Calendar and Filters Section */}
+        <Container maxWidth="lg">
+          <Box className={styles.calendarFiltersSection}>
+            {/* Calendar Dates */}
+            <Box className={styles.calendarDates}>
+              {dates.map((date, index) => (
+                <Box
+                  key={index}
+                  className={`${styles.dateItem} ${index === 0 ? styles.dateItemActive : ''}`}
+                >
+                  <Typography variant="body2" className={styles.dateNumber}>
+                    {date.getDate()}
+                  </Typography>
+                  <Typography variant="caption" className={styles.dateDay}>
+                    {getShortDayName(date)}
+                  </Typography>
                 </Box>
-                <Typography variant="h4" className={styles.promoTitle}>
-                  KickUp Team League
-                </Typography>
-              </Box>
-              <Typography variant="h6" className={styles.promoMessage}>
-                Join the KickUp Team League with your team members!
+              ))}
+            </Box>
+
+            {/* Filters */}
+            <Box className={styles.filters}>
+              <Chip
+                icon={<LocationOnIcon />}
+                label="Seoul"
+                className={styles.filterChip}
+                clickable
+              />
+              <Chip
+                label="Hide Closed"
+                className={styles.filterChip}
+                clickable
+              />
+              <Chip
+                icon={<WbTwilightIcon />}
+                label="Evening Match"
+                className={styles.filterChip}
+                clickable
+              />
+              <Chip
+                icon={<LocalOfferIcon />}
+                label="Benefits"
+                className={styles.filterChip}
+                clickable
+              />
+              <Chip
+                icon={<WcIcon />}
+                label="Gender"
+                className={styles.filterChip}
+                clickable
+              />
+              <Chip
+                icon={<TrendingUpIcon />}
+                label="Level"
+                className={styles.filterChip}
+                clickable
+              />
+              <Chip
+                icon={<HomeIcon />}
+                label="Indoor/Shade"
+                className={styles.filterChip}
+                clickable
+              />
+            </Box>
+          </Box>
+        </Container>
+
+        {/* Match List Section */}
+        <Container maxWidth="lg">
+          <Box className={styles.matchListSection}>
+            <Box className={styles.emptyState}>
+              <Typography variant="h5" className={styles.emptyStateTitle}>
+                No matches available to apply for today
               </Typography>
-              <Box className={styles.promoButtons}>
+              <Typography variant="body1" className={styles.emptyStateSubtitle}>
+                Check other dates
+              </Typography>
+              <Button
+                variant="outlined"
+                className={styles.viewScheduleButton}
+                component={Link}
+                href="/schedule"
+              >
+                View Next Tuesday Schedule
+              </Button>
+            </Box>
+          </Box>
+        </Container>
+
+        {/* Recommendation Section */}
+        <Container maxWidth="lg">
+          <Box className={styles.recommendationSection}>
+            <Box className={styles.recommendationContent}>
+              <Box className={styles.recommendationText}>
+                <Typography variant="h6" className={styles.recommendationTitle}>
+                  Can't find the match you want?
+                </Typography>
+                <Typography variant="body1" className={styles.recommendationSubtitle}>
+                  Recommend a place where you want to play.
+                </Typography>
                 <Button
                   variant="contained"
-                  className={styles.promoButton}
+                  className={styles.recommendButton}
+                  startIcon={<ThumbUpIcon />}
                   component={Link}
-                  href="/team-league/details"
+                  href="/recommend"
                 >
-                  View Details
+                  Recommend
                 </Button>
-                <Button
-                  variant="contained"
-                  className={styles.promoButton}
-                  component={Link}
-                  href="/create-team"
-                >
-                  Create New Team
-                </Button>
+              </Box>
+              <Box className={styles.recommendationImage}>
+                <Typography variant="body2" className={styles.recommendationImageText}>
+                  Can't find a match that fits you?
+                </Typography>
               </Box>
             </Box>
-          </Container>
-        </Box>
-
-        {/* Match Schedule Section */}
-        <Container maxWidth="lg">
-          <Box className={styles.scheduleSection}>
-            <Tabs
-              value={scheduleTab}
-              onChange={handleScheduleTabChange}
-              className={styles.scheduleTabs}
-            >
-              <Tab label="Schedule" />
-              <Tab label="Results" />
-              <Tab label="Team Rankings" />
-              <Tab label="Individual Rankings" />
-            </Tabs>
-
-            <TabPanel value={scheduleTab} index={0}>
-              <Box className={styles.scheduleContent}>
-                <Chip
-                  label="All"
-                  className={styles.filterChip}
-                  clickable
-                />
-                
-                {/* Match Card */}
-                <Card className={styles.matchCard}>
-                  <CardContent>
-                    <Box className={styles.matchHeader}>
-                      <Typography variant="h6" className={styles.matchDate}>
-                        January 21, Wednesday 20:00
-                      </Typography>
-                    </Box>
-                    <Typography variant="body1" className={styles.matchLocation}>
-                      Seoul Yongsan Adidas The Base Field 2 / Man Utd
-                    </Typography>
-                    <Chip
-                      label="Closed"
-                      size="small"
-                      className={styles.statusChip}
-                    />
-                    <Box className={styles.matchDetails}>
-                      <Chip label="Men" size="small" className={styles.detailChip} />
-                      <Chip label="6vs6" size="small" className={styles.detailChip} />
-                      <Chip label="All Levels" size="small" className={styles.detailChip} />
-                      <Chip label="Parking Full" size="small" className={styles.detailChip} />
-                    </Box>
-                    <Box className={styles.matchTeams}>
-                      <Typography variant="body2" className={styles.teamName}>
-                        Somang FS
-                      </Typography>
-                      <Box className={styles.vsIcon}>VS</Box>
-                      <Typography variant="body2" className={styles.teamName}>
-                        YS FC
-                      </Typography>
-                      <Box className={styles.vsIcon}>VS</Box>
-                      <Typography variant="body2" className={styles.teamName}>
-                        Aknack FC
-                      </Typography>
-                    </Box>
-                  </CardContent>
-                </Card>
-              </Box>
-            </TabPanel>
-
-            <TabPanel value={scheduleTab} index={1}>
-              <Typography>Results content coming soon...</Typography>
-            </TabPanel>
-
-            <TabPanel value={scheduleTab} index={2}>
-              <Typography>Team Rankings content coming soon...</Typography>
-            </TabPanel>
-
-            <TabPanel value={scheduleTab} index={3}>
-              <Typography>Individual Rankings content coming soon...</Typography>
-            </TabPanel>
           </Box>
         </Container>
-
-        {/* Support Chat Button */}
-        <IconButton
-          className={styles.supportButton}
-          component={Link}
-          href="/support"
-        >
-          <SupportAgentIcon sx={{ fontSize: 32, color: 'white' }} />
-        </IconButton>
       </Box>
     </>
   );

@@ -1,9 +1,9 @@
-// Footer styles
+// Footer styles - Plab platform style
+
 .footer {
   background-color: #1a1a1a;
   color: #b0b0b0;
-  padding-top: 48px;
-  padding-bottom: 48px;
+  padding: 48px 0 24px;
   margin-top: auto;
 }
 
@@ -13,60 +13,135 @@
   padding: 0 16px;
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 32px;
-  
-  @media (max-width: 960px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  @media (max-width: 600px) {
-    grid-template-columns: 1fr;
-  }
+.footerTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #2a2a2a;
 }
 
 .logoSection {
   display: flex;
   align-items: center;
-  margin-bottom: 16px;
-  
-  .logoIcon {
-    margin-right: 8px;
-    color: #0ea5e9;
-  }
-  
-  .logoText {
-    font-weight: 700;
+  gap: 8px;
+}
+
+.logoIcon {
+  color: #0ea5e9;
+  font-size: 32px;
+}
+
+.logoText {
+  font-weight: 700;
+  color: white;
+  font-size: 1.5rem;
+}
+
+.footerLinks {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.footerLink {
+  color: #b0b0b0;
+  text-decoration: none;
+  font-size: 0.875rem;
+  transition: color 0.2s;
+
+  &:hover {
     color: white;
   }
 }
 
-.sectionTitle {
-  color: white;
-  margin-bottom: 16px;
-  font-weight: 600;
+.separator {
+  color: #4a4a4a;
+  margin: 0 4px;
 }
 
-.linkList {
+.socialLinks {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
-  
-  .link {
-    color: inherit;
-    
-    &:hover {
-      color: white;
-    }
+  gap: 16px;
+}
+
+.socialLink {
+  color: #b0b0b0;
+  transition: color 0.2s;
+
+  &:hover {
+    color: white;
+  }
+
+  svg {
+    font-size: 24px;
   }
 }
 
-.divider {
-  margin-top: 32px;
-  padding-top: 32px;
-  border-top: 1px solid #2a2a2a;
+.footerMiddle {
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.address {
+  color: #b0b0b0;
+  margin-bottom: 16px;
+  font-size: 0.875rem;
+}
+
+.emailSection {
+  margin-bottom: 16px;
+  font-size: 0.875rem;
+  line-height: 1.8;
+}
+
+.emailLabel {
+  color: #b0b0b0;
+}
+
+.emailLink {
+  color: #0ea5e9;
+  text-decoration: none;
+  transition: color 0.2s;
+
+  &:hover {
+    color: #38bdf8;
+    text-decoration: underline;
+  }
+}
+
+.businessInfo {
+  color: #808080;
+  font-size: 0.75rem;
+  line-height: 1.6;
+}
+
+.footerBottom {
   text-align: center;
 }
 
+.copyright {
+  color: #808080;
+  font-size: 0.75rem;
+}
+
+@media (max-width: 960px) {
+  .footerTop {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .footerLinks {
+    width: 100%;
+  }
+
+  .socialLinks {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}

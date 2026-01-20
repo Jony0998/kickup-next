@@ -1,4 +1,4 @@
-// Home page styles - Plab platform exact match
+// Home page styles - Exact Plab platform match
 
 .homePage {
   background: #ffffff;
@@ -6,22 +6,52 @@
   padding-bottom: 80px;
 }
 
-// Action Buttons Section
-.actionButtons {
+// Banner Section
+.bannerSection {
+  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+  padding: 48px 0;
+  margin-bottom: 32px;
+
+  @media (min-width: 960px) {
+    padding: 64px 0;
+    margin-bottom: 48px;
+  }
+}
+
+.bannerContent {
+  text-align: center;
+  color: white;
+}
+
+.bannerTitle {
+  font-weight: 700;
+  color: white;
+  margin-bottom: 16px;
+}
+
+.bannerSubtitle {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.125rem;
+}
+
+// Quick Menu
+.quickMenu {
   display: flex;
   gap: 16px;
   padding: 24px 0;
   justify-content: center;
   flex-wrap: wrap;
+  margin-bottom: 32px;
 
   @media (min-width: 960px) {
     padding: 32px 0;
+    margin-bottom: 48px;
   }
 }
 
-.actionCard {
-  width: 140px;
-  height: 140px;
+.quickMenuItem {
+  width: 120px;
+  height: 120px;
   border-radius: 16px !important;
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
@@ -34,7 +64,7 @@
   }
 }
 
-.actionCardContent {
+.quickMenuContent {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -44,247 +74,215 @@
   gap: 12px;
 }
 
-.actionIcon {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: white;
-}
-
-.teamLeagueIcon {
-  background: #f0fdf4;
-}
-
-.recruitTeammatesIcon {
-  background: #eff6ff;
-}
-
-.recruitGuestsIcon {
-  background: #f0fdf4;
-}
-
-.createTeamIcon {
-  background: #eff6ff;
-}
-
-.actionText {
+.quickMenuText {
   font-weight: 600;
   color: #1f2937;
   text-align: center;
   font-size: 0.875rem;
 }
 
-// Promotional Banner
-.promoBanner {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  padding: 48px 0;
-  margin: 32px 0;
+// Calendar and Filters Section
+.calendarFiltersSection {
+  margin-bottom: 32px;
+}
 
-  @media (min-width: 960px) {
-    padding: 64px 0;
-    margin: 48px 0;
+.calendarDates {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 16px 0;
+  margin-bottom: 16px;
+  -webkit-overflow-scrolling: touch;
+
+  &::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 2px;
   }
 }
 
-.promoContent {
+.dateItem {
+  min-width: 60px;
+  height: 70px;
+  border-radius: 12px;
+  background: white;
+  border: 2px solid #e5e7eb;
+  cursor: pointer;
+  transition: all 0.2s;
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
-  color: white;
-  gap: 24px;
+  justify-content: center;
+  padding: 8px;
+  flex-shrink: 0;
+
+  &:hover {
+    border-color: #0ea5e9;
+    transform: translateY(-2px);
+  }
 }
 
-.promoHeader {
+.dateItemActive {
+  background: #0ea5e9;
+  border-color: #0ea5e9;
+  color: white;
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+
+  .dateNumber,
+  .dateDay {
+    color: white;
+  }
+}
+
+.dateNumber {
+  font-weight: 700;
+  font-size: 1.25rem;
+  line-height: 1.2;
+  color: #1f2937;
+}
+
+.dateDay {
+  font-size: 0.75rem;
+  color: #6b7280;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+.filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 16px 0;
+}
+
+.filterChip {
+  background: white !important;
+  border: 1px solid #e5e7eb !important;
+  color: #374151 !important;
+  font-weight: 500 !important;
+  height: 36px !important;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: #0ea5e9 !important;
+    background: #f0f9ff !important;
+  }
+
+  .MuiChip-icon {
+    color: #6b7280;
+    margin-left: 8px;
+  }
+}
+
+// Match List Section
+.matchListSection {
+  margin: 32px 0;
+  min-height: 300px;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 32px;
+  text-align: center;
+}
+
+.emptyStateTitle {
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 12px;
+}
+
+.emptyStateSubtitle {
+  color: #6b7280;
+  margin-bottom: 24px;
+}
+
+.viewScheduleButton {
+  border-color: #0ea5e9 !important;
+  color: #0ea5e9 !important;
+  text-transform: none !important;
+  padding: 10px 24px !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+
+  &:hover {
+    background: #f0f9ff !important;
+    border-color: #0284c7 !important;
+  }
+}
+
+// Recommendation Section
+.recommendationSection {
+  margin: 48px 0;
+  padding: 32px 0;
+  background: #f9fafb;
+  border-radius: 16px;
+}
+
+.recommendationContent {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 32px;
+  flex-wrap: wrap;
+
+  @media (max-width: 960px) {
+    flex-direction: column;
+    text-align: center;
+  }
 }
 
-.promoIcon {
-  width: 56px;
-  height: 56px;
-  background: rgba(255, 255, 255, 0.2);
+.recommendationText {
+  flex: 1;
+  min-width: 300px;
+}
+
+.recommendationTitle {
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 12px;
+}
+
+.recommendationSubtitle {
+  color: #6b7280;
+  margin-bottom: 24px;
+}
+
+.recommendButton {
+  background: #0ea5e9 !important;
+  color: white !important;
+  text-transform: none !important;
+  padding: 12px 24px !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+
+  &:hover {
+    background: #0284c7 !important;
+  }
+}
+
+.recommendationImage {
+  flex: 1;
+  min-width: 300px;
+  height: 200px;
+  background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
   border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.promoTitle {
-  font-weight: 700;
-  color: white;
-  margin: 0;
-}
-
-.promoMessage {
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.95);
-  max-width: 600px;
-}
-
-.promoButtons {
-  display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.promoButton {
-  background: #047857 !important;
-  color: white !important;
-  padding: 12px 24px !important;
-  border-radius: 8px !important;
-  font-weight: 600 !important;
-  text-transform: none !important;
-  min-width: 160px;
-
-  &:hover {
-    background: #065f46 !important;
-  }
-}
-
-// Schedule Section
-.scheduleSection {
-  margin-top: 48px;
-}
-
-.scheduleTabs {
-  border-bottom: 2px solid #e5e7eb;
-  margin-bottom: 24px;
-
-  .MuiTab-root {
-    text-transform: none;
-    font-weight: 600;
-    color: #6b7280;
-    min-width: 120px;
-
-    &.Mui-selected {
-      color: #0ea5e9;
-    }
-  }
-
-  .MuiTabs-indicator {
-    background-color: #0ea5e9;
-    height: 3px;
-  }
-}
-
-.scheduleContent {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.filterChip {
-  background: #0ea5e9 !important;
-  color: white !important;
-  border-radius: 20px !important;
-  font-weight: 600 !important;
-  align-self: flex-start;
-  margin-bottom: 8px;
-}
-
-// Match Card
-.matchCard {
-  border: 1px solid #e5e7eb;
-  border-radius: 12px !important;
-  margin-top: 16px;
-  transition: box-shadow 0.2s;
-
-  &:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  }
-}
-
-.matchHeader {
-  margin-bottom: 12px;
-}
-
-.matchDate {
+.recommendationImageText {
+  color: #0ea5e9;
   font-weight: 600;
-  color: #1f2937;
-  margin-bottom: 8px;
-}
-
-.matchLocation {
-  font-weight: 500;
-  color: #374151;
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.statusChip {
-  background: #9ca3af !important;
-  color: white !important;
-  font-size: 0.75rem !important;
-  height: 24px !important;
-  margin-left: 8px;
-}
-
-.matchDetails {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 16px 0;
-}
-
-.detailChip {
-  background: #f3f4f6 !important;
-  color: #374151 !important;
-  font-size: 0.75rem !important;
-  height: 28px !important;
-  font-weight: 500 !important;
-}
-
-.matchTeams {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid #e5e7eb;
-  flex-wrap: wrap;
-}
-
-.teamName {
-  font-weight: 600;
-  color: #1f2937;
-}
-
-.vsIcon {
-  color: #9ca3af;
-  font-weight: 600;
-  font-size: 0.875rem;
-}
-
-// Support Chat Button
-.supportButton {
-  position: fixed !important;
-  bottom: 24px;
-  right: 24px;
-  width: 64px !important;
-  height: 64px !important;
-  background: #fbbf24 !important;
-  border-radius: 50% !important;
-  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.4) !important;
-  z-index: 1000;
-  transition: transform 0.2s, box-shadow 0.2s;
-
-  &:hover {
-    transform: scale(1.1);
-    box-shadow: 0 6px 16px rgba(251, 191, 36, 0.5) !important;
-  }
-
-  @media (max-width: 600px) {
-    bottom: 16px;
-    right: 16px;
-    width: 56px !important;
-    height: 56px !important;
-  }
+  font-size: 1.125rem;
 }
