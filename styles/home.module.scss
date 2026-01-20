@@ -1,147 +1,32 @@
-// Home page styles - Plab platform style
+// Home page styles - Plab platform exact match
 
-// Hero Section
-.hero {
-  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
-  color: white;
-  padding-top: 60px;
+.homePage {
+  background: #ffffff;
+  min-height: 100vh;
   padding-bottom: 80px;
-  position: relative;
-  overflow: hidden;
-
-  @media (min-width: 960px) {
-    padding-top: 100px;
-    padding-bottom: 120px;
-  }
 }
 
-.heroContent {
-  text-align: center;
-  position: relative;
-  z-index: 2;
-}
-
-.heroIllustration {
-  position: relative;
-  width: 100%;
-  max-width: 500px;
-  height: 300px;
-  margin: 0 auto 40px;
+// Action Buttons Section
+.actionButtons {
   display: flex;
-  align-items: center;
+  gap: 16px;
+  padding: 24px 0;
   justify-content: center;
+  flex-wrap: wrap;
 
   @media (min-width: 960px) {
-    height: 400px;
-    margin-bottom: 60px;
+    padding: 32px 0;
   }
 }
 
-.heroPeople {
-  display: flex;
-  gap: 40px;
-  align-items: flex-end;
-  position: relative;
-}
-
-.person {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.personHead {
-  width: 60px;
-  height: 60px;
-  background: white;
-  border-radius: 50%;
-  margin-bottom: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.personBody {
-  width: 80px;
-  height: 120px;
-  background: white;
-  border-radius: 40px 40px 20px 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  position: relative;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 40px;
-    height: 30px;
-    background: #0ea5e9;
-    border-radius: 20px;
-  }
-}
-
-.heroBubbles {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.bubble {
-  width: 50px;
-  height: 50px;
-  background: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  animation: float 3s ease-in-out infinite;
-
-  &:nth-child(2) {
-    animation-delay: 1s;
-  }
-}
-
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-.heroTitle {
-  font-weight: 700;
-  font-size: 1.75rem;
-  line-height: 1.4;
-  max-width: 800px;
-  margin: 0 auto;
-
-  @media (min-width: 960px) {
-    font-size: 2.5rem;
-  }
-}
-
-// Feature Blocks
-.featureBlocks {
-  padding: 32px 0;
-  background: white;
-
-  @media (min-width: 960px) {
-    padding: 48px 0;
-  }
-}
-
-.featureBlock {
-  height: 100%;
-  transition: transform 0.2s, box-shadow 0.2s;
+.actionCard {
+  width: 140px;
+  height: 140px;
+  border-radius: 16px !important;
   cursor: pointer;
-  border: 1px solid #e5e7eb;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 1px solid #e5e7eb !important;
+  text-decoration: none;
 
   &:hover {
     transform: translateY(-4px);
@@ -149,128 +34,257 @@
   }
 }
 
-.featureBlockContent {
+.actionCardContent {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 24px 16px !important;
-  text-align: center;
+  justify-content: center;
+  height: 100%;
+  padding: 16px !important;
   gap: 12px;
 }
 
-.featureBlockIcon {
+.actionIcon {
   width: 64px;
   height: 64px;
-  background: #f3f4f6;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+}
+
+.teamLeagueIcon {
+  background: #f0fdf4;
+}
+
+.recruitTeammatesIcon {
+  background: #eff6ff;
+}
+
+.recruitGuestsIcon {
+  background: #f0fdf4;
+}
+
+.createTeamIcon {
+  background: #eff6ff;
+}
+
+.actionText {
+  font-weight: 600;
+  color: #1f2937;
+  text-align: center;
+  font-size: 0.875rem;
+}
+
+// Promotional Banner
+.promoBanner {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  padding: 48px 0;
+  margin: 32px 0;
+
+  @media (min-width: 960px) {
+    padding: 64px 0;
+    margin: 48px 0;
+  }
+}
+
+.promoContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  color: white;
+  gap: 24px;
+}
+
+.promoHeader {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.promoIcon {
+  width: 56px;
+  height: 56px;
+  background: rgba(255, 255, 255, 0.2);
   border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.promoTitle {
+  font-weight: 700;
+  color: white;
+  margin: 0;
+}
+
+.promoMessage {
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.95);
+  max-width: 600px;
+}
+
+.promoButtons {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.promoButton {
+  background: #047857 !important;
+  color: white !important;
+  padding: 12px 24px !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  min-width: 160px;
+
+  &:hover {
+    background: #065f46 !important;
+  }
+}
+
+// Schedule Section
+.scheduleSection {
+  margin-top: 48px;
+}
+
+.scheduleTabs {
+  border-bottom: 2px solid #e5e7eb;
+  margin-bottom: 24px;
+
+  .MuiTab-root {
+    text-transform: none;
+    font-weight: 600;
+    color: #6b7280;
+    min-width: 120px;
+
+    &.Mui-selected {
+      color: #0ea5e9;
+    }
+  }
+
+  .MuiTabs-indicator {
+    background-color: #0ea5e9;
+    height: 3px;
+  }
+}
+
+.scheduleContent {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.filterChip {
+  background: #0ea5e9 !important;
+  color: white !important;
+  border-radius: 20px !important;
+  font-weight: 600 !important;
+  align-self: flex-start;
   margin-bottom: 8px;
 }
 
-.featureBlockText {
+// Match Card
+.matchCard {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px !important;
+  margin-top: 16px;
+  transition: box-shadow 0.2s;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.matchHeader {
+  margin-bottom: 12px;
+}
+
+.matchDate {
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 8px;
+}
+
+.matchLocation {
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.statusChip {
+  background: #9ca3af !important;
+  color: white !important;
+  font-size: 0.75rem !important;
+  height: 24px !important;
+  margin-left: 8px;
+}
+
+.matchDetails {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0;
+}
+
+.detailChip {
+  background: #f3f4f6 !important;
+  color: #374151 !important;
+  font-size: 0.75rem !important;
+  height: 28px !important;
+  font-weight: 500 !important;
+}
+
+.matchTeams {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e5e7eb;
+  flex-wrap: wrap;
+}
+
+.teamName {
   font-weight: 600;
   color: #1f2937;
 }
 
-// Calendar Section
-.calendarSection {
-  padding: 32px 0;
-  background: #f9fafb;
-
-  @media (min-width: 960px) {
-    padding: 48px 0;
-  }
+.vsIcon {
+  color: #9ca3af;
+  font-weight: 600;
+  font-size: 0.875rem;
 }
 
-.calendarDates {
-  display: flex;
-  gap: 12px;
-  overflow-x: auto;
-  padding: 16px 0;
-  margin-bottom: 24px;
-  -webkit-overflow-scrolling: touch;
-
-  &::-webkit-scrollbar {
-    height: 4px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: #f1f1f1;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 2px;
-  }
-}
-
-.dateChip {
-  min-width: 70px;
-  height: 70px;
-  border-radius: 12px !important;
-  background: white !important;
-  border: 2px solid #e5e7eb !important;
-  cursor: pointer;
-  transition: all 0.2s;
+// Support Chat Button
+.supportButton {
+  position: fixed !important;
+  bottom: 24px;
+  right: 24px;
+  width: 64px !important;
+  height: 64px !important;
+  background: #fbbf24 !important;
+  border-radius: 50% !important;
+  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.4) !important;
+  z-index: 1000;
+  transition: transform 0.2s, box-shadow 0.2s;
 
   &:hover {
-    border-color: #0ea5e9 !important;
-    transform: translateY(-2px);
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(251, 191, 36, 0.5) !important;
   }
-}
 
-.dateChipActive {
-  background: #0ea5e9 !important;
-  border-color: #0ea5e9 !important;
-  color: white !important;
-  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
-
-  .dateNumber,
-  .dateDay {
-    color: white !important;
-  }
-}
-
-.dateChip {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 8px;
-}
-
-.dateNumber {
-  font-weight: 700;
-  font-size: 1.25rem;
-  line-height: 1.2;
-  color: #1f2937;
-}
-
-.dateDay {
-  font-size: 0.75rem;
-  color: #6b7280;
-  text-transform: uppercase;
-}
-
-.favoriteFieldButton {
-  display: flex;
-  justify-content: center;
-  margin-top: 24px;
-}
-
-.favoriteFieldBtn {
-  background: #10b981 !important;
-  color: white !important;
-  padding: 12px 24px !important;
-  border-radius: 12px !important;
-  font-weight: 600 !important;
-  text-transform: none !important;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3) !important;
-
-  &:hover {
-    background: #059669 !important;
-    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4) !important;
+  @media (max-width: 600px) {
+    bottom: 16px;
+    right: 16px;
+    width: 56px !important;
+    height: 56px !important;
   }
 }
