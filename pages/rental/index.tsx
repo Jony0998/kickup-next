@@ -498,88 +498,90 @@ export default function FieldReservationPage() {
                 </CardContent>
               </Card>
             ) : (
-              filteredFields.map((venue) => (
-              <Card key={venue.id} className={styles.venueCard}>
-                <CardContent className={styles.venueCardContent}>
-                  <Box className={styles.venueHeader}>
-                    <Typography variant="h6" className={styles.venueName}>
-                      {venue.venueName}
-                    </Typography>
-                    <Box className={styles.amenities}>
-                      {venue.amenities.map((amenity, idx) => (
-                        <Typography key={idx} variant="body2" className={styles.amenity}>
-                          {amenity}
-                          {idx < venue.amenities.length - 1 && " · "}
+              <>
+                {filteredFields.map((venue) => (
+                  <Card key={venue.id} className={styles.venueCard}>
+                    <CardContent className={styles.venueCardContent}>
+                      <Box className={styles.venueHeader}>
+                        <Typography variant="h6" className={styles.venueName}>
+                          {venue.venueName}
                         </Typography>
-                      ))}
-                    </Box>
-                  </Box>
+                        <Box className={styles.amenities}>
+                          {venue.amenities.map((amenity, idx) => (
+                            <Typography key={idx} variant="body2" className={styles.amenity}>
+                              {amenity}
+                              {idx < venue.amenities.length - 1 && " · "}
+                            </Typography>
+                          ))}
+                        </Box>
+                      </Box>
 
-                  <Box className={styles.fieldsContainer}>
-                    {venue.fields.map((field) => (
-                      <Card key={field.id} className={styles.fieldCard} component={Link} href={`/rental/${venue.id}/${field.id}`}>
-                        <CardContent className={styles.fieldCardContent}>
-                          <Box className={styles.fieldHeader}>
-                            <Box className={styles.fieldInfo}>
-                              <Typography variant="subtitle1" className={styles.fieldName}>
-                                {field.name}
-                              </Typography>
-                              <Typography variant="body2" className={styles.fieldDetails}>
-                                {field.size} • {field.indoorOutdoor} • {field.floorType}
-                              </Typography>
-                              <Typography variant="body1" className={styles.fieldPrice}>
-                                {field.price}
-                              </Typography>
-                            </Box>
-                            <Box className={styles.fieldImage}>
-                              <Box className={styles.fieldImagePlaceholder} />
-                            </Box>
-                          </Box>
-
-                          <Box className={styles.timeSlots}>
-                            {field.timeSlots.map((slot, idx) => (
-                              <Box
-                                key={idx}
-                                className={`${styles.timeSlot} ${slot.available ? styles.timeSlotAvailable : styles.timeSlotUnavailable}`}
-                              >
-                                {slot.time}
+                      <Box className={styles.fieldsContainer}>
+                        {venue.fields.map((field) => (
+                          <Card key={field.id} className={styles.fieldCard} component={Link} href={`/rental/${venue.id}/${field.id}`}>
+                            <CardContent className={styles.fieldCardContent}>
+                              <Box className={styles.fieldHeader}>
+                                <Box className={styles.fieldInfo}>
+                                  <Typography variant="subtitle1" className={styles.fieldName}>
+                                    {field.name}
+                                  </Typography>
+                                  <Typography variant="body2" className={styles.fieldDetails}>
+                                    {field.size} • {field.indoorOutdoor} • {field.floorType}
+                                  </Typography>
+                                  <Typography variant="body1" className={styles.fieldPrice}>
+                                    {field.price}
+                                  </Typography>
+                                </Box>
+                                <Box className={styles.fieldImage}>
+                                  <Box className={styles.fieldImagePlaceholder} />
+                                </Box>
                               </Box>
-                            ))}
-                          </Box>
 
-                          <Box className={styles.availabilityStatus}>
-                            <Box className={styles.statusItem}>
-                              <CheckCircleIcon className={styles.statusIconAvailable} />
-                              <Typography variant="body2" className={styles.statusText}>
-                                Available
-                              </Typography>
-                            </Box>
-                            <Box className={styles.statusItem}>
-                              <CancelIcon className={styles.statusIconUnavailable} />
-                              <Typography variant="body2" className={styles.statusText}>
-                                Unavailable
-                              </Typography>
-                            </Box>
-                          </Box>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </Box>
-                </CardContent>
-              </Card>
-            ))}
+                              <Box className={styles.timeSlots}>
+                                {field.timeSlots.map((slot, idx) => (
+                                  <Box
+                                    key={idx}
+                                    className={`${styles.timeSlot} ${slot.available ? styles.timeSlotAvailable : styles.timeSlotUnavailable}`}
+                                  >
+                                    {slot.time}
+                                  </Box>
+                                ))}
+                              </Box>
 
-            {/* Non-Partnered Fields Section */}
-            <Card className={styles.nonPartneredCard} component={Link} href="/rental/non-partnered">
-              <CardContent className={styles.nonPartneredContent}>
-                <Typography variant="h6" className={styles.nonPartneredTitle}>
-                  Non-Partnered Fields More
-                </Typography>
-                <Typography variant="body2" className={styles.nonPartneredSubtitle}>
-                  Please check availability directly with the field.
-                </Typography>
-              </CardContent>
-            </Card>
+                              <Box className={styles.availabilityStatus}>
+                                <Box className={styles.statusItem}>
+                                  <CheckCircleIcon className={styles.statusIconAvailable} />
+                                  <Typography variant="body2" className={styles.statusText}>
+                                    Available
+                                  </Typography>
+                                </Box>
+                                <Box className={styles.statusItem}>
+                                  <CancelIcon className={styles.statusIconUnavailable} />
+                                  <Typography variant="body2" className={styles.statusText}>
+                                    Unavailable
+                                  </Typography>
+                                </Box>
+                              </Box>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </Box>
+                    </CardContent>
+                  </Card>
+                ))}
+
+                {/* Non-Partnered Fields Section */}
+                <Card className={styles.nonPartneredCard} component={Link} href="/rental/non-partnered">
+                  <CardContent className={styles.nonPartneredContent}>
+                    <Typography variant="h6" className={styles.nonPartneredTitle}>
+                      Non-Partnered Fields More
+                    </Typography>
+                    <Typography variant="body2" className={styles.nonPartneredSubtitle}>
+                      Please check availability directly with the field.
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </>
             )}
           </Box>
         </Container>
