@@ -231,10 +231,28 @@ export default function Home() {
                             <Box
                               className={styles.bannerImage}
                               sx={{
-                                backgroundImage: `url("${currentImage}")`,
-                                transition: 'opacity 0.5s ease-in-out',
+                                backgroundImage: currentImage ? `url("${currentImage}")` : 'none',
+                                transition: 'background-image 0.5s ease-in-out, opacity 0.5s ease-in-out',
+                                opacity: currentImage ? 1 : 0,
                               }}
                             />
+                            {/* Preload images for this banner */}
+                            {isVisible && banner.images.map((img, idx) => (
+                              <Box
+                                key={`preload-${idx}`}
+                                component="img"
+                                src={img}
+                                alt=""
+                                sx={{
+                                  position: 'absolute',
+                                  width: 0,
+                                  height: 0,
+                                  opacity: 0,
+                                  pointerEvents: 'none',
+                                  visibility: 'hidden',
+                                }}
+                              />
+                            ))}
                             <Box className={styles.bannerOverlay} />
                             
                             {/* Image indicators */}
