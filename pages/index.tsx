@@ -211,9 +211,10 @@ export default function Home() {
                       transition: 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
                     }}
                   >
-                    {banners.map((banner) => {
-                      const currentImageIndex = imageIndices[banner.id] || 0;
-                      const currentImage = banner.images[currentImageIndex];
+                    {banners.map((banner, bannerIdx) => {
+                      const currentImageIndex = imageIndices[banner.id] ?? 0;
+                      const currentImage = banner.images?.[currentImageIndex] || banner.images[0];
+                      const isVisible = bannerIdx === bannerIndex;
                       
                       return (
                         <Box key={banner.id} className={styles.bannerItem}>
@@ -236,10 +237,10 @@ export default function Home() {
                                 opacity: currentImage ? 1 : 0,
                               }}
                             />
-                            {/* Preload images for this banner */}
+                            {/* Preload images for visible banner */}
                             {isVisible && banner.images.map((img, idx) => (
                               <Box
-                                key={`preload-${idx}`}
+                                key={`preload-${banner.id}-${idx}`}
                                 component="img"
                                 src={img}
                                 alt=""
