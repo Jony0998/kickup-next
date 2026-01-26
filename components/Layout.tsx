@@ -39,9 +39,9 @@ export default function Layout({ children }: LayoutProps) {
   };
 
   const navItems = [
-    { label: 'Social Match', href: '/games' },
-    { label: 'Team', href: '/teams' },
-    { label: 'Field Reservation', href: '/fields' },
+    { label: 'Social Match', href: '/' },
+    { label: 'Team', href: '/team' },
+    { label: 'Field Reservation', href: '/rental' },
   ];
 
   const drawer = (
