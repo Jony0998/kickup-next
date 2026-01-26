@@ -567,28 +567,128 @@
   font-size: 1.125rem;
 }
 
-// Search and Actions Section
-.searchActionsSection {
-  display: flex;
-  gap: 16px;
+// Category Filters Section
+.categoryFiltersSection {
   margin-bottom: 32px;
-  align-items: center;
+  padding: 24px 0;
+}
 
-  @media (max-width: 600px) {
-    flex-direction: column;
+.categoryFiltersLabel {
+  color: #6b7280;
+  font-weight: 500;
+  margin-bottom: 16px;
+  display: block;
+}
+
+.categoryFilters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.categoryChip {
+  background: white !important;
+  border: 1px solid #e5e7eb !important;
+  color: #374151 !important;
+  font-weight: 500 !important;
+  padding: 8px 16px !important;
+  height: auto !important;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: #0ea5e9 !important;
+    background: #f0f9ff !important;
   }
 }
 
-.searchField {
-  flex: 1;
+.categoryChipActive {
+  background: #0ea5e9 !important;
+  border-color: #0ea5e9 !important;
+  color: white !important;
+
+  &:hover {
+    background: #0284c7 !important;
+    border-color: #0284c7 !important;
+  }
 }
 
-.createPostButton {
+// Advanced Filters Section
+.advancedFiltersSection {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 32px;
+  padding: 16px 0;
+  border-top: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e5e7eb;
+  align-items: center;
+}
+
+.filterDropdown {
+  min-width: 120px;
+}
+
+.filterSelect {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  height: 40px;
+
+  .MuiOutlinedInput-notchedOutline {
+    border-color: #e5e7eb;
+  }
+
+  &:hover .MuiOutlinedInput-notchedOutline {
+    border-color: #0ea5e9;
+  }
+
+  &.Mui-focused .MuiOutlinedInput-notchedOutline {
+    border-color: #0ea5e9;
+  }
+}
+
+.sortButton {
   text-transform: none !important;
-  padding: 12px 24px !important;
+  padding: 8px 16px !important;
   border-radius: 8px !important;
-  font-weight: 600 !important;
+  font-weight: 500 !important;
+  border: 1px solid #e5e7eb !important;
+  color: #374151 !important;
+  background: white !important;
+  min-width: 160px;
+
+  &:hover {
+    background: #f3f4f6 !important;
+  }
+}
+
+.sortButtonActive {
   background: #0ea5e9 !important;
+  border-color: #0ea5e9 !important;
+  color: white !important;
+
+  &:hover {
+    background: #0284c7 !important;
+  }
+}
+
+.filterButton {
+  text-transform: none !important;
+  padding: 8px 16px !important;
+  border-radius: 8px !important;
+  font-weight: 500 !important;
+  border: 1px solid #e5e7eb !important;
+  color: #374151 !important;
+  background: white !important;
+
+  &:hover {
+    background: #f3f4f6 !important;
+  }
+}
+
+.filterButtonActive {
+  background: #0ea5e9 !important;
+  border-color: #0ea5e9 !important;
   color: white !important;
 
   &:hover {
@@ -618,34 +718,132 @@
   padding: 24px !important;
 }
 
-.recruitmentHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+.recruitmentCardHeader {
   margin-bottom: 16px;
 }
 
 .recruitmentTeamInfo {
   display: flex;
   gap: 16px;
-  align-items: center;
+  align-items: flex-start;
   flex: 1;
 }
 
 .recruitmentTeamLogo {
   background: #f3f4f6 !important;
   color: #6b7280 !important;
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 1.5rem;
+  flex-shrink: 0;
 }
 
 .recruitmentTeamDetails {
   flex: 1;
+  min-width: 0;
 }
 
 .recruitmentTeamName {
   font-weight: 600;
   color: #1f2937;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
+  font-size: 1.125rem;
+}
+
+.recruitmentTeamMeta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.recruitmentMemberCount {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.memberIcon {
+  font-size: 18px;
+  color: #6b7280;
+}
+
+.memberCount {
+  color: #374151;
+  font-weight: 500;
+}
+
+.recruitmentStatusChip {
+  background: #0ea5e9 !important;
+  color: white !important;
+  font-weight: 600 !important;
+  font-size: 0.75rem !important;
+  height: 24px !important;
+}
+
+.recruitmentLocation {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.locationIcon {
+  font-size: 18px;
+  color: #6b7280;
+  flex-shrink: 0;
+}
+
+.recruitmentLocationText {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.recruitmentDetailsRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 16px;
+  padding: 12px 0;
+}
+
+.recruitmentDetailItem {
+  color: #374151;
+  font-size: 0.875rem;
+}
+
+.recruitmentDetailSeparator {
+  color: #9ca3af;
+  margin: 0 2px;
+}
+
+.recruitmentEngagement {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.engagementItem {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.engagementIcon {
+  font-size: 16px;
+  color: #6b7280;
+}
+
+.engagementText {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.engagementSeparator {
+  color: #9ca3af;
 }
 
 .recruitmentPostedDate {
@@ -876,6 +1074,42 @@
 
     &:hover {
       background: #0284c7 !important;
+    }
+  }
+}
+
+// Floating Action Button
+.floatingActionButton {
+  position: fixed !important;
+  bottom: 24px;
+  right: 24px;
+  width: 64px !important;
+  height: 64px !important;
+  background: #0ea5e9 !important;
+  color: white !important;
+  border-radius: 50% !important;
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.4) !important;
+  z-index: 1000;
+  transition: transform 0.2s, box-shadow 0.2s;
+
+  &:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(14, 165, 233, 0.5) !important;
+    background: #0284c7 !important;
+  }
+
+  svg {
+    font-size: 32px;
+  }
+
+  @media (max-width: 600px) {
+    bottom: 16px;
+    right: 16px;
+    width: 56px !important;
+    height: 56px !important;
+
+    svg {
+      font-size: 28px;
     }
   }
 }
