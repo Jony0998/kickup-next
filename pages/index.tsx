@@ -110,9 +110,27 @@ export default function Home() {
   ];
 
   const banners = [
-    { id: 1, title: "Social Culture Banner" },
-    { id: 2, title: "Starter Match Banner" },
-    { id: 3, title: "Team League Banner" },
+    {
+      id: 1,
+      title: "Respect, encourage, and enjoy together",
+      subtitle: "Join the KickUp community and play football with respect",
+      image: "social-culture",
+      color: "#0ea5e9",
+    },
+    {
+      id: 2,
+      title: "Starter Match - Perfect for Beginners",
+      subtitle: "New to football? Join our beginner-friendly matches",
+      image: "starter-match",
+      color: "#10b981",
+    },
+    {
+      id: 3,
+      title: "Team League - Compete with Your Team",
+      subtitle: "Form a team and compete in our league tournaments",
+      image: "team-league",
+      color: "#f59e0b",
+    },
   ];
 
   const nextBanner = () => {
@@ -156,10 +174,44 @@ export default function Home() {
                 >
                   {banners.map((banner) => (
                     <Box key={banner.id} className={styles.bannerItem}>
-                      <Box className={styles.bannerPlaceholder}>
-                        <Typography variant="h5" className={styles.bannerTitle}>
-                          {banner.title}
-                        </Typography>
+                      <Box
+                        className={styles.bannerPlaceholder}
+                        sx={{
+                          background: `linear-gradient(135deg, ${banner.color} 0%, ${banner.color}dd 100%)`,
+                        }}
+                      >
+                        <Box className={styles.bannerInner}>
+                          <Box className={styles.bannerIcon}>
+                            {banner.id === 1 && (
+                              <SportsSoccerIcon sx={{ fontSize: 80, color: 'white' }} />
+                            )}
+                            {banner.id === 2 && (
+                              <LocalFloristIcon sx={{ fontSize: 80, color: 'white' }} />
+                            )}
+                            {banner.id === 3 && (
+                              <EmojiEventsIcon sx={{ fontSize: 80, color: 'white' }} />
+                            )}
+                          </Box>
+                          <Typography variant="h4" className={styles.bannerTitle}>
+                            {banner.title}
+                          </Typography>
+                          <Typography variant="h6" className={styles.bannerSubtitle}>
+                            {banner.subtitle}
+                          </Typography>
+                          <Button
+                            variant="contained"
+                            className={styles.bannerButton}
+                            component={Link}
+                            href={banner.id === 1 ? "/games" : banner.id === 2 ? "/beginner" : "/team-league"}
+                            sx={{
+                              bgcolor: 'white',
+                              color: banner.color,
+                              '&:hover': { bgcolor: 'rgba(255,255,255,0.9)' },
+                            }}
+                          >
+                            {banner.id === 1 ? "Join Now" : banner.id === 2 ? "Get Started" : "Join League"}
+                          </Button>
+                        </Box>
                       </Box>
                     </Box>
                   ))}
