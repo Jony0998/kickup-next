@@ -10,19 +10,22 @@ import {
   CardContent,
   Chip,
   Avatar,
-  TextField,
-  InputAdornment,
+  Select,
+  MenuItem,
+  FormControl,
+  IconButton,
 } from "@mui/material";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import SearchIcon from "@mui/icons-material/Search";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import WcIcon from "@mui/icons-material/Wc";
+import PeopleIcon from "@mui/icons-material/People";
+import AddIcon from "@mui/icons-material/Add";
 import styles from "@/styles/team.module.scss";
 
 export default function RecruitGuestsPage() {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [filterValue, setFilterValue] = useState("all");
 
   // Mock guest recruitment posts
   const guestPosts = [
@@ -33,10 +36,11 @@ export default function RecruitGuestsPage() {
       matchDate: "January 30, Friday",
       matchTime: "20:00",
       location: "Seoul, Yongsan",
-      field: "Adidas The Base Field 2",
+      field: "Adidas The Base Field 2 / Man Utd",
       gender: "Male",
       format: "6vs6",
-      level: "Intermediate",
+      level: "All Levels",
+      parking: "Parking Full",
       needed: 2,
       description: "Need 2 guest players for our league match this Friday.",
       postedDate: "1 day ago",
@@ -55,6 +59,21 @@ export default function RecruitGuestsPage() {
       needed: 1,
       description: "Looking for 1 guest player. Fun and friendly match!",
       postedDate: "3 days ago",
+    },
+    {
+      id: 3,
+      teamName: "Eagles United",
+      teamLogo: "/team3.jpg",
+      matchDate: "February 2, Monday",
+      matchTime: "21:00",
+      location: "Seoul, Mapo",
+      field: "Mapo Futsal Center",
+      gender: "Female",
+      format: "6vs6",
+      level: "Beginner",
+      needed: 3,
+      description: "Need 3 guest players for our friendly match.",
+      postedDate: "5 days ago",
     },
   ];
 
@@ -94,58 +113,38 @@ export default function RecruitGuestsPage() {
           </Box>
         </Container>
 
-        {/* Search and Actions */}
+        {/* Filter */}
         <Container maxWidth="lg">
-          <Box className={styles.searchActionsSection}>
-            <TextField
-              placeholder="Search by team name, location, date..."
-              variant="outlined"
-              fullWidth
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className={styles.searchField}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                ),
-              }}
-            />
-            <Button
-              variant="contained"
-              className={styles.createPostButton}
-              component={Link}
-              href="/team/guests/create"
-            >
-              Post Guest Request
-            </Button>
+          <Box className={styles.filterSection}>
+            <FormControl className={styles.filterControl}>
+              <Select
+                value={filterValue}
+                onChange={(e) => setFilterValue(e.target.value)}
+                className={styles.filterSelect}
+              >
+                <MenuItem value="all">All</MenuItem>
+                <MenuItem value="male">Male</MenuItem>
+                <MenuItem value="female">Female</MenuItem>
+                <MenuItem value="mixed">Mixed</MenuItem>
+              </Select>
+            </FormControl>
           </Box>
         </Container>
 
         {/* Guest Posts List */}
         <Container maxWidth="lg">
-          <Box className={styles.recruitmentList}>
+          <Box className={styles.matchList}>
             {guestPosts.map((post) => (
-              <Card key={post.id} className={styles.recruitmentCard}>
-                <CardContent className={styles.recruitmentCardContent}>
-                  <Box className={styles.recruitmentHeader}>
-                    <Box className={styles.recruitmentTeamInfo}>
-                      <Avatar
-                        src={post.teamLogo}
-                        className={styles.recruitmentTeamLogo}
-                        sx={{ width: 48, height: 48 }}
-                      >
-                        {post.teamName[0]}
-                      </Avatar>
-                      <Box className={styles.recruitmentTeamDetails}>
-                        <Typography variant="h6" className={styles.recruitmentTeamName}>
-                          {post.teamName}
-                        </Typography>
-                        <Typography variant="body2" className={styles.recruitmentPostedDate}>
-                          Posted {post.postedDate}
-                        </Typography>
-                      </Box>
+              <Card key={post.id} className={styles.matchCard} component={Link} href={`/team/guests/${post.id}`}>
+                <CardContent className={styles.matchCardContent}>
+                  <Box className={styles.matchHeader}>
+                    <Box className={styles.matchDateTime}>
+                      <Typography variant="body1" className={styles.matchDate}>
+                        {post.matchDate}
+                      </Typography>
+                      <Typography variant="h6" className={styles.matchTime}>
+                        {post.matchTime}
+                      </Typography>
                     </Box>
                     <Chip
                       label={`Need ${post.needed} player${post.needed > 1 ? 's' : ''}`}
@@ -154,37 +153,53 @@ export default function RecruitGuestsPage() {
                     />
                   </Box>
 
-                  <Typography variant="body1" className={styles.recruitmentDescription}>
-                    {post.description}
-                  </Typography>
-
-                  <Box className={styles.guestMatchInfo}>
-                    <Typography variant="body2" className={styles.guestMatchDate}>
-                      {post.matchDate} at {post.matchTime}
-                    </Typography>
-                    <Typography variant="body2" className={styles.guestMatchField}>
-                      {post.field}, {post.location}
+                  <Box className={styles.guestTeamInfo}>
+                    <Avatar
+                      src={post.teamLogo}
+                      className={styles.teamLogo}
+                      sx={{ width: 40, height: 40 }}
+                    >
+                      {post.teamName[0]}
+                    </Avatar>
+                    <Typography variant="h6" className={styles.matchField}>
+                      {post.teamName} - {post.field}
                     </Typography>
                   </Box>
 
-                  <Box className={styles.recruitmentDetails}>
+                  <Box className={styles.matchDetails}>
                     <Chip
                       icon={<WcIcon />}
                       label={post.gender}
                       size="small"
-                      className={styles.recruitmentDetailChip}
+                      className={styles.detailChip}
                     />
-                    <Chip
-                      label={post.format}
-                      size="small"
-                      className={styles.recruitmentDetailChip}
-                    />
-                    <Chip
-                      label={post.level}
-                      size="small"
-                      className={styles.recruitmentDetailChip}
-                    />
+                    <Typography variant="body2" className={styles.detailSeparator}>
+                      ·
+                    </Typography>
+                    <Typography variant="body2" className={styles.detailText}>
+                      {post.format}
+                    </Typography>
+                    <Typography variant="body2" className={styles.detailSeparator}>
+                      ·
+                    </Typography>
+                    <Typography variant="body2" className={styles.detailText}>
+                      {post.level}
+                    </Typography>
+                    {post.parking && (
+                      <>
+                        <Typography variant="body2" className={styles.detailSeparator}>
+                          ·
+                        </Typography>
+                        <Typography variant="body2" className={styles.detailText}>
+                          {post.parking}
+                        </Typography>
+                      </>
+                    )}
                   </Box>
+
+                  <Typography variant="body2" className={styles.guestDescription}>
+                    {post.description}
+                  </Typography>
 
                   <Box className={styles.recruitmentActions}>
                     <Button
@@ -209,8 +224,16 @@ export default function RecruitGuestsPage() {
             ))}
           </Box>
         </Container>
+
+        {/* Floating Action Button */}
+        <IconButton
+          className={styles.floatingActionButton}
+          component={Link}
+          href="/team/guests/create"
+        >
+          <AddIcon />
+        </IconButton>
       </Box>
     </>
   );
 }
-

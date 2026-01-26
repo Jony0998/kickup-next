@@ -881,21 +881,19 @@
   }
 }
 
-.guestMatchInfo {
-  background: #f9fafb;
-  padding: 12px 16px;
-  border-radius: 8px;
+.guestTeamInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.guestDescription {
+  color: #374151;
   margin-bottom: 16px;
-}
-
-.guestMatchDate {
-  font-weight: 600;
-  color: #1f2937;
-  margin-bottom: 4px;
-}
-
-.guestMatchField {
-  color: #6b7280;
+  padding: 12px 0;
+  border-top: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .recruitmentPositions {
