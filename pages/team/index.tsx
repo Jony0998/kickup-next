@@ -175,7 +175,9 @@ export default function TeamPage() {
           <Box className={styles.quickMenu}>
             <Card className={styles.quickMenuItem} component={Link} href="/team/league">
               <CardContent className={styles.quickMenuContent}>
-                <EmojiEventsIcon sx={{ fontSize: 32, color: '#0ea5e9' }} />
+                <Box className={styles.quickMenuIconWrapper}>
+                  <EmojiEventsIcon className={styles.quickMenuIcon} />
+                </Box>
                 <Typography variant="body2" className={styles.quickMenuText}>
                   Team League
                 </Typography>
@@ -184,7 +186,9 @@ export default function TeamPage() {
 
             <Card className={styles.quickMenuItem} component={Link} href="/team/recruit">
               <CardContent className={styles.quickMenuContent}>
-                <GroupAddIcon sx={{ fontSize: 32, color: '#10b981' }} />
+                <Box className={styles.quickMenuIconWrapper}>
+                  <GroupAddIcon className={styles.quickMenuIcon} />
+                </Box>
                 <Typography variant="body2" className={styles.quickMenuText}>
                   Recruit Teammates
                 </Typography>
@@ -193,7 +197,9 @@ export default function TeamPage() {
 
             <Card className={styles.quickMenuItem} component={Link} href="/team/guests">
               <CardContent className={styles.quickMenuContent}>
-                <PersonAddIcon sx={{ fontSize: 32, color: '#f59e0b' }} />
+                <Box className={styles.quickMenuIconWrapper}>
+                  <PersonAddIcon className={styles.quickMenuIcon} />
+                </Box>
                 <Typography variant="body2" className={styles.quickMenuText}>
                   Recruit Guests
                 </Typography>
@@ -202,7 +208,9 @@ export default function TeamPage() {
 
             <Card className={styles.quickMenuItem} component={Link} href="/team/create">
               <CardContent className={styles.quickMenuContent}>
-                <AddCircleIcon sx={{ fontSize: 32, color: '#ef4444' }} />
+                <Box className={styles.quickMenuIconWrapper}>
+                  <AddCircleIcon className={styles.quickMenuIcon} />
+                </Box>
                 <Typography variant="body2" className={styles.quickMenuText}>
                   Create Team
                 </Typography>
