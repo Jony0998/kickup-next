@@ -529,3 +529,41 @@
   }
 }
 
+// Page Header
+.pageHeader {
+  margin-bottom: 32px;
+  padding-top: 24px;
+}
+
+.backButton {
+  text-transform: none !important;
+  color: #6b7280 !important;
+  margin-bottom: 24px;
+
+  &:hover {
+    background: #f3f4f6 !important;
+  }
+}
+
+.pageTitleSection {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.pageTitleIcon {
+  font-size: 40px !important;
+  color: #0ea5e9;
+}
+
+.pageTitle {
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.pageSubtitle {
+  color: #6b7280;
+  font-size: 1.125rem;
+}
+
