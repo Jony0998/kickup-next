@@ -164,12 +164,31 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.9) !important;
-  z-index: 10;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  z-index: 20 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+  width: 48px !important;
+  height: 48px !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
 
   &:hover {
     background: white !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+    transform: translateY(-50%) scale(1.1);
+  }
+
+  svg {
+    font-size: 28px;
+    color: #1f2937;
+  }
+
+  @media (max-width: 600px) {
+    width: 40px !important;
+    height: 40px !important;
+
+    svg {
+      font-size: 24px;
+    }
   }
 }
 

@@ -194,13 +194,6 @@ export default function Home() {
         <Box className={styles.bannerSection}>
           <Container maxWidth="lg">
             <Box className={styles.bannerContainer}>
-              <IconButton
-                className={styles.bannerNavButton}
-                onClick={prevBanner}
-                sx={{ left: 0 }}
-              >
-                <ChevronLeftIcon />
-              </IconButton>
               <Box className={styles.bannerContent}>
                 <Box
                   className={styles.bannerSlide}
@@ -294,8 +287,15 @@ export default function Home() {
               </Box>
               <IconButton
                 className={styles.bannerNavButton}
+                onClick={prevBanner}
+                sx={{ left: 16 }}
+              >
+                <ChevronLeftIcon />
+              </IconButton>
+              <IconButton
+                className={styles.bannerNavButton}
                 onClick={nextBanner}
-                sx={{ right: 0 }}
+                sx={{ right: 16 }}
               >
                 <ChevronRightIcon />
               </IconButton>
