@@ -100,10 +100,10 @@
   &.MuiButton-outlined {
     border-color: white !important;
     color: white !important;
-    background: rgba(255, 255, 255, 0.1) !important;
+    background: rgba(255, 255, 255, 0.15) !important;
 
     &:hover {
-      background: rgba(255, 255, 255, 0.2) !important;
+      background: rgba(255, 255, 255, 0.25) !important;
       border-color: white !important;
     }
   }
@@ -114,6 +114,20 @@
 
     &:hover {
       background: rgba(255, 255, 255, 0.95) !important;
+    }
+  }
+}
+
+.bannerButtonViewDetails {
+  &.MuiButton-outlined {
+    border-color: rgba(255, 255, 255, 0.8) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.2) !important;
+      border-color: white !important;
+      color: white !important;
     }
   }
 }

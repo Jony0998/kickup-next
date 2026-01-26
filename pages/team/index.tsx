@@ -225,12 +225,12 @@ export default function TeamPage() {
             <Box className={styles.bannerContent}>
               <Box className={styles.bannerLeft}>
                 <Typography variant="h4" className={styles.bannerTitle}>
-                  Join Plab Team League with your team members!
+                  Join Kickup Team League with your team members!
                 </Typography>
                 <Box className={styles.bannerButtons}>
                   <Button
                     variant="outlined"
-                    className={styles.bannerButton}
+                    className={`${styles.bannerButton} ${styles.bannerButtonViewDetails}`}
                     component={Link}
                     href="/team/league/details"
                   >
