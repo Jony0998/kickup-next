@@ -170,6 +170,25 @@ export default function TeamPage() {
       </Head>
 
       <Box className={styles.teamPage}>
+        {/* Banner Section */}
+        <Box className={styles.bannerSection}>
+          <Container maxWidth="lg">
+            <Box className={styles.bannerContent}>
+              <Box className={styles.bannerImage}>
+                <Box className={styles.bannerOverlay} />
+                <Box className={styles.bannerText}>
+                  <Typography variant="h3" className={styles.bannerTitle}>
+                    Team League
+                  </Typography>
+                  <Typography variant="h6" className={styles.bannerSubtitle}>
+                    Compete with your team and climb the rankings
+                  </Typography>
+                </Box>
+              </Box>
+            </Box>
+          </Container>
+        </Box>
+
         {/* Quick Menu Buttons */}
         <Container maxWidth="lg">
           <Box className={styles.quickMenu}>
