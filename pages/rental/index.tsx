@@ -31,6 +31,23 @@ export default function FieldReservationPage() {
   const [indoorOutdoor, setIndoorOutdoor] = useState("");
   const [floorType, setFloorType] = useState("");
 
+  // Helper function to check if field matches size filter
+  const matchesFieldSize = (size: string) => {
+    if (!fieldSize) return true;
+    const sizeNum = parseInt(size.split("x")[0]);
+    if (fieldSize === "small") return sizeNum < 30;
+    if (fieldSize === "medium") return sizeNum >= 30 && sizeNum < 45;
+    if (fieldSize === "large") return sizeNum >= 45;
+    return true;
+  };
+
+  // Helper function to check if time slot matches time filter
+  const matchesTimeFilter = (timeSlots: Array<{ time: string; available: boolean }>) => {
+    if (!time) return true;
+    const slot = timeSlots.find((s) => s.time === time);
+    return slot ? slot.available : false;
+  };
+
   // Mock field data
   const fields = [
     {
@@ -195,6 +212,50 @@ export default function FieldReservationPage() {
     return `${month} ${day}, ${dayName}`;
   };
 
+  // Filter fields based on selected filters
+  const filteredFields = fields
+    .filter((venue) => {
+      // Filter by region
+      if (region !== "all" && venue.location.toLowerCase() !== region.toLowerCase()) {
+        return false;
+      }
+      return true;
+    })
+    .map((venue) => ({
+      ...venue,
+      fields: venue.fields.filter((field) => {
+        // Filter by indoor/outdoor
+        if (indoorOutdoor && field.indoorOutdoor.toLowerCase() !== indoorOutdoor.toLowerCase()) {
+          return false;
+        }
+
+        // Filter by floor type
+        if (floorType) {
+          const floorTypeMap: { [key: string]: string } = {
+            artificial: "artificial turf",
+            natural: "natural grass",
+            hard: "hard court",
+          };
+          if (field.floorType.toLowerCase() !== floorTypeMap[floorType]?.toLowerCase()) {
+            return false;
+          }
+        }
+
+        // Filter by field size
+        if (!matchesFieldSize(field.size)) {
+          return false;
+        }
+
+        // Filter by time availability
+        if (time && !matchesTimeFilter(field.timeSlots)) {
+          return false;
+        }
+
+        return true;
+      }),
+    }))
+    .filter((venue) => venue.fields.length > 0); // Only show venues with matching fields
+
   return (
     <>
       <Head>
@@ -233,7 +294,23 @@ export default function FieldReservationPage() {
                 className={styles.filterSelect}
                 displayEmpty
               >
-                <MenuItem value="all">All Regions</MenuItem>
+                <MenuItem value="all">
+                  <Box component="span" sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    All Regions
+                    {region !== "all" && (
+                      <Chip
+                        label="Active"
+                        size="small"
+                        sx={{
+                          height: 18,
+                          fontSize: "0.65rem",
+                          bgcolor: "#0ea5e9",
+                          color: "white",
+                        }}
+                      />
+                    )}
+                  </Box>
+                </MenuItem>
                 <MenuItem value="seoul">Seoul</MenuItem>
                 <MenuItem value="goyang">Goyang</MenuItem>
                 <MenuItem value="guri">Guri</MenuItem>
@@ -248,7 +325,23 @@ export default function FieldReservationPage() {
                 className={styles.filterSelect}
                 displayEmpty
               >
-                <MenuItem value="">{getTodayDate()}</MenuItem>
+                <MenuItem value="">
+                  <Box component="span" sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    {getTodayDate()}
+                    {date && (
+                      <Chip
+                        label="Active"
+                        size="small"
+                        sx={{
+                          height: 18,
+                          fontSize: "0.65rem",
+                          bgcolor: "#0ea5e9",
+                          color: "white",
+                        }}
+                      />
+                    )}
+                  </Box>
+                </MenuItem>
                 <MenuItem value="tomorrow">Tomorrow</MenuItem>
                 <MenuItem value="day-after">Day After Tomorrow</MenuItem>
               </Select>
@@ -261,7 +354,23 @@ export default function FieldReservationPage() {
                 className={styles.filterSelect}
                 displayEmpty
               >
-                <MenuItem value="">Time</MenuItem>
+                <MenuItem value="">
+                  <Box component="span" sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    Time
+                    {time && (
+                      <Chip
+                        label="Active"
+                        size="small"
+                        sx={{
+                          height: 18,
+                          fontSize: "0.65rem",
+                          bgcolor: "#0ea5e9",
+                          color: "white",
+                        }}
+                      />
+                    )}
+                  </Box>
+                </MenuItem>
                 <MenuItem value="06:00">06:00</MenuItem>
                 <MenuItem value="12:00">12:00</MenuItem>
                 <MenuItem value="18:00">18:00</MenuItem>
@@ -276,7 +385,23 @@ export default function FieldReservationPage() {
                 className={styles.filterSelect}
                 displayEmpty
               >
-                <MenuItem value="">Field Size</MenuItem>
+                <MenuItem value="">
+                  <Box component="span" sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    Field Size
+                    {fieldSize && (
+                      <Chip
+                        label="Active"
+                        size="small"
+                        sx={{
+                          height: 18,
+                          fontSize: "0.65rem",
+                          bgcolor: "#0ea5e9",
+                          color: "white",
+                        }}
+                      />
+                    )}
+                  </Box>
+                </MenuItem>
                 <MenuItem value="small">Small (18x8m)</MenuItem>
                 <MenuItem value="medium">Medium (30-40x17-20m)</MenuItem>
                 <MenuItem value="large">Large (45x60m)</MenuItem>
@@ -290,7 +415,23 @@ export default function FieldReservationPage() {
                 className={styles.filterSelect}
                 displayEmpty
               >
-                <MenuItem value="">Indoor/Outdoor</MenuItem>
+                <MenuItem value="">
+                  <Box component="span" sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    Indoor/Outdoor
+                    {indoorOutdoor && (
+                      <Chip
+                        label="Active"
+                        size="small"
+                        sx={{
+                          height: 18,
+                          fontSize: "0.65rem",
+                          bgcolor: "#0ea5e9",
+                          color: "white",
+                        }}
+                      />
+                    )}
+                  </Box>
+                </MenuItem>
                 <MenuItem value="indoor">Indoor</MenuItem>
                 <MenuItem value="outdoor">Outdoor</MenuItem>
               </Select>
@@ -303,7 +444,23 @@ export default function FieldReservationPage() {
                 className={styles.filterSelect}
                 displayEmpty
               >
-                <MenuItem value="">Floor Type</MenuItem>
+                <MenuItem value="">
+                  <Box component="span" sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    Floor Type
+                    {floorType && (
+                      <Chip
+                        label="Active"
+                        size="small"
+                        sx={{
+                          height: 18,
+                          fontSize: "0.65rem",
+                          bgcolor: "#0ea5e9",
+                          color: "white",
+                        }}
+                      />
+                    )}
+                  </Box>
+                </MenuItem>
                 <MenuItem value="artificial">Artificial Turf</MenuItem>
                 <MenuItem value="natural">Natural Grass</MenuItem>
                 <MenuItem value="hard">Hard Court</MenuItem>
@@ -315,7 +472,33 @@ export default function FieldReservationPage() {
         {/* Fields List */}
         <Container maxWidth="lg">
           <Box className={styles.fieldsList}>
-            {fields.map((venue) => (
+            {filteredFields.length === 0 ? (
+              <Card className={styles.noResultsCard}>
+                <CardContent className={styles.noResultsContent}>
+                  <Typography variant="h6" className={styles.noResultsTitle}>
+                    No fields found
+                  </Typography>
+                  <Typography variant="body2" className={styles.noResultsText}>
+                    Try adjusting your filters to see more results.
+                  </Typography>
+                  <Button
+                    variant="outlined"
+                    onClick={() => {
+                      setRegion("all");
+                      setDate("");
+                      setTime("");
+                      setFieldSize("");
+                      setIndoorOutdoor("");
+                      setFloorType("");
+                    }}
+                    className={styles.resetFiltersButton}
+                  >
+                    Reset Filters
+                  </Button>
+                </CardContent>
+              </Card>
+            ) : (
+              filteredFields.map((venue) => (
               <Card key={venue.id} className={styles.venueCard}>
                 <CardContent className={styles.venueCardContent}>
                   <Box className={styles.venueHeader}>
@@ -397,6 +580,8 @@ export default function FieldReservationPage() {
                 </Typography>
               </CardContent>
             </Card>
+              ))
+            )}
           </Box>
         </Container>
       </Box>
