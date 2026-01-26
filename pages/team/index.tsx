@@ -224,68 +224,30 @@ export default function TeamPage() {
           <Box className={styles.bannerSection}>
             <Box className={styles.bannerContent}>
               <Box className={styles.bannerLeft}>
-                <Typography variant="h3" className={styles.bannerTitle}>
-                  Build Your Dream Team
-                </Typography>
-                <Typography variant="h5" className={styles.bannerSubtitle}>
-                  Join thousands of players competing in leagues
-                </Typography>
-                <Typography variant="body1" className={styles.bannerText}>
-                  Create your team, recruit players, and compete in organized leagues. 
-                  Find the perfect teammates and take your game to the next level.
+                <Typography variant="h4" className={styles.bannerTitle}>
+                  Join Plab Team League with your team members!
                 </Typography>
                 <Box className={styles.bannerButtons}>
                   <Button
-                    variant="contained"
-                    className={styles.bannerButtonPrimary}
+                    variant="outlined"
+                    className={styles.bannerButton}
                     component={Link}
-                    href="/team/create"
-                    size="large"
+                    href="/team/league/details"
                   >
-                    Create Team
+                    View Details
                   </Button>
                   <Button
-                    variant="outlined"
-                    className={styles.bannerButtonSecondary}
+                    variant="contained"
+                    className={styles.bannerButton}
                     component={Link}
-                    href="/team/league"
-                    size="large"
+                    href="/team/create"
                   >
-                    View Leagues
+                    Create New Team
                   </Button>
-                </Box>
-                <Box className={styles.bannerStats}>
-                  <Box className={styles.statItem}>
-                    <Typography variant="h4" className={styles.statNumber}>
-                      500+
-                    </Typography>
-                    <Typography variant="body2" className={styles.statLabel}>
-                      Active Teams
-                    </Typography>
-                  </Box>
-                  <Box className={styles.statItem}>
-                    <Typography variant="h4" className={styles.statNumber}>
-                      2000+
-                    </Typography>
-                    <Typography variant="body2" className={styles.statLabel}>
-                      Players
-                    </Typography>
-                  </Box>
-                  <Box className={styles.statItem}>
-                    <Typography variant="h4" className={styles.statNumber}>
-                      50+
-                    </Typography>
-                    <Typography variant="body2" className={styles.statLabel}>
-                      Leagues
-                    </Typography>
-                  </Box>
                 </Box>
               </Box>
               <Box className={styles.bannerRight}>
-                <Box className={styles.bannerImageContainer}>
-                  <Box className={styles.bannerImage} />
-                  <Box className={styles.bannerImageOverlay} />
-                </Box>
+                <Box className={styles.bannerImage} />
               </Box>
             </Box>
           </Box>
