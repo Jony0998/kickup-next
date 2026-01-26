@@ -135,26 +135,43 @@ export default function TeamLeaguePage() {
       </Head>
 
       <Box className={styles.teamPage}>
-        {/* Header */}
+        {/* Banner Section */}
         <Container maxWidth="lg">
-          <Box className={styles.pageHeader}>
-            <Button
-              component={Link}
-              href="/team"
-              startIcon={<ArrowBackIcon />}
-              className={styles.backButton}
-            >
-              Back to Team
-            </Button>
-            <Box className={styles.pageTitleSection}>
-              <EmojiEventsIcon className={styles.pageTitleIcon} />
-              <Typography variant="h4" className={styles.pageTitle}>
-                Team League
-              </Typography>
+          <Box className={styles.bannerSection}>
+            <Box className={styles.bannerContent}>
+              <Box className={styles.bannerLeft}>
+                <Box className={styles.bannerIconWrapper}>
+                  <EmojiEventsIcon className={styles.bannerIcon} />
+                </Box>
+                <Typography variant="h4" className={styles.bannerTitle}>
+                  Plab Team League
+                </Typography>
+                <Typography variant="body1" className={styles.bannerText}>
+                  Join Plab Team League with your team members!
+                </Typography>
+                <Box className={styles.bannerButtons}>
+                  <Button
+                    variant="outlined"
+                    className={styles.bannerButton}
+                    component={Link}
+                    href="/team/league/details"
+                  >
+                    View Details
+                  </Button>
+                  <Button
+                    variant="contained"
+                    className={styles.bannerButton}
+                    component={Link}
+                    href="/team/create"
+                  >
+                    Create New Team
+                  </Button>
+                </Box>
+              </Box>
+              <Box className={styles.bannerRight}>
+                <Box className={styles.bannerImage} />
+              </Box>
             </Box>
-            <Typography variant="body1" className={styles.pageSubtitle}>
-              Compete with your team in organized league matches
-            </Typography>
           </Box>
         </Container>
 
@@ -201,6 +218,7 @@ export default function TeamLeaguePage() {
                   value={filterValue}
                   onChange={(e) => setFilterValue(e.target.value)}
                   className={styles.filterSelect}
+                  displayEmpty
                 >
                   <MenuItem value="all">All</MenuItem>
                   <MenuItem value="male">Male</MenuItem>
@@ -279,7 +297,7 @@ export default function TeamLeaguePage() {
                             <Avatar
                               src={team.logo}
                               className={styles.teamLogo}
-                              sx={{ width: 32, height: 32 }}
+                              sx={{ width: 40, height: 40 }}
                             >
                               {team.name[0]}
                             </Avatar>
@@ -290,9 +308,32 @@ export default function TeamLeaguePage() {
                         ))}
                       </Box>
                     )}
+
+                    {match.teams.length === 0 && (
+                      <Box className={styles.emptyTeamsSection}>
+                        <Typography variant="body2" className={styles.emptyTeamsText}>
+                          No teams registered yet
+                        </Typography>
+                      </Box>
+                    )}
                   </CardContent>
                 </Card>
               ))}
+
+              {/* Feedback Link */}
+              <Card className={styles.feedbackCard} component={Link} href="/team/league/feedback">
+                <CardContent className={styles.feedbackContent}>
+                  <AssessmentIcon className={styles.feedbackIcon} />
+                  <Box className={styles.feedbackText}>
+                    <Typography variant="body1" className={styles.feedbackTitle}>
+                      How is Plab Team League?
+                    </Typography>
+                    <Typography variant="body2" className={styles.feedbackSubtitle}>
+                      Send feedback to Plab
+                    </Typography>
+                  </Box>
+                </CardContent>
+              </Card>
             </Box>
           </TabPanel>
 

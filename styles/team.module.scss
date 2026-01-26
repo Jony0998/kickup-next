@@ -465,14 +465,26 @@
 .teamLogo {
   background: #f3f4f6 !important;
   color: #6b7280 !important;
-  font-weight: 600;
-  font-size: 0.875rem;
+  font-weight: 700;
+  font-size: 1rem;
+  border: 2px solid #e5e7eb;
 }
 
 .teamName {
   font-weight: 600;
   color: #374151;
   font-size: 0.875rem;
+}
+
+.emptyTeamsSection {
+  padding-top: 16px;
+  border-top: 1px solid #e5e7eb;
+  text-align: center;
+}
+
+.emptyTeamsText {
+  color: #9ca3af;
+  font-style: italic;
 }
 
 // Feedback Card
