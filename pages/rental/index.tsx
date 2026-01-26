@@ -580,7 +580,6 @@ export default function FieldReservationPage() {
                 </Typography>
               </CardContent>
             </Card>
-              ))
             )}
           </Box>
         </Container>
