@@ -19,6 +19,8 @@ import SportsSoccerIcon from '@mui/icons-material/SportsSoccer';
 import SearchIcon from '@mui/icons-material/Search';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
+import LightModeIcon from '@mui/icons-material/LightMode';
 import { TextField, InputAdornment } from '@mui/material';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -27,9 +29,11 @@ import styles from '@/styles/layout.module.scss';
 
 interface LayoutProps {
   children: ReactNode;
+  darkMode: boolean;
+  toggleDarkMode: () => void;
 }
 
-export default function Layout({ children }: LayoutProps) {
+export default function Layout({ children, darkMode, toggleDarkMode }: LayoutProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -149,6 +153,13 @@ export default function Layout({ children }: LayoutProps) {
               }}
             />
             <IconButton
+              onClick={toggleDarkMode}
+              sx={{ color: 'white', ml: 1 }}
+              aria-label="toggle dark mode"
+            >
+              {darkMode ? <LightModeIcon /> : <DarkModeIcon />}
+            </IconButton>
+            <IconButton
               component={Link}
               href="/calendar"
               sx={{ color: 'white', ml: 1 }}
@@ -223,6 +234,15 @@ export default function Layout({ children }: LayoutProps) {
                 className={`${styles.drawerListItemButton} ${styles.drawerAuthButton}`}
               >
                 <ListItemText primary="Sign Up" />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding className={styles.drawerListItem}>
+              <ListItemButton
+                onClick={toggleDarkMode}
+                className={styles.drawerListItemButton}
+              >
+                {darkMode ? <LightModeIcon sx={{ mr: 2 }} /> : <DarkModeIcon sx={{ mr: 2 }} />}
+                <ListItemText primary={darkMode ? "Light Mode" : "Dark Mode"} />
               </ListItemButton>
             </ListItem>
           </List>
