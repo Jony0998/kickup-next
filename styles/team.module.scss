@@ -120,14 +120,14 @@
 
 .bannerButtonViewDetails {
   &.MuiButton-outlined {
-    border-color: rgba(255, 255, 255, 0.8) !important;
-    color: rgba(255, 255, 255, 0.9) !important;
-    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: #fbbf24 !important;
+    color: #fbbf24 !important;
+    background: rgba(251, 191, 36, 0.1) !important;
 
     &:hover {
-      background: rgba(255, 255, 255, 0.2) !important;
-      border-color: white !important;
-      color: white !important;
+      background: rgba(251, 191, 36, 0.2) !important;
+      border-color: #f59e0b !important;
+      color: #f59e0b !important;
     }
   }
 }
