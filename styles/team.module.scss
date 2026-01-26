@@ -567,3 +567,191 @@
   font-size: 1.125rem;
 }
 
+// Search and Actions Section
+.searchActionsSection {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 32px;
+  align-items: center;
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+  }
+}
+
+.searchField {
+  flex: 1;
+}
+
+.createPostButton {
+  text-transform: none !important;
+  padding: 12px 24px !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  background: #0ea5e9 !important;
+  color: white !important;
+
+  &:hover {
+    background: #0284c7 !important;
+  }
+}
+
+// Recruitment List
+.recruitmentList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.recruitmentCard {
+  border: 1px solid #e5e7eb !important;
+  border-radius: 12px !important;
+  transition: all 0.2s;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-color: #0ea5e9 !important;
+  }
+}
+
+.recruitmentCardContent {
+  padding: 24px !important;
+}
+
+.recruitmentHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.recruitmentTeamInfo {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex: 1;
+}
+
+.recruitmentTeamLogo {
+  background: #f3f4f6 !important;
+  color: #6b7280 !important;
+  font-weight: 600;
+}
+
+.recruitmentTeamDetails {
+  flex: 1;
+}
+
+.recruitmentTeamName {
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 4px;
+}
+
+.recruitmentPostedDate {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.neededChip {
+  background: #fef3c7 !important;
+  color: #92400e !important;
+  font-weight: 600 !important;
+}
+
+.recruitmentDescription {
+  color: #374151;
+  margin-bottom: 16px;
+  line-height: 1.6;
+}
+
+.recruitmentDetails {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.recruitmentDetailChip {
+  background: #f3f4f6 !important;
+  color: #374151 !important;
+  font-size: 0.75rem !important;
+
+  .MuiChip-icon {
+    color: #6b7280;
+    font-size: 16px;
+  }
+}
+
+.guestMatchInfo {
+  background: #f9fafb;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.guestMatchDate {
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 4px;
+}
+
+.guestMatchField {
+  color: #6b7280;
+}
+
+.recruitmentPositions {
+  margin-bottom: 16px;
+}
+
+.recruitmentPositionsLabel {
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.recruitmentPositionsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.positionChip {
+  background: #eff6ff !important;
+  color: #0ea5e9 !important;
+  font-weight: 500 !important;
+  font-size: 0.75rem !important;
+}
+
+.recruitmentActions {
+  display: flex;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.recruitmentActionButton {
+  text-transform: none !important;
+  padding: 10px 20px !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+
+  &.MuiButton-outlined {
+    border-color: #0ea5e9 !important;
+    color: #0ea5e9 !important;
+
+    &:hover {
+      background: #f0f9ff !important;
+    }
+  }
+
+  &.MuiButton-contained {
+    background: #0ea5e9 !important;
+    color: white !important;
+
+    &:hover {
+      background: #0284c7 !important;
+    }
+  }
+}
+
