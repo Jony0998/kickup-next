@@ -177,9 +177,23 @@ export default function Home() {
                       <Box
                         className={styles.bannerPlaceholder}
                         sx={{
-                          background: `linear-gradient(135deg, ${banner.color} 0%, ${banner.color}dd 100%)`,
+                          background: `linear-gradient(135deg, ${banner.color}cc 0%, ${banner.color}99 100%)`,
+                          position: 'relative',
+                          overflow: 'hidden',
                         }}
                       >
+                        {/* Background Image */}
+                        <Box
+                          className={styles.bannerImage}
+                          sx={{
+                            backgroundImage: banner.id === 1
+                              ? 'url("https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1200&q=80")'
+                              : banner.id === 2
+                              ? 'url("https://images.unsplash.com/photo-1575361204480-aadea25e6e68?w=1200&q=80")'
+                              : 'url("https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=1200&q=80")',
+                          }}
+                        />
+                        <Box className={styles.bannerOverlay} />
                         <Box className={styles.bannerInner}>
                           <Box className={styles.bannerIcon}>
                             {banner.id === 1 && (
