@@ -755,3 +755,128 @@
   }
 }
 
+// Create Team Form
+.createTeamCard {
+  border: 1px solid #e5e7eb !important;
+  border-radius: 16px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+}
+
+.createTeamCardContent {
+  padding: 32px !important;
+
+  @media (max-width: 600px) {
+    padding: 24px !important;
+  }
+}
+
+.logoUploadSection {
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.logoUploadBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.teamLogoPreview {
+  background: #f3f4f6 !important;
+  color: #6b7280 !important;
+  font-size: 3rem;
+  font-weight: 700;
+  border: 3px solid #e5e7eb;
+}
+
+.logoUploadActions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.uploadButton {
+  text-transform: none !important;
+  border-color: #0ea5e9 !important;
+  color: #0ea5e9 !important;
+
+  &:hover {
+    background: #f0f9ff !important;
+  }
+}
+
+.deleteLogoButton {
+  color: #ef4444 !important;
+
+  &:hover {
+    background: #fee2e2 !important;
+  }
+}
+
+.formSection {
+  margin-bottom: 32px;
+}
+
+.formSectionTitle {
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 16px;
+  font-size: 1.125rem;
+}
+
+.formField {
+  margin-bottom: 16px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.formActions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding-top: 24px;
+  border-top: 1px solid #e5e7eb;
+  margin-top: 32px;
+}
+
+.formActionButton {
+  text-transform: none !important;
+  padding: 12px 24px !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  min-width: 120px;
+
+  &.MuiButton-outlined {
+    border-color: #6b7280 !important;
+    color: #374151 !important;
+
+    &:hover {
+      background: #f3f4f6 !important;
+    }
+  }
+
+  &.MuiButton-contained {
+    background: #0ea5e9 !important;
+    color: white !important;
+
+    &:hover {
+      background: #0284c7 !important;
+    }
+  }
+}
+
