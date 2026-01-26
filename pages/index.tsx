@@ -193,117 +193,122 @@ export default function Home() {
         {/* Banner/Carousel Section */}
         <Box className={styles.bannerSection}>
           <Container maxWidth="lg">
-            <Box className={styles.bannerContainer}>
-              <Box className={styles.bannerContent}>
-                <Box
-                  className={styles.bannerSlide}
-                  sx={{
-                    transform: `translateX(-${bannerIndex * 100}%)`,
-                  }}
-                >
-                  {banners.map((banner) => {
-                    const currentImageIndex = imageIndices[banner.id] || 0;
-                    const currentImage = banner.images[currentImageIndex];
-                    
-                    return (
-                      <Box key={banner.id} className={styles.bannerItem}>
-                        <Box
-                          className={styles.bannerPlaceholder}
-                          sx={{
-                            background: `linear-gradient(135deg, ${banner.color}cc 0%, ${banner.color}99 100%)`,
-                            position: 'relative',
-                            overflow: 'hidden',
-                            cursor: 'pointer',
-                          }}
-                          onClick={() => handleBannerImageClick(banner.id)}
-                        >
-                          {/* Background Image with transition */}
-                          <Box
-                            className={styles.bannerImage}
-                            sx={{
-                              backgroundImage: `url("${currentImage}")`,
-                              transition: 'opacity 0.5s ease-in-out',
-                            }}
-                          />
-                          <Box className={styles.bannerOverlay} />
-                          
-                          {/* Image indicators */}
-                          <Box className={styles.bannerImageIndicators}>
-                            {banner.images.map((_, imgIndex) => (
-                              <Box
-                                key={imgIndex}
-                                className={`${styles.bannerImageDot} ${
-                                  imgIndex === currentImageIndex ? styles.bannerImageDotActive : ''
-                                }`}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setImageIndices((prev) => ({
-                                    ...prev,
-                                    [banner.id]: imgIndex,
-                                  }));
-                                }}
-                              />
-                            ))}
-                          </Box>
-
-                          <Box className={styles.bannerInner}>
-                            <Box className={styles.bannerIcon}>
-                              {banner.id === 1 && (
-                                <SportsSoccerIcon sx={{ fontSize: 80, color: 'white' }} />
-                              )}
-                              {banner.id === 2 && (
-                                <LocalFloristIcon sx={{ fontSize: 80, color: 'white' }} />
-                              )}
-                              {banner.id === 3 && (
-                                <EmojiEventsIcon sx={{ fontSize: 80, color: 'white' }} />
-                              )}
-                            </Box>
-                            <Typography variant="h4" className={styles.bannerTitle}>
-                              {banner.title}
-                            </Typography>
-                            <Typography variant="h6" className={styles.bannerSubtitle}>
-                              {banner.subtitle}
-                            </Typography>
-                            <Button
-                              variant="contained"
-                              className={styles.bannerButton}
-                              component={Link}
-                              href={banner.id === 1 ? "/games" : banner.id === 2 ? "/beginner" : "/team-league"}
-                              onClick={(e) => e.stopPropagation()}
-                              sx={{
-                                bgcolor: 'white',
-                                color: banner.color,
-                                '&:hover': { bgcolor: 'rgba(255,255,255,0.9)' },
-                              }}
-                            >
-                              {banner.id === 1 ? "Join Now" : banner.id === 2 ? "Get Started" : "Join League"}
-                            </Button>
-                          </Box>
-                        </Box>
-                      </Box>
-                    );
-                  })}
-                </Box>
-              </Box>
+            <Box className={styles.bannerWrapper}>
               <IconButton
                 className={styles.bannerNavButton}
                 onClick={prevBanner}
-                sx={{ left: 16 }}
+                sx={{ left: -24 }}
               >
                 <ChevronLeftIcon />
               </IconButton>
+              
+              <Box className={styles.bannerContainer}>
+                <Box className={styles.bannerContent}>
+                  <Box
+                    className={styles.bannerSlide}
+                    sx={{
+                      transform: `translateX(-${bannerIndex * 100}%)`,
+                      transition: 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+                    }}
+                  >
+                    {banners.map((banner) => {
+                      const currentImageIndex = imageIndices[banner.id] || 0;
+                      const currentImage = banner.images[currentImageIndex];
+                      
+                      return (
+                        <Box key={banner.id} className={styles.bannerItem}>
+                          <Box
+                            className={styles.bannerPlaceholder}
+                            sx={{
+                              background: `linear-gradient(135deg, ${banner.color}cc 0%, ${banner.color}99 100%)`,
+                              position: 'relative',
+                              overflow: 'hidden',
+                              cursor: 'pointer',
+                            }}
+                            onClick={() => handleBannerImageClick(banner.id)}
+                          >
+                            {/* Background Image with transition */}
+                            <Box
+                              className={styles.bannerImage}
+                              sx={{
+                                backgroundImage: `url("${currentImage}")`,
+                                transition: 'opacity 0.5s ease-in-out',
+                              }}
+                            />
+                            <Box className={styles.bannerOverlay} />
+                            
+                            {/* Image indicators */}
+                            <Box className={styles.bannerImageIndicators}>
+                              {banner.images.map((_, imgIndex) => (
+                                <Box
+                                  key={imgIndex}
+                                  className={`${styles.bannerImageDot} ${
+                                    imgIndex === currentImageIndex ? styles.bannerImageDotActive : ''
+                                  }`}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setImageIndices((prev) => ({
+                                      ...prev,
+                                      [banner.id]: imgIndex,
+                                    }));
+                                  }}
+                                />
+                              ))}
+                            </Box>
+
+                            <Box className={styles.bannerInner}>
+                              <Box className={styles.bannerIcon}>
+                                {banner.id === 1 && (
+                                  <SportsSoccerIcon sx={{ fontSize: 80, color: 'white' }} />
+                                )}
+                                {banner.id === 2 && (
+                                  <LocalFloristIcon sx={{ fontSize: 80, color: 'white' }} />
+                                )}
+                                {banner.id === 3 && (
+                                  <EmojiEventsIcon sx={{ fontSize: 80, color: 'white' }} />
+                                )}
+                              </Box>
+                              <Typography variant="h4" className={styles.bannerTitle}>
+                                {banner.title}
+                              </Typography>
+                              <Typography variant="h6" className={styles.bannerSubtitle}>
+                                {banner.subtitle}
+                              </Typography>
+                              <Button
+                                variant="contained"
+                                className={styles.bannerButton}
+                                component={Link}
+                                href={banner.id === 1 ? "/games" : banner.id === 2 ? "/beginner" : "/team-league"}
+                                onClick={(e) => e.stopPropagation()}
+                                sx={{
+                                  bgcolor: 'white',
+                                  color: banner.color,
+                                  '&:hover': { bgcolor: 'rgba(255,255,255,0.9)' },
+                                }}
+                              >
+                                {banner.id === 1 ? "Join Now" : banner.id === 2 ? "Get Started" : "Join League"}
+                              </Button>
+                            </Box>
+                          </Box>
+                        </Box>
+                      );
+                    })}
+                  </Box>
+                </Box>
+                <Box className={styles.bannerIndicators}>
+                  <Typography variant="body2" className={styles.bannerIndicator}>
+                    {bannerIndex + 1} | {banners.length}
+                  </Typography>
+                </Box>
+              </Box>
+
               <IconButton
                 className={styles.bannerNavButton}
                 onClick={nextBanner}
-                sx={{ right: 16 }}
+                sx={{ right: -24 }}
               >
                 <ChevronRightIcon />
               </IconButton>
-              <Box className={styles.bannerIndicators}>
-                <Typography variant="body2" className={styles.bannerIndicator}>
-                  {bannerIndex + 1} | {banners.length}
-                </Typography>
-              </Box>
             </Box>
           </Container>
         </Box>
