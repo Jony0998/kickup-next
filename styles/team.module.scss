@@ -1,0 +1,372 @@
+// Team page styles - Plab platform style
+
+.teamPage {
+  background: #ffffff;
+  min-height: 100vh;
+  padding: 24px 0 80px;
+}
+
+// Quick Menu
+.quickMenu {
+  display: flex;
+  gap: 16px;
+  padding: 24px 0;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 32px;
+
+  @media (min-width: 960px) {
+    padding: 32px 0;
+    margin-bottom: 48px;
+  }
+}
+
+.quickMenuItem {
+  width: 140px;
+  height: 120px;
+  border-radius: 16px !important;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 1px solid #e5e7eb !important;
+  text-decoration: none;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.quickMenuContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 16px !important;
+  gap: 12px;
+}
+
+.quickMenuText {
+  font-weight: 600;
+  color: #1f2937;
+  text-align: center;
+  font-size: 0.875rem;
+}
+
+// Hero Section
+.heroSection {
+  margin-bottom: 48px;
+}
+
+.heroContent {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+  flex-wrap: wrap;
+
+  @media (max-width: 960px) {
+    flex-direction: column;
+  }
+}
+
+.heroImage {
+  flex: 1;
+  min-width: 300px;
+  height: 200px;
+  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  @media (min-width: 960px) {
+    height: 250px;
+  }
+}
+
+.heroImageText {
+  color: white;
+  font-weight: 600;
+  font-size: 1.125rem;
+}
+
+.heroText {
+  flex: 1;
+  min-width: 300px;
+}
+
+.heroTitle {
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 24px;
+  line-height: 1.4;
+}
+
+.heroButtons {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.heroButton {
+  text-transform: none !important;
+  padding: 12px 24px !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+
+  &.MuiButton-outlined {
+    border-color: #0ea5e9 !important;
+    color: #0ea5e9 !important;
+
+    &:hover {
+      background: #f0f9ff !important;
+      border-color: #0284c7 !important;
+    }
+  }
+
+  &.MuiButton-contained {
+    background: #0ea5e9 !important;
+    color: white !important;
+
+    &:hover {
+      background: #0284c7 !important;
+    }
+  }
+}
+
+// Tabs Section
+.tabsSection {
+  margin-bottom: 32px;
+}
+
+.tabs {
+  border-bottom: 2px solid #e5e7eb;
+  margin-bottom: 24px;
+
+  .MuiTabs-indicator {
+    height: 3px;
+    background: #0ea5e9;
+  }
+}
+
+.tab {
+  text-transform: none !important;
+  font-weight: 600 !important;
+  color: #6b7280 !important;
+  min-height: 64px !important;
+  padding: 12px 24px !important;
+
+  &.Mui-selected {
+    color: #0ea5e9 !important;
+  }
+
+  .MuiTab-iconWrapper {
+    margin-right: 8px;
+  }
+}
+
+.filterSection {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 24px;
+}
+
+.filterControl {
+  min-width: 120px;
+}
+
+.filterSelect {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+
+  .MuiOutlinedInput-notchedOutline {
+    border-color: #e5e7eb;
+  }
+
+  &:hover .MuiOutlinedInput-notchedOutline {
+    border-color: #0ea5e9;
+  }
+
+  &.Mui-focused .MuiOutlinedInput-notchedOutline {
+    border-color: #0ea5e9;
+  }
+}
+
+// Match List
+.matchList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.matchCard {
+  border: 1px solid #e5e7eb !important;
+  border-radius: 12px !important;
+  transition: all 0.2s;
+  cursor: pointer;
+  text-decoration: none;
+  overflow: hidden;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+    border-color: #0ea5e9 !important;
+  }
+}
+
+.matchCardContent {
+  padding: 20px !important;
+}
+
+.matchHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.matchDateTime {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.matchDate {
+  color: #6b7280;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.matchTime {
+  font-weight: 700;
+  color: #1f2937;
+  font-size: 1.5rem;
+}
+
+.statusChip {
+  background: #fee2e2 !important;
+  color: #dc2626 !important;
+  font-weight: 600 !important;
+  font-size: 0.75rem !important;
+}
+
+.matchField {
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+.matchDetails {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+
+.detailChip {
+  background: #f3f4f6 !important;
+  color: #374151 !important;
+  font-size: 0.75rem !important;
+  height: 24px !important;
+
+  .MuiChip-icon {
+    color: #6b7280;
+    font-size: 16px;
+  }
+}
+
+.detailSeparator {
+  color: #9ca3af;
+  margin: 0 4px;
+}
+
+.detailText {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+// Teams Section
+.teamsSection {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.teamItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.teamLogo {
+  background: #f3f4f6 !important;
+  color: #6b7280 !important;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.teamName {
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.875rem;
+}
+
+// Feedback Card
+.feedbackCard {
+  border: 2px dashed #e5e7eb !important;
+  border-radius: 12px !important;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+  background: #f9fafb !important;
+
+  &:hover {
+    border-color: #0ea5e9 !important;
+    background: #f0f9ff !important;
+    transform: translateY(-2px);
+  }
+}
+
+.feedbackContent {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px !important;
+}
+
+.feedbackIcon {
+  color: #0ea5e9;
+  font-size: 32px;
+}
+
+.feedbackText {
+  flex: 1;
+}
+
+.feedbackTitle {
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 4px;
+}
+
+.feedbackSubtitle {
+  color: #6b7280;
+}
+
+// Empty State
+.emptyState {
+  text-align: center;
+  padding: 64px 24px;
+  color: #6b7280;
+
+  h6 {
+    margin-bottom: 8px;
+    color: #374151;
+  }
+}
+
