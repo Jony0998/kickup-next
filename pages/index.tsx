@@ -1,6 +1,6 @@
 import Head from "next/head";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Container,
@@ -10,28 +10,32 @@ import {
   CardContent,
   Chip,
   IconButton,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
+  CardMedia,
+  Avatar,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import SportsSoccerIcon from "@mui/icons-material/SportsSoccer";
 import LocalFloristIcon from "@mui/icons-material/LocalFlorist";
 import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
-import FilterListIcon from "@mui/icons-material/FilterList";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import WbTwilightIcon from "@mui/icons-material/WbTwilight";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 import WcIcon from "@mui/icons-material/Wc";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import HomeIcon from "@mui/icons-material/Home";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import SupportAgentIcon from "@mui/icons-material/SupportAgent";
+import WarningIcon from "@mui/icons-material/Warning";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import styles from "@/styles/home.module.scss";
 
 export default function Home() {
+  const [bannerIndex, setBannerIndex] = useState(0);
+  const [selectedDate, setSelectedDate] = useState(0);
+
   // Generate dates for calendar (14 days)
   const today = new Date();
   const dates = Array.from({ length: 14 }, (_, i) => {
@@ -50,6 +54,75 @@ export default function Home() {
     return days[date.getDay()];
   };
 
+  // Mock match data
+  const matches = [
+    {
+      time: "23:00",
+      badge: "AI Team Assignment",
+      field: "KickUp Stadium Gasan Digital Empire Field 2",
+      details: ["All Genders", "5vs5", "18 Parking Spaces"],
+      image: "/field1.jpg",
+    },
+    {
+      time: "23:00",
+      badge: "AI Team Assignment",
+      field: "KickUp Stadium Gasan Kolon Techno Valley Field 1 (Black)",
+      details: ["All Genders", "6vs6", "17 Parking Spaces"],
+      image: "/field2.jpg",
+    },
+    {
+      time: "23:00",
+      field: "Seoul Yeongdeungpo Nams Seoul Shopping Center SKY Futsal Park Field 1 N",
+      details: ["All Genders", "5vs5"],
+      image: "/field3.jpg",
+    },
+    {
+      time: "23:59",
+      field: "Seoul Eunpyeong Lotte Mall Field B",
+      details: ["All Genders", "6vs6"],
+      image: "/field4.jpg",
+    },
+    {
+      time: "23:59",
+      closingSoon: true,
+      field: "Seoul Eunpyeong Lotte Mall Field A",
+      details: ["All Genders", "6vs6"],
+      image: "/field5.jpg",
+    },
+    {
+      time: "23:59",
+      field: "Seoul Yongsan Adidas The Base Field 2 / Man Utd",
+      details: ["All Genders", "6vs6", "Parking Full"],
+      image: "/field6.jpg",
+    },
+    {
+      time: "23:59",
+      field: "Seoul Gangdong Songpa Futsal Field",
+      details: ["All Genders", "5vs5"],
+      image: "/field7.jpg",
+    },
+    {
+      time: "23:59",
+      field: "Seoul Gangbuk Arc Futsal Stadium Indoor",
+      details: ["All Genders", "5vs5"],
+      image: "/field8.jpg",
+    },
+  ];
+
+  const banners = [
+    { id: 1, title: "Social Culture Banner" },
+    { id: 2, title: "Starter Match Banner" },
+    { id: 3, title: "Team League Banner" },
+  ];
+
+  const nextBanner = () => {
+    setBannerIndex((prev) => (prev + 1) % banners.length);
+  };
+
+  const prevBanner = () => {
+    setBannerIndex((prev) => (prev - 1 + banners.length) % banners.length);
+  };
+
   return (
     <>
       <Head>
@@ -66,13 +139,44 @@ export default function Home() {
         {/* Banner/Carousel Section */}
         <Box className={styles.bannerSection}>
           <Container maxWidth="lg">
-            <Box className={styles.bannerContent}>
-              <Typography variant="h4" className={styles.bannerTitle}>
-                Find Your Perfect Match
-              </Typography>
-              <Typography variant="body1" className={styles.bannerSubtitle}>
-                Join social matches, create teams, and book fields
-              </Typography>
+            <Box className={styles.bannerContainer}>
+              <IconButton
+                className={styles.bannerNavButton}
+                onClick={prevBanner}
+                sx={{ left: 0 }}
+              >
+                <ChevronLeftIcon />
+              </IconButton>
+              <Box className={styles.bannerContent}>
+                <Box
+                  className={styles.bannerSlide}
+                  sx={{
+                    transform: `translateX(-${bannerIndex * 100}%)`,
+                  }}
+                >
+                  {banners.map((banner) => (
+                    <Box key={banner.id} className={styles.bannerItem}>
+                      <Box className={styles.bannerPlaceholder}>
+                        <Typography variant="h5" className={styles.bannerTitle}>
+                          {banner.title}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  ))}
+                </Box>
+              </Box>
+              <IconButton
+                className={styles.bannerNavButton}
+                onClick={nextBanner}
+                sx={{ right: 0 }}
+              >
+                <ChevronRightIcon />
+              </IconButton>
+              <Box className={styles.bannerIndicators}>
+                <Typography variant="body2" className={styles.bannerIndicator}>
+                  {bannerIndex + 1} | {banners.length}
+                </Typography>
+              </Box>
             </Box>
           </Container>
         </Box>
@@ -135,7 +239,8 @@ export default function Home() {
               {dates.map((date, index) => (
                 <Box
                   key={index}
-                  className={`${styles.dateItem} ${index === 0 ? styles.dateItemActive : ''}`}
+                  className={`${styles.dateItem} ${index === selectedDate ? styles.dateItemActive : ''}`}
+                  onClick={() => setSelectedDate(index)}
                 >
                   <Typography variant="body2" className={styles.dateNumber}>
                     {date.getDate()}
@@ -157,12 +262,6 @@ export default function Home() {
               />
               <Chip
                 label="Hide Closed"
-                className={styles.filterChip}
-                clickable
-              />
-              <Chip
-                icon={<WbTwilightIcon />}
-                label="Evening Match"
                 className={styles.filterChip}
                 clickable
               />
@@ -194,23 +293,101 @@ export default function Home() {
           </Box>
         </Container>
 
+        {/* Closing Soon Banner */}
+        <Container maxWidth="lg">
+          <Box className={styles.closingSoonBanner}>
+            <Box className={styles.closingSoonContent}>
+              <WarningIcon className={styles.closingSoonIcon} />
+              <Typography variant="body1" className={styles.closingSoonText}>
+                Closing Soon! Applications close in a moment of hesitation
+              </Typography>
+            </Box>
+            <Card className={styles.closingSoonCard} component={Link} href="/match/1">
+              <CardContent className={styles.closingSoonCardContent}>
+                <Box className={styles.closingSoonTime}>
+                  <Typography variant="h6" className={styles.closingSoonTimeText}>
+                    23:59
+                  </Typography>
+                  <Chip
+                    label="Closing Soon"
+                    size="small"
+                    className={styles.closingSoonChip}
+                  />
+                </Box>
+                <Typography variant="body1" className={styles.closingSoonField}>
+                  Seoul Eunpyeong Lotte Mall Field A
+                </Typography>
+              </CardContent>
+            </Card>
+          </Box>
+        </Container>
+
         {/* Match List Section */}
         <Container maxWidth="lg">
           <Box className={styles.matchListSection}>
-            <Box className={styles.emptyState}>
-              <Typography variant="h5" className={styles.emptyStateTitle}>
-                No matches available to apply for today
-              </Typography>
-              <Typography variant="body1" className={styles.emptyStateSubtitle}>
-                Check other dates
-              </Typography>
+            {matches.map((match, index) => (
+              <Card
+                key={index}
+                className={styles.matchCard}
+                component={Link}
+                href={`/match/${index + 1}`}
+              >
+                <CardContent className={styles.matchCardContent}>
+                  <Box className={styles.matchLeft}>
+                    <Typography variant="h6" className={styles.matchTime}>
+                      {match.time}
+                    </Typography>
+                    {match.badge && (
+                      <Box className={styles.matchBadge}>
+                        <AutoAwesomeIcon sx={{ fontSize: 16 }} />
+                        <Typography variant="caption" className={styles.matchBadgeText}>
+                          {match.badge}
+                        </Typography>
+                      </Box>
+                    )}
+                    {match.closingSoon && (
+                      <Box className={styles.matchBadge}>
+                        <WarningIcon sx={{ fontSize: 16 }} />
+                        <Typography variant="caption" className={styles.matchBadgeText}>
+                          Closing Soon
+                        </Typography>
+                      </Box>
+                    )}
+                    <Typography variant="h6" className={styles.matchField}>
+                      {match.field}
+                    </Typography>
+                    <Box className={styles.matchDetails}>
+                      {match.details.map((detail, idx) => (
+                        <React.Fragment key={idx}>
+                          {idx > 0 && <span className={styles.detailSeparator}>·</span>}
+                          <Typography variant="body2" className={styles.matchDetail}>
+                            {detail}
+                          </Typography>
+                        </React.Fragment>
+                      ))}
+                    </Box>
+                  </Box>
+                  <Box className={styles.matchRight}>
+                    <Avatar
+                      variant="rounded"
+                      className={styles.matchImage}
+                      sx={{ width: 120, height: 120 }}
+                    >
+                      <SportsSoccerIcon sx={{ fontSize: 48 }} />
+                    </Avatar>
+                  </Box>
+                </CardContent>
+              </Card>
+            ))}
+
+            <Box className={styles.viewScheduleButton}>
               <Button
                 variant="outlined"
-                className={styles.viewScheduleButton}
+                className={styles.scheduleButton}
                 component={Link}
                 href="/schedule"
               >
-                View Next Tuesday Schedule
+                View Next Monday Schedule
               </Button>
             </Box>
           </Box>
@@ -245,6 +422,15 @@ export default function Home() {
             </Box>
           </Box>
         </Container>
+
+        {/* Support Chat Button */}
+        <IconButton
+          className={styles.supportButton}
+          component={Link}
+          href="/support"
+        >
+          <SupportAgentIcon sx={{ fontSize: 32, color: 'white' }} />
+        </IconButton>
       </Box>
     </>
   );
