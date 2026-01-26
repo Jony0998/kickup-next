@@ -170,25 +170,6 @@ export default function TeamPage() {
       </Head>
 
       <Box className={styles.teamPage}>
-        {/* Banner Section */}
-        <Box className={styles.bannerSection}>
-          <Container maxWidth="lg">
-            <Box className={styles.bannerContent}>
-              <Box className={styles.bannerImage}>
-                <Box className={styles.bannerOverlay} />
-                <Box className={styles.bannerText}>
-                  <Typography variant="h3" className={styles.bannerTitle}>
-                    Team League
-                  </Typography>
-                  <Typography variant="h6" className={styles.bannerSubtitle}>
-                    Compete with your team and climb the rankings
-                  </Typography>
-                </Box>
-              </Box>
-            </Box>
-          </Container>
-        </Box>
-
         {/* Quick Menu Buttons */}
         <Container maxWidth="lg">
           <Box className={styles.quickMenu}>
@@ -230,23 +211,24 @@ export default function TeamPage() {
           </Box>
         </Container>
 
-        {/* Hero Section */}
+        {/* Banner Section */}
         <Container maxWidth="lg">
-          <Box className={styles.heroSection}>
-            <Box className={styles.heroContent}>
-              <Box className={styles.heroImage}>
-                <Typography variant="body2" className={styles.heroImageText}>
-                  Team League Banner
+          <Box className={styles.bannerSection}>
+            <Box className={styles.bannerContent}>
+              <Box className={styles.bannerLeft}>
+                <Box className={styles.bannerIconWrapper}>
+                  <EmojiEventsIcon className={styles.bannerIcon} />
+                </Box>
+                <Typography variant="h4" className={styles.bannerTitle}>
+                  Plab Team League
                 </Typography>
-              </Box>
-              <Box className={styles.heroText}>
-                <Typography variant="h4" className={styles.heroTitle}>
+                <Typography variant="body1" className={styles.bannerText}>
                   Join Plab Team League with your team members!
                 </Typography>
-                <Box className={styles.heroButtons}>
+                <Box className={styles.bannerButtons}>
                   <Button
                     variant="outlined"
-                    className={styles.heroButton}
+                    className={styles.bannerButton}
                     component={Link}
                     href="/team/league/details"
                   >
@@ -254,13 +236,16 @@ export default function TeamPage() {
                   </Button>
                   <Button
                     variant="contained"
-                    className={styles.heroButton}
+                    className={styles.bannerButton}
                     component={Link}
                     href="/team/create"
                   >
                     Create New Team
                   </Button>
                 </Box>
+              </Box>
+              <Box className={styles.bannerRight}>
+                <Box className={styles.bannerImage} />
               </Box>
             </Box>
           </Box>
