@@ -114,24 +114,48 @@ export default function Home() {
       id: 1,
       title: "Respect, encourage, and enjoy together",
       subtitle: "Join the KickUp community and play football with respect",
-      image: "social-culture",
       color: "#0ea5e9",
+      images: [
+        "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1200&q=80",
+        "https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=1200&q=80",
+        "https://images.unsplash.com/photo-1575361204480-aadea25e6e68?w=1200&q=80",
+        "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=1200&q=80",
+        "https://images.unsplash.com/photo-1576678927484-cc907957088c?w=1200&q=80",
+      ],
     },
     {
       id: 2,
       title: "Starter Match - Perfect for Beginners",
       subtitle: "New to football? Join our beginner-friendly matches",
-      image: "starter-match",
       color: "#10b981",
+      images: [
+        "https://images.unsplash.com/photo-1575361204480-aadea25e6e68?w=1200&q=80",
+        "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=1200&q=80",
+        "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1200&q=80",
+        "https://images.unsplash.com/photo-1576678927484-cc907957088c?w=1200&q=80",
+        "https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=1200&q=80",
+      ],
     },
     {
       id: 3,
       title: "Team League - Compete with Your Team",
       subtitle: "Form a team and compete in our league tournaments",
-      image: "team-league",
       color: "#f59e0b",
+      images: [
+        "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=1200&q=80",
+        "https://images.unsplash.com/photo-1576678927484-cc907957088c?w=1200&q=80",
+        "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1200&q=80",
+        "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=1200&q=80",
+        "https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=1200&q=80",
+      ],
     },
   ];
+
+  const [imageIndices, setImageIndices] = useState<{ [key: number]: number }>({
+    1: 0,
+    2: 0,
+    3: 0,
+  });
 
   const nextBanner = () => {
     setBannerIndex((prev) => (prev + 1) % banners.length);
@@ -139,6 +163,18 @@ export default function Home() {
 
   const prevBanner = () => {
     setBannerIndex((prev) => (prev - 1 + banners.length) % banners.length);
+  };
+
+  const handleBannerImageClick = (bannerId: number) => {
+    setImageIndices((prev) => {
+      const currentIndex = prev[bannerId] || 0;
+      const banner = banners.find((b) => b.id === bannerId);
+      const nextIndex = banner ? (currentIndex + 1) % banner.images.length : 0;
+      return {
+        ...prev,
+        [bannerId]: nextIndex,
+      };
+    });
   };
 
   return (
@@ -172,63 +208,88 @@ export default function Home() {
                     transform: `translateX(-${bannerIndex * 100}%)`,
                   }}
                 >
-                  {banners.map((banner) => (
-                    <Box key={banner.id} className={styles.bannerItem}>
-                      <Box
-                        className={styles.bannerPlaceholder}
-                        sx={{
-                          background: `linear-gradient(135deg, ${banner.color}cc 0%, ${banner.color}99 100%)`,
-                          position: 'relative',
-                          overflow: 'hidden',
-                        }}
-                      >
-                        {/* Background Image */}
+                  {banners.map((banner) => {
+                    const currentImageIndex = imageIndices[banner.id] || 0;
+                    const currentImage = banner.images[currentImageIndex];
+                    
+                    return (
+                      <Box key={banner.id} className={styles.bannerItem}>
                         <Box
-                          className={styles.bannerImage}
+                          className={styles.bannerPlaceholder}
                           sx={{
-                            backgroundImage: banner.id === 1
-                              ? 'url("https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1200&q=80")'
-                              : banner.id === 2
-                              ? 'url("https://images.unsplash.com/photo-1575361204480-aadea25e6e68?w=1200&q=80")'
-                              : 'url("https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=1200&q=80")',
+                            background: `linear-gradient(135deg, ${banner.color}cc 0%, ${banner.color}99 100%)`,
+                            position: 'relative',
+                            overflow: 'hidden',
+                            cursor: 'pointer',
                           }}
-                        />
-                        <Box className={styles.bannerOverlay} />
-                        <Box className={styles.bannerInner}>
-                          <Box className={styles.bannerIcon}>
-                            {banner.id === 1 && (
-                              <SportsSoccerIcon sx={{ fontSize: 80, color: 'white' }} />
-                            )}
-                            {banner.id === 2 && (
-                              <LocalFloristIcon sx={{ fontSize: 80, color: 'white' }} />
-                            )}
-                            {banner.id === 3 && (
-                              <EmojiEventsIcon sx={{ fontSize: 80, color: 'white' }} />
-                            )}
-                          </Box>
-                          <Typography variant="h4" className={styles.bannerTitle}>
-                            {banner.title}
-                          </Typography>
-                          <Typography variant="h6" className={styles.bannerSubtitle}>
-                            {banner.subtitle}
-                          </Typography>
-                          <Button
-                            variant="contained"
-                            className={styles.bannerButton}
-                            component={Link}
-                            href={banner.id === 1 ? "/games" : banner.id === 2 ? "/beginner" : "/team-league"}
+                          onClick={() => handleBannerImageClick(banner.id)}
+                        >
+                          {/* Background Image with transition */}
+                          <Box
+                            className={styles.bannerImage}
                             sx={{
-                              bgcolor: 'white',
-                              color: banner.color,
-                              '&:hover': { bgcolor: 'rgba(255,255,255,0.9)' },
+                              backgroundImage: `url("${currentImage}")`,
+                              transition: 'opacity 0.5s ease-in-out',
                             }}
-                          >
-                            {banner.id === 1 ? "Join Now" : banner.id === 2 ? "Get Started" : "Join League"}
-                          </Button>
+                          />
+                          <Box className={styles.bannerOverlay} />
+                          
+                          {/* Image indicators */}
+                          <Box className={styles.bannerImageIndicators}>
+                            {banner.images.map((_, imgIndex) => (
+                              <Box
+                                key={imgIndex}
+                                className={`${styles.bannerImageDot} ${
+                                  imgIndex === currentImageIndex ? styles.bannerImageDotActive : ''
+                                }`}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setImageIndices((prev) => ({
+                                    ...prev,
+                                    [banner.id]: imgIndex,
+                                  }));
+                                }}
+                              />
+                            ))}
+                          </Box>
+
+                          <Box className={styles.bannerInner}>
+                            <Box className={styles.bannerIcon}>
+                              {banner.id === 1 && (
+                                <SportsSoccerIcon sx={{ fontSize: 80, color: 'white' }} />
+                              )}
+                              {banner.id === 2 && (
+                                <LocalFloristIcon sx={{ fontSize: 80, color: 'white' }} />
+                              )}
+                              {banner.id === 3 && (
+                                <EmojiEventsIcon sx={{ fontSize: 80, color: 'white' }} />
+                              )}
+                            </Box>
+                            <Typography variant="h4" className={styles.bannerTitle}>
+                              {banner.title}
+                            </Typography>
+                            <Typography variant="h6" className={styles.bannerSubtitle}>
+                              {banner.subtitle}
+                            </Typography>
+                            <Button
+                              variant="contained"
+                              className={styles.bannerButton}
+                              component={Link}
+                              href={banner.id === 1 ? "/games" : banner.id === 2 ? "/beginner" : "/team-league"}
+                              onClick={(e) => e.stopPropagation()}
+                              sx={{
+                                bgcolor: 'white',
+                                color: banner.color,
+                                '&:hover': { bgcolor: 'rgba(255,255,255,0.9)' },
+                              }}
+                            >
+                              {banner.id === 1 ? "Join Now" : banner.id === 2 ? "Get Started" : "Join League"}
+                            </Button>
+                          </Box>
                         </Box>
                       </Box>
-                    </Box>
-                  ))}
+                    );
+                  })}
                 </Box>
               </Box>
               <IconButton
