@@ -1,10 +1,12 @@
-// Footer styles - Plab platform style
+// Footer styles - Plab platform style (distinct background)
 
 .footer {
-  background-color: #1a1a1a;
-  color: #b0b0b0;
+  background-color: #191F28;
+  color: rgba(255, 255, 255, 0.85);
   padding: 48px 0 24px;
   margin-top: auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
 .container {
@@ -21,7 +23,8 @@
   gap: 24px;
   margin-bottom: 32px;
   padding-bottom: 24px;
-  border-bottom: 1px solid #2a2a2a;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  transition: border-color 0.3s ease;
 }
 
 .logoSection {
@@ -31,14 +34,16 @@
 }
 
 .logoIcon {
-  color: #0ea5e9;
+  color: #00E377;
   font-size: 32px;
+  transition: color 0.3s ease;
 }
 
 .logoText {
   font-weight: 700;
-  color: white;
+  color: #fff;
   font-size: 1.5rem;
+  transition: color 0.3s ease;
 }
 
 .footerLinks {
@@ -49,19 +54,20 @@
 }
 
 .footerLink {
-  color: #b0b0b0;
+  color: rgba(255, 255, 255, 0.8);
   text-decoration: none;
   font-size: 0.875rem;
-  transition: color 0.2s;
+  transition: color 0.3s ease;
 
   &:hover {
-    color: white;
+    color: #00E377;
   }
 }
 
 .separator {
-  color: #4a4a4a;
+  color: rgba(255, 255, 255, 0.4);
   margin: 0 4px;
+  transition: color 0.3s ease;
 }
 
 .socialLinks {
@@ -70,11 +76,11 @@
 }
 
 .socialLink {
-  color: #b0b0b0;
-  transition: color 0.2s;
+  color: rgba(255, 255, 255, 0.8);
+  transition: color 0.3s ease;
 
   &:hover {
-    color: white;
+    color: #00E377;
   }
 
   svg {
@@ -85,13 +91,15 @@
 .footerMiddle {
   margin-bottom: 24px;
   padding-bottom: 24px;
-  border-bottom: 1px solid #2a2a2a;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  transition: border-color 0.3s ease;
 }
 
 .address {
-  color: #b0b0b0;
+  color: rgba(255, 255, 255, 0.75);
   margin-bottom: 16px;
   font-size: 0.875rem;
+  transition: color 0.3s ease;
 }
 
 .emailSection {
@@ -101,24 +109,26 @@
 }
 
 .emailLabel {
-  color: #b0b0b0;
+  color: rgba(255, 255, 255, 0.75);
+  transition: color 0.3s ease;
 }
 
 .emailLink {
-  color: #0ea5e9;
+  color: #00E377;
   text-decoration: none;
-  transition: color 0.2s;
+  transition: color 0.3s ease;
 
   &:hover {
-    color: #38bdf8;
+    color: #00C466;
     text-decoration: underline;
   }
 }
 
 .businessInfo {
-  color: #808080;
+  color: rgba(255, 255, 255, 0.5);
   font-size: 0.75rem;
   line-height: 1.6;
+  transition: color 0.3s ease;
 }
 
 .footerBottom {
@@ -126,8 +136,9 @@
 }
 
 .copyright {
-  color: #808080;
+  color: rgba(255, 255, 255, 0.5);
   font-size: 0.75rem;
+  transition: color 0.3s ease;
 }
 
 @media (max-width: 960px) {

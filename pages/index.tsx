@@ -1,6 +1,7 @@
 import Head from "next/head";
 import Link from "next/link";
-import React, { useState } from "react";
+import { useRouter } from "next/router";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   Box,
   Container,
@@ -24,25 +25,141 @@ import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 import WcIcon from "@mui/icons-material/Wc";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import HomeIcon from "@mui/icons-material/Home";
+import GroupIcon from "@mui/icons-material/Group";
+import BoltIcon from "@mui/icons-material/Bolt";
+import CheckroomIcon from "@mui/icons-material/Checkroom";
+import WbSunnyIcon from "@mui/icons-material/WbSunny";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
-import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 import WarningIcon from "@mui/icons-material/Warning";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import styles from "@/styles/home.module.scss";
+import MatchFilters, { FilterOptions, defaultFilters } from "@/components/MatchFilters";
+import { getBanners, Banner } from "@/lib/bannerApi";
+import { getMatches, Match } from "@/lib/matchApi";
+import { useAuth } from "@/contexts/AuthContext";
+import MatchCard from "@/components/MatchCard";
+import SeoHead from "@/components/SeoHead";
+import Image from "next/image";
+import { useSearch } from "@/contexts/SearchContext";
+import { useDebounce } from "@/hooks/useDebounce";
 
 export default function Home() {
+  const router = useRouter();
+  const { isAdmin, isAgent } = useAuth();
+  const [banners, setBanners] = useState<Banner[]>([]);
   const [bannerIndex, setBannerIndex] = useState(0);
-  const [selectedDate, setSelectedDate] = useState(0);
+  const [selectedDate, setSelectedDate] = useState(-1); // -1 = no date filter (show all)
+  const [mounted, setMounted] = useState(false);
+  const [dates, setDates] = useState<Date[]>([]);
+  const [filters, setFilters] = useState<FilterOptions>(defaultFilters);
+  const [matches, setMatches] = useState<Match[]>([]);
+  const [loadingMatches, setLoadingMatches] = useState(false);
+  const [activeCategory, setActiveCategory] = useState<string>("all");
+  const { searchQuery, setSearchMatches } = useSearch();
+  const debouncedSearch = useDebounce(searchQuery, 150);
 
-  // Generate dates for calendar (14 days)
-  const today = new Date();
-  const dates = Array.from({ length: 14 }, (_, i) => {
-    const date = new Date(today);
-    date.setDate(today.getDate() + i);
-    return date;
-  });
+  // Sync category with URL
+  useEffect(() => {
+    const { cat } = router.query;
+    if (cat && typeof cat === "string") {
+      setActiveCategory(cat);
+    } else {
+      setActiveCategory("all");
+    }
+  }, [router.query]);
+
+  // Fetch banners
+  useEffect(() => {
+    const fetchBanners = async () => {
+      try {
+        const data = await getBanners();
+        setBanners(data);
+      } catch (error) {
+        console.error("Failed to load banners", error);
+      }
+    };
+    fetchBanners();
+  }, []);
+
+  // Auto-slide banners
+  useEffect(() => {
+    if (banners.length <= 1) return;
+    const timer = setInterval(() => {
+      setBannerIndex((prev) => (prev + 1) % banners.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [banners.length]);
+
+  // Handle query parameters from URL (e.g. from All Menu or deep links)
+  useEffect(() => {
+    const { gender, level, fieldType, sport, format, earlyBird, tShirt, time } = router.query;
+
+    if (gender || level || fieldType || sport || format || earlyBird || tShirt || time) {
+      const newFilters = { ...defaultFilters };
+
+      if (gender === "women") newFilters.gender = "Women Only";
+      if (gender === "mixed") newFilters.gender = "All Genders";
+      if (level === "starter") newFilters.level = "STARTER";
+      if (level === "rookie") newFilters.level = "ROOKIE";
+      if (level === "amateur") newFilters.level = "AMATEUR";
+      if (level === "semi_pro") newFilters.level = "SEMI_PRO";
+      if (level === "pro") newFilters.level = "PRO";
+      if (level === "elite") newFilters.level = "ELITE";
+      if (fieldType === "indoor") newFilters.fieldType = "Indoor";
+      if (fieldType === "outdoor") newFilters.fieldType = "Outdoor";
+      if (time === "morning") newFilters.timeRange = "morning";
+      // All Menu: format=4vs4 etc. -> teamSize filter
+      if (format === "4vs4") newFilters.teamSize = "4vs4";
+      else if (format === "5vs5") newFilters.teamSize = "5vs5";
+      else if (format === "6vs6") newFilters.teamSize = "6vs6";
+      else if (format === "7vs7") newFilters.teamSize = "7vs7";
+
+      setFilters(newFilters);
+    }
+  }, [router.query]);
+
+  // Store additional filter params
+  const [additionalFilters, setAdditionalFilters] = useState<{
+    sport?: string;
+    format?: string;
+    earlyBird?: boolean;
+    tShirt?: boolean;
+  }>({});
+
+  useEffect(() => {
+    const { sport, format, earlyBird, tShirt } = router.query;
+    setAdditionalFilters({
+      sport: sport as string,
+      format: format as string,
+      earlyBird: earlyBird === "true",
+      tShirt: tShirt === "true",
+    });
+  }, [router.query]);
+
+  // When landing from All Menu (or any URL with filter params), scroll to match list
+  useEffect(() => {
+    const q = router.query;
+    const hasFilter = q.gender || q.level || q.fieldType || q.time || q.format || q.earlyBird || q.tShirt || q.sport;
+    if (!hasFilter) return;
+    const t = setTimeout(() => {
+      document.getElementById("match-list")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 300);
+    return () => clearTimeout(t);
+  }, [router.query]);
+
+  // Generate dates for calendar (14 days) — client-only to avoid hydration mismatch (timezone/locale)
+  useEffect(() => {
+    setMounted(true);
+    const today = new Date();
+    const next14 = Array.from({ length: 14 }, (_, i) => {
+      const d = new Date(today);
+      d.setDate(today.getDate() + i);
+      return d;
+    });
+    setDates(next14);
+  }, []);
 
   const getDayName = (date: Date) => {
     const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -54,108 +171,155 @@ export default function Home() {
     return days[date.getDay()];
   };
 
-  // Mock match data
-  const matches = [
-    {
-      time: "23:00",
-      badge: "AI Team Assignment",
-      field: "KickUp Stadium Gasan Digital Empire Field 2",
-      details: ["All Genders", "5vs5", "18 Parking Spaces"],
-      image: "/field1.jpg",
-    },
-    {
-      time: "23:00",
-      badge: "AI Team Assignment",
-      field: "KickUp Stadium Gasan Kolon Techno Valley Field 1 (Black)",
-      details: ["All Genders", "6vs6", "17 Parking Spaces"],
-      image: "/field2.jpg",
-    },
-    {
-      time: "23:00",
-      field: "Seoul Yeongdeungpo Nams Seoul Shopping Center SKY Futsal Park Field 1 N",
-      details: ["All Genders", "5vs5"],
-      image: "/field3.jpg",
-    },
-    {
-      time: "23:59",
-      field: "Seoul Eunpyeong Lotte Mall Field B",
-      details: ["All Genders", "6vs6"],
-      image: "/field4.jpg",
-    },
-    {
-      time: "23:59",
-      closingSoon: true,
-      field: "Seoul Eunpyeong Lotte Mall Field A",
-      details: ["All Genders", "6vs6"],
-      image: "/field5.jpg",
-    },
-    {
-      time: "23:59",
-      field: "Seoul Yongsan Adidas The Base Field 2 / Man Utd",
-      details: ["All Genders", "6vs6", "Parking Full"],
-      image: "/field6.jpg",
-    },
-    {
-      time: "23:59",
-      field: "Seoul Gangdong Songpa Futsal Field",
-      details: ["All Genders", "5vs5"],
-      image: "/field7.jpg",
-    },
-    {
-      time: "23:59",
-      field: "Seoul Gangbuk Arc Futsal Stadium Indoor",
-      details: ["All Genders", "5vs5"],
-      image: "/field8.jpg",
-    },
-  ];
+  // Fetch matches from API
+  useEffect(() => {
+    const fetchMatches = async () => {
+      setLoadingMatches(true);
+      try {
+        const params: any = { status: 'UPCOMING' };
 
-  const banners = [
-    {
-      id: 1,
-      title: "Respect, encourage, and enjoy together",
-      subtitle: "Join the KickUp community and play football with respect",
-      color: "#0ea5e9",
-      images: [
-        "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1200&q=80",
-        "https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=1200&q=80",
-        "https://images.unsplash.com/photo-1575361204480-aadea25e6e68?w=1200&q=80",
-        "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=1200&q=80",
-        "https://images.unsplash.com/photo-1576678927484-cc907957088c?w=1200&q=80",
-      ],
-    },
-    {
-      id: 2,
-      title: "Starter Match - Perfect for Beginners",
-      subtitle: "New to football? Join our beginner-friendly matches",
-      color: "#10b981",
-      images: [
-        "https://images.unsplash.com/photo-1575361204480-aadea25e6e68?w=1200&q=80",
-        "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=1200&q=80",
-        "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1200&q=80",
-        "https://images.unsplash.com/photo-1576678927484-cc907957088c?w=1200&q=80",
-        "https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=1200&q=80",
-      ],
-    },
-    {
-      id: 3,
-      title: "Team League - Compete with Your Team",
-      subtitle: "Form a team and compete in our league tournaments",
-      color: "#f59e0b",
-      images: [
-        "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=1200&q=80",
-        "https://images.unsplash.com/photo-1576678927484-cc907957088c?w=1200&q=80",
-        "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1200&q=80",
-        "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=1200&q=80",
-        "https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=1200&q=80",
-      ],
-    },
-  ];
+        // Only pass date filter if user has selected a specific date
+        if (selectedDate >= 0 && dates[selectedDate]) {
+          params.date = dates[selectedDate].toISOString().split('T')[0];
+        }
 
-  const [imageIndices, setImageIndices] = useState<{ [key: number]: number }>({
-    1: 0,
-    2: 0,
-    3: 0,
-  });
+        const data = await getMatches(params);
+        setMatches(data);
+        setSearchMatches(data); // share with navbar autocomplete
+      } catch (error) {
+        console.error("Failed to load matches", error);
+      } finally {
+        setLoadingMatches(false);
+      }
+    };
+
+    fetchMatches();
+  }, [selectedDate, dates]);
+
+  // Client-side filtering — all filter chips (Date, Gender, Level, Size, Location) apply here
+  const filteredMatches = useMemo(() => {
+    const now = new Date();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const tomorrowStart = new Date(todayStart);
+    tomorrowStart.setDate(tomorrowStart.getDate() + 1);
+    const weekEnd = new Date(todayStart);
+    weekEnd.setDate(weekEnd.getDate() + 7);
+
+    return matches.filter((match) => {
+      // Date filter (chip: Today / Tomorrow / This Week) — compare by calendar day (local)
+      if (filters.dateRange !== "all") {
+        const d = new Date(match.matchDate);
+        const matchDay = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+        if (filters.dateRange === "today") {
+          if (matchDay !== todayStart.getTime()) return false;
+        } else if (filters.dateRange === "tomorrow") {
+          if (matchDay !== tomorrowStart.getTime()) return false;
+        } else if (filters.dateRange === "week") {
+          if (matchDay < todayStart.getTime() || matchDay >= weekEnd.getTime()) return false;
+        }
+      }
+
+      // Calendar date strip — when user taps a date (24, 25, …) or "All"
+      if (selectedDate >= 0 && dates[selectedDate]) {
+        const d = new Date(match.matchDate);
+        const matchDayStart = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+        const targetDayStart = new Date(
+          dates[selectedDate].getFullYear(),
+          dates[selectedDate].getMonth(),
+          dates[selectedDate].getDate()
+        ).getTime();
+        if (matchDayStart !== targetDayStart) return false;
+      }
+
+      // Filter by time range
+      if (filters.timeRange !== "all") {
+        const hour = parseInt(String(match.matchTime || "0").split(":")[0], 10);
+        if (filters.timeRange === "morning" && hour >= 12) return false;
+        if (filters.timeRange === "afternoon" && (hour < 12 || hour >= 18)) return false;
+        if (filters.timeRange === "evening" && hour < 18) return false;
+      }
+
+      // Search (debounced)
+      if (debouncedSearch) {
+        const q = debouncedSearch.toLowerCase();
+        const title = (match.matchTitle || "").toLowerCase();
+        const city = (match.location?.city || "").toLowerCase();
+        const fieldObj = typeof match.fieldId === "object" && match.fieldId !== null ? match.fieldId : null;
+        const fieldName = ((fieldObj as any)?.propertyName || "").toLowerCase();
+        const description = (match.matchDescription || "").toLowerCase();
+        if (!title.includes(q) && !city.includes(q) && !fieldName.includes(q) && !description.includes(q)) return false;
+      }
+
+      // Location (chip) — match by city or address
+      if (filters.location !== "all") {
+        const city = (match.location?.city || "").trim();
+        const address = (match.location?.address || "").toLowerCase();
+        const locLower = filters.location.toLowerCase();
+        if (city.toLowerCase() !== locLower && !address.includes(locLower)) return false;
+      }
+
+      // Filter by price
+      const fee = match.matchFee || 0;
+      if (fee < filters.priceRange[0] || fee > filters.priceRange[1]) return false;
+
+      // Gender (chip) — Men Only / Women Only / Mixed
+      if (filters.gender !== "all") {
+        const g = (match.gender || "").toUpperCase();
+        if (filters.gender === "Men Only" && g !== "MALE") return false;
+        if (filters.gender === "Women Only" && g !== "FEMALE") return false;
+        if (filters.gender === "All Genders" && g !== "MIXED" && g !== "") return false;
+      }
+
+      // Level (chip) — skill level (STARTER from All Menu = ROOKIE or STARTER)
+      if (filters.level !== "all") {
+        const matchLevel = (match.skillLevel || "").toUpperCase();
+        if (filters.level === "STARTER") {
+          if (matchLevel !== "ROOKIE" && matchLevel !== "STARTER") return false;
+        } else if (matchLevel !== filters.level) return false;
+      }
+
+      // Category Filter (quick menu: social / beginner / team)
+      if (activeCategory === "social") {
+        if (match.matchType !== "FRIENDLY") return false;
+      } else if (activeCategory === "beginner") {
+        const level = (match.skillLevel || "").toUpperCase();
+        if (level !== "STARTER" && level !== "ROOKIE" && level !== "AMATEUR") return false;
+      } else if (activeCategory === "team") {
+        if (match.matchType !== "TOURNAMENT" && match.matchType !== "LEAGUE") return false;
+      }
+
+      // Size (chip) — team size 4vs4, 5vs5, 6vs6, etc. (from All Menu format param)
+      if (filters.teamSize && filters.teamSize !== "all") {
+        const half = Math.ceil((match.maxPlayers || 0) / 2);
+        const matchTeamSize = `${half}vs${half}`;
+        if (matchTeamSize !== filters.teamSize) return false;
+      }
+
+      // All Menu: Early Bird — early morning matches (before 12:00)
+      if (additionalFilters.earlyBird) {
+        const hour = parseInt(String(match.matchTime || "0").split(":")[0], 10);
+        if (hour >= 12) return false;
+      }
+
+      // All Menu: T-shirt — match title/description mentions t-shirt
+      if (additionalFilters.tShirt) {
+        const text = ((match.matchTitle || "") + " " + (match.matchDescription || "")).toLowerCase();
+        if (!text.includes("t-shirt") && !text.includes("tshirt") && !text.includes("t shirt")) return false;
+      }
+
+      // All Menu: Sport (e.g. football) — matchType FRIENDLY or all if no sport field
+      if (additionalFilters.sport && String(additionalFilters.sport).toLowerCase() === "football") {
+        // We only have football/futsal; include all match types
+      }
+
+      return true;
+    })
+    // Sort by likes descending — popular matches at the top
+    .sort((a, b) => (b.likes ?? 0) - (a.likes ?? 0));
+  }, [matches, filters, selectedDate, dates, activeCategory, debouncedSearch, additionalFilters]);
+
+
+  const [imageIndices, setImageIndices] = useState<{ [key: string]: number }>({});
 
   const nextBanner = () => {
     setBannerIndex((prev) => (prev + 1) % banners.length);
@@ -165,7 +329,7 @@ export default function Home() {
     setBannerIndex((prev) => (prev - 1 + banners.length) % banners.length);
   };
 
-  const handleBannerImageClick = (bannerId: number) => {
+  const handleBannerImageClick = (bannerId: string) => {
     setImageIndices((prev) => {
       const currentIndex = prev[bannerId] || 0;
       const banner = banners.find((b) => b.id === bannerId);
@@ -179,410 +343,209 @@ export default function Home() {
 
   return (
     <>
-      <Head>
-        <title>KickUp - Football and Futsal Games Platform</title>
-        <meta
-          name="description"
-          content="Platform for organizing football and futsal games. Find fields, games and teams."
-        />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+      <SeoHead
+        description="KickUp - Futbol va futzal platformasi. O'zingizga mos match toping."
+      />
 
       <Box className={styles.homePage}>
         {/* Banner/Carousel Section */}
         <Box className={styles.bannerSection}>
-          <Container maxWidth="lg">
-            <Box className={styles.bannerWrapper}>
-              <IconButton
-                className={styles.bannerNavButton}
-                onClick={prevBanner}
-                sx={{ left: -24 }}
-              >
-                <ChevronLeftIcon />
-              </IconButton>
-              
-              <Box className={styles.bannerContainer}>
-                <Box className={styles.bannerContent}>
-                  <Box
-                    className={styles.bannerSlide}
-                    sx={{
-                      transform: `translateX(-${bannerIndex * 100}%)`,
-                      transition: 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
-                    }}
-                  >
-                    {banners.map((banner, bannerIdx) => {
-                      const currentImageIndex = imageIndices[banner.id] ?? 0;
-                      const currentImage = banner.images?.[currentImageIndex] || banner.images[0];
-                      const isVisible = bannerIdx === bannerIndex;
-                      
-                      return (
-                        <Box key={banner.id} className={styles.bannerItem}>
-                          <Box
-                            className={styles.bannerPlaceholder}
-                            sx={{
-                              background: `linear-gradient(135deg, ${banner.color}cc 0%, ${banner.color}99 100%)`,
-                              position: 'relative',
-                              overflow: 'hidden',
-                              cursor: 'pointer',
-                            }}
-                            onClick={() => handleBannerImageClick(banner.id)}
-                          >
-                            {/* Background Image with transition */}
-                            <Box
-                              className={styles.bannerImage}
-                              sx={{
-                                backgroundImage: currentImage ? `url("${currentImage}")` : 'none',
-                                transition: 'background-image 0.5s ease-in-out, opacity 0.5s ease-in-out',
-                                opacity: currentImage ? 1 : 0,
-                              }}
-                            />
-                            {/* Preload images for visible banner */}
-                            {isVisible && banner.images.map((img, idx) => (
-                              <Box
-                                key={`preload-${banner.id}-${idx}`}
-                                component="img"
-                                src={img}
-                                alt=""
-                                sx={{
-                                  position: 'absolute',
-                                  width: 0,
-                                  height: 0,
-                                  opacity: 0,
-                                  pointerEvents: 'none',
-                                  visibility: 'hidden',
-                                }}
-                              />
-                            ))}
-                            <Box className={styles.bannerOverlay} />
-                            
-                            {/* Image indicators */}
-                            <Box className={styles.bannerImageIndicators}>
-                              {banner.images.map((_, imgIndex) => (
-                                <Box
-                                  key={imgIndex}
-                                  className={`${styles.bannerImageDot} ${
-                                    imgIndex === currentImageIndex ? styles.bannerImageDotActive : ''
-                                  }`}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setImageIndices((prev) => ({
-                                      ...prev,
-                                      [banner.id]: imgIndex,
-                                    }));
-                                  }}
-                                />
-                              ))}
-                            </Box>
-
-                            <Box className={styles.bannerInner}>
-                              <Box className={styles.bannerIcon}>
-                                {banner.id === 1 && (
-                                  <SportsSoccerIcon sx={{ fontSize: 80, color: 'white' }} />
-                                )}
-                                {banner.id === 2 && (
-                                  <LocalFloristIcon sx={{ fontSize: 80, color: 'white' }} />
-                                )}
-                                {banner.id === 3 && (
-                                  <EmojiEventsIcon sx={{ fontSize: 80, color: 'white' }} />
-                                )}
-                              </Box>
-                              <Typography variant="h4" className={styles.bannerTitle}>
-                                {banner.title}
-                              </Typography>
-                              <Typography variant="h6" className={styles.bannerSubtitle}>
-                                {banner.subtitle}
-                              </Typography>
-                              <Button
-                                variant="contained"
-                                className={styles.bannerButton}
-                                component={Link}
-                                href={banner.id === 1 ? "/games" : banner.id === 2 ? "/beginner" : "/team-league"}
-                                onClick={(e) => e.stopPropagation()}
-                                sx={{
-                                  bgcolor: 'white',
-                                  color: banner.color,
-                                  '&:hover': { bgcolor: 'rgba(255,255,255,0.9)' },
-                                }}
-                              >
-                                {banner.id === 1 ? "Join Now" : banner.id === 2 ? "Get Started" : "Join League"}
-                              </Button>
-                            </Box>
-                          </Box>
-                        </Box>
-                      );
-                    })}
+          <Box className={styles.bannerContainer}>
+            <Box
+              className={styles.bannerSlide}
+              sx={{
+                transform: `translateX(-${bannerIndex * 100}%)`,
+              }}
+            >
+              {banners.map((banner) => (
+                <Box key={banner.id} className={styles.bannerItem}>
+                  {banner.videoUrl ? (
+                    <video
+                      autoPlay
+                      muted
+                      loop
+                      playsInline
+                      className={styles.bannerVideo}
+                      poster={banner.images[0]}
+                    >
+                      <source src={banner.videoUrl} type="video/mp4" />
+                    </video>
+                  ) : (
+                    <Box className={styles.bannerImage}>
+                      <Image
+                        src={banner.images[0]}
+                        alt={banner.title}
+                        fill
+                        style={{ objectFit: 'cover' }}
+                        priority={bannerIndex === 0}
+                        sizes="(max-width: 768px) 100vw, 85vw"
+                      />
+                    </Box>
+                  )}
+                  <Box className={styles.bannerOverlay} />
+                  <Box className={styles.bannerContent}>
+                    <Typography className={styles.bannerTitle}>{banner.title}</Typography>
+                    <Typography className={styles.bannerSubtitle}>{banner.subtitle}</Typography>
                   </Box>
-                </Box>
-                <Box className={styles.bannerIndicators}>
-                  <Typography variant="body2" className={styles.bannerIndicator}>
-                    {bannerIndex + 1} | {banners.length}
-                  </Typography>
-                </Box>
-              </Box>
-
-              <IconButton
-                className={styles.bannerNavButton}
-                onClick={nextBanner}
-                sx={{ right: -24 }}
-              >
-                <ChevronRightIcon />
-              </IconButton>
-            </Box>
-          </Container>
-        </Box>
-
-        {/* Quick Menu Buttons */}
-        <Container maxWidth="lg">
-          <Box className={styles.quickMenu}>
-            <Card className={styles.quickMenuItem} component={Link} href="/menu">
-              <CardContent className={styles.quickMenuContent}>
-                <MenuIcon sx={{ fontSize: 32, color: '#0ea5e9' }} />
-                <Typography variant="body2" className={styles.quickMenuText}>
-                  All Menu
-                </Typography>
-              </CardContent>
-            </Card>
-
-            <Card className={styles.quickMenuItem} component={Link} href="/football-match">
-              <CardContent className={styles.quickMenuContent}>
-                <SportsSoccerIcon sx={{ fontSize: 32, color: '#0ea5e9' }} />
-                <Typography variant="body2" className={styles.quickMenuText}>
-                  Football Match
-                </Typography>
-              </CardContent>
-            </Card>
-
-            <Card className={styles.quickMenuItem} component={Link} href="/beginner">
-              <CardContent className={styles.quickMenuContent}>
-                <LocalFloristIcon sx={{ fontSize: 32, color: '#10b981' }} />
-                <Typography variant="body2" className={styles.quickMenuText}>
-                  Beginner
-                </Typography>
-              </CardContent>
-            </Card>
-
-            <Card className={styles.quickMenuItem} component={Link} href="/team-league">
-              <CardContent className={styles.quickMenuContent}>
-                <EmojiEventsIcon sx={{ fontSize: 32, color: '#10b981' }} />
-                <Typography variant="body2" className={styles.quickMenuText}>
-                  Team League
-                </Typography>
-              </CardContent>
-            </Card>
-
-            <Card className={styles.quickMenuItem} component={Link} href="/get-started">
-              <CardContent className={styles.quickMenuContent}>
-                <PlayArrowIcon sx={{ fontSize: 32, color: '#f59e0b' }} />
-                <Typography variant="body2" className={styles.quickMenuText}>
-                  Get Started
-                </Typography>
-              </CardContent>
-            </Card>
-          </Box>
-        </Container>
-
-        {/* Calendar and Filters Section */}
-        <Container maxWidth="lg">
-          <Box className={styles.calendarFiltersSection}>
-            {/* Calendar Dates */}
-            <Box className={styles.calendarDates}>
-              {dates.map((date, index) => (
-                <Box
-                  key={index}
-                  className={`${styles.dateItem} ${index === selectedDate ? styles.dateItemActive : ''}`}
-                  onClick={() => setSelectedDate(index)}
-                >
-                  <Typography variant="body2" className={styles.dateNumber}>
-                    {date.getDate()}
-                  </Typography>
-                  <Typography variant="caption" className={styles.dateDay}>
-                    {getShortDayName(date)}
-                  </Typography>
                 </Box>
               ))}
             </Box>
-
-            {/* Filters */}
-            <Box className={styles.filters}>
-              <Chip
-                icon={<LocationOnIcon />}
-                label="Seoul"
-                className={styles.filterChip}
-                clickable
-              />
-              <Chip
-                label="Hide Closed"
-                className={styles.filterChip}
-                clickable
-              />
-              <Chip
-                icon={<LocalOfferIcon />}
-                label="Benefits"
-                className={styles.filterChip}
-                clickable
-              />
-              <Chip
-                icon={<WcIcon />}
-                label="Gender"
-                className={styles.filterChip}
-                clickable
-              />
-              <Chip
-                icon={<TrendingUpIcon />}
-                label="Level"
-                className={styles.filterChip}
-                clickable
-              />
-              <Chip
-                icon={<HomeIcon />}
-                label="Indoor/Shade"
-                className={styles.filterChip}
-                clickable
-              />
+            <Box className={styles.bannerIndicators}>
+              {bannerIndex + 1} / {banners.length}
             </Box>
           </Box>
-        </Container>
+        </Box>
 
-        {/* Closing Soon Banner */}
-        <Container maxWidth="lg">
-          <Box className={styles.closingSoonBanner}>
-            <Box className={styles.closingSoonContent}>
-              <WarningIcon className={styles.closingSoonIcon} />
-              <Typography variant="body1" className={styles.closingSoonText}>
-                Closing Soon! Applications close in a moment of hesitation
-              </Typography>
+        {/* Quick Menu — Matches/Beginner apply filter via URL and stay on home; Team/Menu navigate */}
+        <Box className={styles.quickMenu}>
+          <Box
+            className={styles.quickMenuItem}
+            onClick={() => {
+              router.push("/");
+              window.scrollTo({ top: 0, behavior: "smooth" });
+              setTimeout(() => {
+                document.getElementById("match-list")?.scrollIntoView({ behavior: "smooth", block: "start" });
+              }, 120);
+            }}
+            sx={{ cursor: "pointer" }}
+            role="link"
+            aria-label="Show all matches"
+          >
+            <Box className={`${styles.quickMenuIconBox} ${activeCategory === "all" || activeCategory === "social" ? styles.active : ""}`}>
+              <SportsSoccerIcon sx={{ fontSize: 24, color: "var(--plab-black)" }} />
             </Box>
-            <Card className={styles.closingSoonCard} component={Link} href="/match/1">
-              <CardContent className={styles.closingSoonCardContent}>
-                <Box className={styles.closingSoonTime}>
-                  <Typography variant="h6" className={styles.closingSoonTimeText}>
-                    23:59
-                  </Typography>
-                  <Chip
-                    label="Closing Soon"
-                    size="small"
-                    className={styles.closingSoonChip}
-                  />
-                </Box>
-                <Typography variant="body1" className={styles.closingSoonField}>
-                  Seoul Eunpyeong Lotte Mall Field A
-                </Typography>
-              </CardContent>
-            </Card>
+            <Typography className={styles.quickMenuText}>Matches</Typography>
           </Box>
+          <Box
+            className={styles.quickMenuItem}
+            onClick={() => {
+              router.push({ pathname: "/", query: { cat: "beginner" } });
+              window.scrollTo({ top: 0, behavior: "smooth" });
+              setTimeout(() => {
+                document.getElementById("match-list")?.scrollIntoView({ behavior: "smooth", block: "start" });
+              }, 120);
+            }}
+            sx={{ cursor: "pointer" }}
+            role="link"
+            aria-label="Show beginner matches"
+          >
+            <Box className={`${styles.quickMenuIconBox} ${activeCategory === "beginner" ? styles.active : ""}`}>
+              <LocalFloristIcon sx={{ fontSize: 24, color: "#00E377" }} />
+            </Box>
+            <Typography className={styles.quickMenuText}>Beginner</Typography>
+          </Box>
+          <Link href="/team" className={styles.quickMenuItem} scroll>
+            <Box className={`${styles.quickMenuIconBox} ${activeCategory === "team" ? styles.active : ""}`}>
+              <GroupIcon sx={{ fontSize: 24, color: "var(--plab-blue)" }} />
+            </Box>
+            <Typography className={styles.quickMenuText}>Team</Typography>
+          </Link>
+          <Link href="/menu" className={styles.quickMenuItem} scroll>
+            <Box className={styles.quickMenuIconBox}>
+              <MenuIcon sx={{ fontSize: 24, color: "var(--plab-gray)" }} />
+            </Box>
+            <Typography className={styles.quickMenuText}>Menu</Typography>
+          </Link>
+        </Box>
+
+        {/* Filters (Clean) */}
+        <Container maxWidth="lg" sx={{ mb: 2 }}>
+          <MatchFilters
+            filters={filters}
+            onFiltersChange={setFilters}
+            onReset={() => {
+              setFilters(defaultFilters);
+              setSelectedDate(-1);
+            }}
+            selectedDateValue={selectedDate >= 0 && dates[selectedDate] ? dates[selectedDate] : null}
+            onDateSelect={(date) => {
+              if (!date) {
+                setSelectedDate(-1);
+                return;
+              }
+              if (!dates.length) {
+                setSelectedDate(-1);
+                return;
+              }
+              const idx = dates.findIndex(
+                (d) =>
+                  d.getFullYear() === date.getFullYear() &&
+                  d.getMonth() === date.getMonth() &&
+                  d.getDate() === date.getDate()
+              );
+              setSelectedDate(idx >= 0 ? idx : -1);
+            }}
+          />
         </Container>
 
-        {/* Match List Section */}
-        <Container maxWidth="lg">
-          <Box className={styles.matchListSection}>
-            {matches.map((match, index) => (
-              <Card
-                key={index}
-                className={styles.matchCard}
-                component={Link}
-                href={`/match/${index + 1}`}
-              >
-                <CardContent className={styles.matchCardContent}>
-                  <Box className={styles.matchLeft}>
-                    <Typography variant="h6" className={styles.matchTime}>
-                      {match.time}
-                    </Typography>
-                    {match.badge && (
-                      <Box className={styles.matchBadge}>
-                        <AutoAwesomeIcon sx={{ fontSize: 16 }} />
-                        <Typography variant="caption" className={styles.matchBadgeText}>
-                          {match.badge}
-                        </Typography>
-                      </Box>
-                    )}
-                    {match.closingSoon && (
-                      <Box className={styles.matchBadge}>
-                        <WarningIcon sx={{ fontSize: 16 }} />
-                        <Typography variant="caption" className={styles.matchBadgeText}>
-                          Closing Soon
-                        </Typography>
-                      </Box>
-                    )}
-                    <Typography variant="h6" className={styles.matchField}>
-                      {match.field}
-                    </Typography>
-                    <Box className={styles.matchDetails}>
-                      {match.details.map((detail, idx) => (
-                        <React.Fragment key={idx}>
-                          {idx > 0 && <span className={styles.detailSeparator}>·</span>}
-                          <Typography variant="body2" className={styles.matchDetail}>
-                            {detail}
-                          </Typography>
-                        </React.Fragment>
-                      ))}
-                    </Box>
-                  </Box>
-                  <Box className={styles.matchRight}>
-                    <Avatar
-                      variant="rounded"
-                      className={styles.matchImage}
-                      sx={{ width: 120, height: 120 }}
-                    >
-                      <SportsSoccerIcon sx={{ fontSize: 48 }} />
-                    </Avatar>
-                  </Box>
-                </CardContent>
-              </Card>
-            ))}
+        {/* Sticky Date Slider */}
+        <Box className={styles.dateSection}>
+          <Box className={styles.dateSlider}>
+            {/* "All" option to clear date filter */}
+            <div
+              className={`${styles.dateItem} ${selectedDate === -1 ? styles.active : ''}`}
+              onClick={() => setSelectedDate(-1)}
+            >
+              <span className={styles.dateDay}>All</span>
+              <span className={styles.dateNumber}>★</span>
+            </div>
+            {mounted &&
+              dates.map((date, index) => {
+                const isSelected = selectedDate === index;
+                return (
+                  <div
+                    key={index}
+                    className={`${styles.dateItem} ${isSelected ? styles.active : ''}`}
+                    onClick={() => setSelectedDate(isSelected ? -1 : index)}
+                  >
+                    <span className={styles.dateDay}>{getShortDayName(date)}</span>
+                    <span className={styles.dateNumber}>{date.getDate()}</span>
+                  </div>
+                );
+              })}
+          </Box>
+        </Box>
 
-            <Box className={styles.viewScheduleButton}>
+        {/* Match List — scroll target when Matches/Beginner is clicked */}
+        <Box id="match-list" className={styles.matchList}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+            <div className={styles.sectionTitle}>
+              <LocalOfferIcon fontSize="small" sx={{ color: 'var(--plab-green)' }} />
+              {filteredMatches.length} Matches Found
+            </div>
+            {(isAdmin || isAgent) && (
               <Button
-                variant="outlined"
-                className={styles.scheduleButton}
-                component={Link}
-                href="/schedule"
+                variant="contained"
+                size="small"
+                onClick={() => router.push('/match/create')}
+                sx={{
+                  borderRadius: 2,
+                  textTransform: 'none',
+                  bgcolor: 'var(--plab-green)',
+                  '&:hover': { bgcolor: 'var(--plab-green-dark)' }
+                }}
               >
-                View Next Monday Schedule
+                + Create Match
               </Button>
-            </Box>
+            )}
           </Box>
-        </Container>
 
-        {/* Recommendation Section */}
-        <Container maxWidth="lg">
-          <Box className={styles.recommendationSection}>
-            <Box className={styles.recommendationContent}>
-              <Box className={styles.recommendationText}>
-                <Typography variant="h6" className={styles.recommendationTitle}>
-                  Can't find the match you want?
-                </Typography>
-                <Typography variant="body1" className={styles.recommendationSubtitle}>
-                  Recommend a place where you want to play.
-                </Typography>
-                <Button
-                  variant="contained"
-                  className={styles.recommendButton}
-                  startIcon={<ThumbUpIcon />}
-                  component={Link}
-                  href="/recommend"
-                >
-                  Recommend
-                </Button>
-              </Box>
-              <Box className={styles.recommendationImage}>
-                <Typography variant="body2" className={styles.recommendationImageText}>
-                  Can't find a match that fits you?
-                </Typography>
-              </Box>
+          {loadingMatches ? (
+            <Box sx={{ p: 4, textAlign: 'center' }}>Loading matches...</Box>
+          ) : filteredMatches.length === 0 ? (
+            <Box sx={{ p: 4, textAlign: 'center', color: 'text.secondary' }}>
+              <SportsSoccerIcon sx={{ fontSize: 48, opacity: 0.3, mb: 1 }} />
+              <div>No matches found</div>
+              <div style={{ fontSize: 12, marginTop: 4 }}>Try different filters or check back later</div>
             </Box>
-          </Box>
-        </Container>
+          ) : (
+            filteredMatches.map((match) => (
+              <MatchCard key={match._id} match={match} />
+            ))
+          )}
+        </Box>
 
-        {/* Support Chat Button */}
-        <IconButton
-          className={styles.supportButton}
-          component={Link}
-          href="/support"
-        >
-          <SupportAgentIcon sx={{ fontSize: 32, color: 'white' }} />
-        </IconButton>
-      </Box>
+      </Box >
     </>
   );
 }

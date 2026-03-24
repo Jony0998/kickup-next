@@ -3,16 +3,23 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  background: var(--bg-primary);
+  transition: background-color 0.3s ease;
 }
 
 .main {
   flex-grow: 1;
+  background: var(--bg-primary);
+  transition: background-color 0.3s ease;
 }
 
 // AppBar styles
 .appBar {
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.3s ease, background-color 0.3s ease;
+  background-color: var(--bg-secondary); // Safe fallback
+  z-index: 1100;
+
   .toolbar {
     padding-left: 16px;
     padding-right: 16px;
@@ -25,7 +32,7 @@
   text-decoration: none;
   color: inherit;
   margin-right: 32px;
-  
+
   &:hover {
     opacity: 0.9;
   }
@@ -43,7 +50,7 @@
   display: flex;
   flex-grow: 1;
   gap: 8px;
-  
+
   @media (max-width: 960px) {
     display: none;
   }
@@ -54,7 +61,7 @@
   align-items: center;
   gap: 8px;
   margin-right: 16px;
-  
+
   @media (max-width: 1200px) {
     display: none;
   }
@@ -63,7 +70,7 @@
 .searchBar {
   min-width: 300px;
   max-width: 400px;
-  
+
   @media (max-width: 1400px) {
     min-width: 250px;
     max-width: 300px;
@@ -73,7 +80,7 @@
 .authButtons {
   display: flex;
   gap: 8px;
-  
+
   @media (max-width: 960px) {
     display: none;
   }
@@ -90,7 +97,7 @@
   @media (min-width: 960px) {
     display: none;
   }
-  
+
   .drawerPaper {
     box-sizing: border-box;
     width: 240px;
@@ -99,16 +106,16 @@
 
 .drawerContent {
   text-align: center;
-  
+
   .drawerTitle {
     margin-top: 16px;
     margin-bottom: 16px;
   }
-  
+
   .drawerList {
     .drawerListItem {
       padding: 0;
-      
+
       .drawerListItemButton {
         text-align: center;
       }
@@ -119,9 +126,42 @@
 .drawerAuthButton {
   background-color: #0ea5e9;
   color: white;
-  
+
   &:hover {
     background-color: #0284c7;
   }
 }
 
+// Global Support FAB (Help / Customer support) — above BottomNav on mobile, safe-area aware
+.supportFab {
+  position: fixed;
+  bottom: calc(56px + env(safe-area-inset-bottom, 0px) + 16px);
+  right: max(20px, env(safe-area-inset-right, 0px) + 12px);
+  z-index: 90;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: var(--plab-bg, #f5f5f5);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  border: 1px solid var(--plab-light-gray, #e5e7eb);
+  color: var(--plab-black, #191f28);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+
+  @media (min-width: 900px) {
+    bottom: 24px;
+    right: 24px;
+  }
+
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}

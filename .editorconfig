@@ -1,0 +1,5 @@
+# .env fayllarini UTF-16 emas, UTF-8 da saqlang (Docker Compose talabi)
+root = true
+
+[.env*]
+charset = utf-8

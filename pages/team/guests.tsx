@@ -1,6 +1,7 @@
 import Head from "next/head";
 import Link from "next/link";
-import React, { useState } from "react";
+import { useRouter } from "next/router";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Container,
@@ -14,6 +15,13 @@ import {
   MenuItem,
   FormControl,
   IconButton,
+  CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Alert,
 } from "@mui/material";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -22,13 +30,70 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import WcIcon from "@mui/icons-material/Wc";
 import PeopleIcon from "@mui/icons-material/People";
 import AddIcon from "@mui/icons-material/Add";
+import { getGuestPosts, applyAsGuest, GuestPost } from "@/lib/guestRecruitmentApi";
+import { useAuth } from "@/contexts/AuthContext";
 import styles from "@/styles/team.module.scss";
 
 export default function RecruitGuestsPage() {
+  const router = useRouter();
+  const { isAuthenticated } = useAuth();
   const [filterValue, setFilterValue] = useState("all");
+  const [guestPosts, setGuestPosts] = useState<GuestPost[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [applyDialogOpen, setApplyDialogOpen] = useState(false);
+  const [selectedPost, setSelectedPost] = useState<GuestPost | null>(null);
+  const [applying, setApplying] = useState(false);
+  const [error, setError] = useState("");
 
-  // Mock guest recruitment posts
-  const guestPosts = [
+  useEffect(() => {
+    if (router.query.action === "create") {
+      setCreateDialogOpen(true);
+    }
+    loadGuestPosts();
+  }, [filterValue, router.query]);
+
+  const loadGuestPosts = async () => {
+    try {
+      setLoading(true);
+      const filter = filterValue !== "all" ? { gender: filterValue } : undefined;
+      const posts = await getGuestPosts(filter);
+      setGuestPosts(posts);
+    } catch (error) {
+      console.error("Error loading guest posts:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleApply = async (post: GuestPost) => {
+    if (!isAuthenticated) {
+      router.push("/login");
+      return;
+    }
+    setSelectedPost(post);
+    setApplyDialogOpen(true);
+  };
+
+  const confirmApply = async () => {
+    if (!selectedPost) return;
+    try {
+      setApplying(true);
+      setError("");
+      await applyAsGuest(selectedPost.id);
+      setApplyDialogOpen(false);
+      setSelectedPost(null);
+      // Reload posts
+      loadGuestPosts();
+    } catch (err: any) {
+      setError(err?.message || "Failed to apply as guest");
+    } finally {
+      setApplying(false);
+    }
+  };
+
+  // Fallback mock data
+  const mockGuestPosts = [
     {
       id: 1,
       teamName: "FC Warriors",
@@ -86,7 +151,6 @@ export default function RecruitGuestsPage() {
           content="Find guest players for your matches or join as a guest player on KickUp."
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <Box className={styles.teamPage}>
@@ -134,7 +198,17 @@ export default function RecruitGuestsPage() {
         {/* Guest Posts List */}
         <Container maxWidth="lg">
           <Box className={styles.matchList}>
-            {guestPosts.map((post) => (
+            {loading ? (
+              <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+                <CircularProgress />
+              </Box>
+            ) : guestPosts.length === 0 ? (
+              <Box className={styles.emptyState}>
+                <Typography variant="h6">No guest posts available</Typography>
+                <Typography variant="body2">Be the first to post a guest recruitment request</Typography>
+              </Box>
+            ) : (
+              guestPosts.map((post) => (
               <Card key={post.id} className={styles.matchCard} component={Link} href={`/team/guests/${post.id}`}>
                 <CardContent className={styles.matchCardContent}>
                   <Box className={styles.matchHeader}>
@@ -213,26 +287,63 @@ export default function RecruitGuestsPage() {
                     <Button
                       variant="contained"
                       className={styles.recruitmentActionButton}
-                      component={Link}
-                      href={`/team/guests/${post.id}/apply`}
+                      onClick={() => handleApply(post)}
                     >
                       Apply as Guest
                     </Button>
                   </Box>
                 </CardContent>
               </Card>
-            ))}
+              ))
+            )}
           </Box>
         </Container>
 
         {/* Floating Action Button */}
         <IconButton
           className={styles.floatingActionButton}
-          component={Link}
-          href="/team/guests/create"
+          onClick={() => setCreateDialogOpen(true)}
         >
           <AddIcon />
         </IconButton>
+
+        {/* Apply Dialog */}
+        <Dialog open={applyDialogOpen} onClose={() => setApplyDialogOpen(false)} maxWidth="sm" fullWidth>
+          <DialogTitle>Apply as Guest Player</DialogTitle>
+          <DialogContent>
+            {error && (
+              <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError("")}>
+                {error}
+              </Alert>
+            )}
+            {selectedPost && (
+              <Box>
+                <Typography variant="body1" sx={{ mb: 2 }}>
+                  You are applying to join <strong>{selectedPost.teamName}</strong> as a guest player for their match on{" "}
+                  <strong>{selectedPost.matchDate}</strong> at <strong>{selectedPost.matchTime}</strong>.
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  The team needs {selectedPost.needed} guest player{selectedPost.needed > 1 ? "s" : ""}.
+                </Typography>
+              </Box>
+            )}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setApplyDialogOpen(false)} disabled={applying}>
+              Cancel
+            </Button>
+            <Button onClick={confirmApply} variant="contained" disabled={applying}>
+              {applying ? <CircularProgress size={20} /> : "Confirm Application"}
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        {/* Create Post Dialog - Link to create page */}
+        {createDialogOpen && (
+          <Box>
+            {router.push("/team/guests/create")}
+          </Box>
+        )}
       </Box>
     </>
   );

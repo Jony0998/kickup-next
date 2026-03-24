@@ -1,242 +1,366 @@
 import Head from "next/head";
-import Link from "next/link";
-import React, { useState } from "react";
+import { useRouter } from "next/router";
+import { useState, useEffect, useRef } from "react";
+import React from "react";
 import {
   Box,
   Container,
   Typography,
-  Button,
   Card,
   CardContent,
   TextField,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  Avatar,
+  Button,
+  Alert,
+  CircularProgress,
   Chip,
   IconButton,
+  Avatar,
 } from "@mui/material";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import AddIcon from "@mui/icons-material/Add";
+import CloseIcon from "@mui/icons-material/Close";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
-import DeleteIcon from "@mui/icons-material/Delete";
-import styles from "@/styles/team.module.scss";
+import { useAuth } from "@/contexts/AuthContext";
+import { createTeam, inviteTeamMember } from "@/lib/teamApi";
+import Layout from "@/components/Layout";
+
+const MAX_LOGO_SIZE_MB = 5;
 
 export default function CreateTeamPage() {
-  const [teamName, setTeamName] = useState("");
-  const [teamDescription, setTeamDescription] = useState("");
-  const [gender, setGender] = useState("");
-  const [level, setLevel] = useState("");
-  const [location, setLocation] = useState("");
-  const [teamLogo, setTeamLogo] = useState<string | null>(null);
+  const router = useRouter();
+  const { isAuthenticated } = useAuth();
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [memberEmails, setMemberEmails] = useState<string[]>([]);
+  const [currentEmail, setCurrentEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setTeamLogo(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push("/login");
+    }
+  }, [isAuthenticated, router]);
+
+  if (!isAuthenticated) {
+    return null;
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+
+    if (!name.trim()) {
+      setError("Team name is required");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      console.log("CreateTeamPage: Calling createTeam API...");
+      const team = await createTeam(name.trim(), description.trim() || undefined, {
+        logo: logoUrl || undefined,
+      });
+      console.log("CreateTeamPage: Team created successfully!", team);
+
+      // Invite members if any (Note: Backend should support email-based invitations)
+      if (memberEmails.length > 0) {
+        for (const email of memberEmails) {
+          try {
+            // Try to invite by email - backend should handle this
+            // If backend only supports userId, we'll need to look up users by email first
+            await inviteTeamMember(team.id, email);
+          } catch (err) {
+            console.error(`Failed to invite ${email}:`, err);
+            // Continue with other invitations even if one fails
+          }
+        }
+      }
+
+      router.push(`/team/${team.id}`);
+    } catch (err: any) {
+      console.error("Error creating team:", err);
+      const msg = err?.message || "Failed to create team";
+      setError(msg);
+      window.alert("Error: " + msg);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle form submission
-    console.log("Team created:", {
-      teamName,
-      teamDescription,
-      gender,
-      level,
-      location,
-      teamLogo,
-    });
+  const handleAddEmail = () => {
+    if (currentEmail.trim() && !memberEmails.includes(currentEmail.trim())) {
+      setMemberEmails([...memberEmails, currentEmail.trim()]);
+      setCurrentEmail("");
+    }
+  };
+
+  const handleRemoveEmail = (email: string) => {
+    setMemberEmails(memberEmails.filter((e) => e !== email));
+  };
+
+  const handleLogoClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleLogoFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > MAX_LOGO_SIZE_MB * 1024 * 1024) {
+      setError(`Image size must not exceed ${MAX_LOGO_SIZE_MB}MB`);
+      return;
+    }
+    if (!file.type.match(/^image\/(jpeg|jpg|png|gif)$/)) {
+      setError("Only images (jpg, png, gif) are allowed");
+      return;
+    }
+
+    setUploadingLogo(true);
+    setError("");
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    if (!token) {
+      setError("Login qiling yoki qayta kirish qiling.");
+      setUploadingLogo(false);
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/upload-image?type=teams", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error((errData as any).message || "Failed to upload image");
+      }
+
+      const data = await response.json();
+      if (data.success && data.url) {
+        setLogoUrl(data.url);
+      } else {
+        throw new Error("Could not get image URL");
+      }
+    } catch (err: any) {
+      setError(err?.message || "Error uploading image");
+    } finally {
+      setUploadingLogo(false);
+      e.target.value = "";
+    }
+  };
+
+  const handleRemoveLogo = () => {
+    setLogoUrl(null);
   };
 
   return (
     <>
       <Head>
         <title>Create Team - KickUp</title>
-        <meta
-          name="description"
-          content="Create your own team on KickUp and start competing."
-        />
+        <meta name="description" content="Create a new team" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Box className={styles.teamPage}>
-        {/* Header */}
-        <Container maxWidth="lg">
-          <Box className={styles.pageHeader}>
-            <Button
-              component={Link}
-              href="/team"
-              startIcon={<ArrowBackIcon />}
-              className={styles.backButton}
-            >
-              Back to Team
-            </Button>
-            <Box className={styles.pageTitleSection}>
-              <AddCircleIcon className={styles.pageTitleIcon} />
-              <Typography variant="h4" className={styles.pageTitle}>
+      <Box sx={{ bgcolor: "background.default", minHeight: "100vh", py: 4 }}>
+        <Container maxWidth="sm">
+          <Button
+            startIcon={<ArrowBackIcon />}
+            onClick={() => router.back()}
+            sx={{ mb: 3, textTransform: "none" }}
+          >
+            Back
+          </Button>
+
+          <Card sx={{ boxShadow: 2 }}>
+            <CardContent>
+              <Typography variant="h4" sx={{ fontWeight: 700, mb: 3, textAlign: "center" }}>
                 Create New Team
               </Typography>
-            </Box>
-            <Typography variant="body1" className={styles.pageSubtitle}>
-              Start your own team and compete in leagues
-            </Typography>
-          </Box>
-        </Container>
 
-        {/* Create Team Form */}
-        <Container maxWidth="md">
-          <Card className={styles.createTeamCard}>
-            <CardContent className={styles.createTeamCardContent}>
+              {error && (
+                <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError("")}>
+                  {error}
+                </Alert>
+              )}
+
               <form onSubmit={handleSubmit}>
-                {/* Team Logo */}
-                <Box className={styles.logoUploadSection}>
-                  <Typography variant="h6" className={styles.formSectionTitle}>
-                    Team Logo
-                  </Typography>
-                  <Box className={styles.logoUploadBox}>
+                {/* Team logo upload */}
+                <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", mb: 3 }}>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/jpeg,image/jpg,image/png,image/gif"
+                    onChange={handleLogoFileChange}
+                    style={{ display: "none" }}
+                  />
+                  <Box
+                    onClick={uploadingLogo ? undefined : handleLogoClick}
+                    sx={{
+                      position: "relative",
+                      cursor: uploadingLogo ? "wait" : "pointer",
+                      "&:hover .logo-overlay": { opacity: 1 },
+                    }}
+                  >
                     <Avatar
-                      src={teamLogo || undefined}
-                      className={styles.teamLogoPreview}
-                      sx={{ width: 120, height: 120 }}
+                      src={logoUrl || undefined}
+                      sx={{
+                        width: 120,
+                        height: 120,
+                        bgcolor: "grey.200",
+                        fontSize: 48,
+                        border: "3px dashed",
+                        borderColor: logoUrl ? "transparent" : "grey.400",
+                      }}
                     >
-                      {teamName[0] || "T"}
+                      {name ? name[0].toUpperCase() : "?"}
                     </Avatar>
-                    <Box className={styles.logoUploadActions}>
-                      <input
-                        accept="image/*"
-                        style={{ display: "none" }}
-                        id="logo-upload"
-                        type="file"
-                        onChange={handleLogoUpload}
-                      />
-                      <label htmlFor="logo-upload">
-                        <Button
-                          variant="outlined"
-                          component="span"
-                          startIcon={<PhotoCameraIcon />}
-                          className={styles.uploadButton}
-                        >
-                          Upload Logo
-                        </Button>
-                      </label>
-                      {teamLogo && (
-                        <IconButton
-                          onClick={() => setTeamLogo(null)}
-                          className={styles.deleteLogoButton}
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      )}
-                    </Box>
-                  </Box>
-                </Box>
-
-                {/* Team Name */}
-                <Box className={styles.formSection}>
-                  <Typography variant="h6" className={styles.formSectionTitle}>
-                    Team Name *
-                  </Typography>
-                  <TextField
-                    fullWidth
-                    required
-                    value={teamName}
-                    onChange={(e) => setTeamName(e.target.value)}
-                    placeholder="Enter your team name"
-                    className={styles.formField}
-                  />
-                </Box>
-
-                {/* Team Description */}
-                <Box className={styles.formSection}>
-                  <Typography variant="h6" className={styles.formSectionTitle}>
-                    Team Description
-                  </Typography>
-                  <TextField
-                    fullWidth
-                    multiline
-                    rows={4}
-                    value={teamDescription}
-                    onChange={(e) => setTeamDescription(e.target.value)}
-                    placeholder="Tell us about your team..."
-                    className={styles.formField}
-                  />
-                </Box>
-
-                {/* Team Details */}
-                <Box className={styles.formSection}>
-                  <Typography variant="h6" className={styles.formSectionTitle}>
-                    Team Details
-                  </Typography>
-                  <Box className={styles.formRow}>
-                    <FormControl fullWidth className={styles.formField}>
-                      <InputLabel>Gender</InputLabel>
-                      <Select
-                        value={gender}
-                        onChange={(e) => setGender(e.target.value)}
-                        label="Gender"
-                      >
-                        <MenuItem value="male">Male</MenuItem>
-                        <MenuItem value="female">Female</MenuItem>
-                        <MenuItem value="mixed">Mixed</MenuItem>
-                      </Select>
-                    </FormControl>
-
-                    <FormControl fullWidth className={styles.formField}>
-                      <InputLabel>Level</InputLabel>
-                      <Select
-                        value={level}
-                        onChange={(e) => setLevel(e.target.value)}
-                        label="Level"
-                      >
-                        <MenuItem value="beginner">Beginner</MenuItem>
-                        <MenuItem value="intermediate">Intermediate</MenuItem>
-                        <MenuItem value="advanced">Advanced</MenuItem>
-                        <MenuItem value="all">All Levels</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </Box>
-
-                  <FormControl fullWidth className={styles.formField}>
-                    <InputLabel>Location</InputLabel>
-                    <Select
-                      value={location}
-                      onChange={(e) => setLocation(e.target.value)}
-                      label="Location"
+                    <Box
+                      className="logo-overlay"
+                      sx={{
+                        position: "absolute",
+                        inset: 0,
+                        borderRadius: "50%",
+                        bgcolor: "rgba(0,0,0,0.5)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        opacity: 0,
+                        transition: "opacity 0.2s",
+                      }}
                     >
-                      <MenuItem value="seoul">Seoul</MenuItem>
-                      <MenuItem value="busan">Busan</MenuItem>
-                      <MenuItem value="incheon">Incheon</MenuItem>
-                      <MenuItem value="other">Other</MenuItem>
-                    </Select>
-                  </FormControl>
+                      <PhotoCameraIcon sx={{ color: "white", fontSize: 36 }} />
+                    </Box>
+                    {uploadingLogo && (
+                      <CircularProgress
+                        size={40}
+                        sx={{ position: "absolute", top: "50%", left: "50%", mt: -2.5, ml: -2.5 }}
+                      />
+                    )}
+                  </Box>
+                  <Typography variant="body2" color="text.secondary" sx={{ mt: 1, textAlign: "center" }}>
+                    {logoUrl ? "Image uploaded. Click to change." : "Team logo (optional). Click to upload."}
+                  </Typography>
+                  {logoUrl && (
+                    <Button
+                      size="small"
+                      color="error"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleRemoveLogo();
+                      }}
+                      sx={{ mt: 1 }}
+                    >
+                      Remove image
+                    </Button>
+                  )}
                 </Box>
 
-                {/* Form Actions */}
-                <Box className={styles.formActions}>
-                  <Button
-                    variant="outlined"
-                    component={Link}
-                    href="/team"
-                    className={styles.formActionButton}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    className={styles.formActionButton}
-                  >
-                    Create Team
-                  </Button>
+                <TextField
+                  fullWidth
+                  label="Team Name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                  disabled={loading}
+                  sx={{ mb: 2 }}
+                  placeholder="Enter team name"
+                />
+
+                <TextField
+                  fullWidth
+                  multiline
+                  rows={4}
+                  label="Description (Optional)"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  disabled={loading}
+                  sx={{ mb: 3 }}
+                  placeholder="Tell us about your team..."
+                />
+
+                {/* Invite Members Section */}
+                <Box sx={{ mb: 3 }}>
+                  <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
+                    Invite Team Members (Optional)
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                    Add email addresses of players you want to invite to your team
+                  </Typography>
+
+                  <Box sx={{ display: "flex", gap: 1, mb: 2 }}>
+                    <TextField
+                      fullWidth
+                      type="email"
+                      placeholder="Enter email address"
+                      value={currentEmail}
+                      onChange={(e) => setCurrentEmail(e.target.value)}
+                      onKeyPress={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          handleAddEmail();
+                        }
+                      }}
+                      disabled={loading}
+                      size="small"
+                    />
+                    <Button
+                      variant="outlined"
+                      onClick={handleAddEmail}
+                      disabled={loading || !currentEmail.trim()}
+                      startIcon={<AddIcon />}
+                    >
+                      Add
+                    </Button>
+                  </Box>
+
+                  {memberEmails.length > 0 && (
+                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+                      {memberEmails.map((email) => (
+                        <Chip
+                          key={email}
+                          label={email}
+                          onDelete={() => handleRemoveEmail(email)}
+                          deleteIcon={<CloseIcon />}
+                          color="primary"
+                          variant="outlined"
+                        />
+                      ))}
+                    </Box>
+                  )}
                 </Box>
+
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  size="large"
+                  disabled={loading || !name.trim()}
+                  sx={{
+                    py: 1.5,
+                    background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                    "&:hover": {
+                      background: "linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%)",
+                    },
+                  }}
+                >
+                  {loading ? (
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <CircularProgress size={20} sx={{ color: "white" }} />
+                      <span>Creating...</span>
+                    </Box>
+                  ) : (
+                    "Create Team"
+                  )}
+                </Button>
               </form>
             </CardContent>
           </Card>
@@ -245,4 +369,3 @@ export default function CreateTeamPage() {
     </>
   );
 }
-

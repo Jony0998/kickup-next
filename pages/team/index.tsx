@@ -1,6 +1,7 @@
 import Head from "next/head";
 import Link from "next/link";
-import React, { useState } from "react";
+import { useRouter } from "next/router";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Container,
@@ -22,15 +23,16 @@ import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
+import AddIcon from "@mui/icons-material/Add";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import AssessmentIcon from "@mui/icons-material/Assessment";
 import LeaderboardIcon from "@mui/icons-material/Leaderboard";
-import PersonIcon from "@mui/icons-material/Person";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import WcIcon from "@mui/icons-material/Wc";
+import GroupIcon from "@mui/icons-material/Group";
 import FeedbackIcon from "@mui/icons-material/Feedback";
 import styles from "@/styles/team.module.scss";
+import { getTeams, getMyTeams, Team } from "@/lib/teamApi";
+import { useAuth } from "@/contexts/AuthContext";
+import { normalizeImageUrl } from "@/lib/imageUrl";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -55,107 +57,72 @@ function TabPanel(props: TabPanelProps) {
 }
 
 export default function TeamPage() {
+  const router = useRouter();
+  const { isAuthenticated } = useAuth();
   const [tabValue, setTabValue] = useState(0);
-  const [filterValue, setFilterValue] = useState("all");
+  const [filterValue, setFilterValue] = useState<"all" | "my">("all");
+  const [allTeams, setAllTeams] = useState<Team[]>([]);
+  const [myTeams, setMyTeams] = useState<Team[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [loadingMy, setLoadingMy] = useState(false);
+  const [teamsError, setTeamsError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const { tab } = router.query;
+    if (tab === "recruit") setTabValue(1);
+  }, [router.query]);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
 
-  // Mock match data
-  const matches = [
-    {
-      id: 1,
-      date: "January 27, Tuesday",
-      time: "20:00",
-      field: "Seoul Yongsan Adidas The Base Field 2 / Man Utd",
-      status: "closed",
-      gender: "Male",
-      format: "6vs6",
-      level: "All Levels",
-      parking: "Parking Full",
-      teams: [
-        { name: "Ares", logo: "/team1.jpg" },
-        { name: "FC Chabuka", logo: "/team2.jpg" },
-        { name: "Matmanba", logo: "/team3.jpg" },
-      ],
-    },
-    {
-      id: 2,
-      date: "January 28, Wednesday",
-      time: "20:00",
-      field: "Seoul Yongsan Adidas The Base Field 2 / Man Utd",
-      gender: "Male",
-      format: "6vs6",
-      level: "All Levels",
-      parking: "Parking Full",
-      teams: [{ name: "FC Westfrom", logo: "/team4.jpg" }],
-    },
-    {
-      id: 3,
-      date: "January 28, Wednesday",
-      time: "22:00",
-      field: "Seoul Eunpyeong Lotte Mall Field A",
-      gender: "Male",
-      format: "6vs6",
-      level: "All Levels",
-      teams: [],
-    },
-    {
-      id: 4,
-      date: "January 29, Thursday",
-      time: "20:00",
-      field: "Seoul Yongsan Adidas The Base Field 2 / Man Utd",
-      gender: "Female",
-      format: "6vs6",
-      level: "All Levels",
-      parking: "2 Parking Spaces",
-      teams: [],
-    },
-    {
-      id: 5,
-      date: "January 29, Thursday",
-      time: "21:00",
-      field: "Seoul Yeongdeungpo The F Field A",
-      gender: "Male",
-      format: "6vs6",
-      level: "All Levels",
-      parking: "2 Parking Spaces",
-      teams: [
-        { name: "FC MMM", logo: "/team5.jpg" },
-        { name: "DASH", logo: "/team6.jpg" },
-      ],
-    },
-    {
-      id: 6,
-      date: "January 30, Friday",
-      time: "20:00",
-      field: "Seoul Eunpyeong Lotte Mall Field B",
-      gender: "Male",
-      format: "6vs6",
-      level: "All Levels",
-      teams: [
-        { name: "Coward FC", logo: "/team7.jpg" },
-        { name: "Kim Chukdan (KJFC)", logo: "/team8.jpg" },
-      ],
-    },
-    {
-      id: 7,
-      date: "January 30, Friday",
-      time: "21:00",
-      field: "Seoul Yeongdeungpo The F Field A",
-      status: "closed",
-      gender: "Male",
-      format: "6vs6",
-      level: "All Levels",
-      parking: "2 Parking Spaces",
-      teams: [
-        { name: "FC Chabuka", logo: "/team2.jpg" },
-        { name: "FC Lacrima", logo: "/team9.jpg" },
-        { name: "Jongjeom FS", logo: "/team10.jpg" },
-      ],
-    },
-  ];
+  const loadAllTeams = React.useCallback(() => {
+    setTeamsError(null);
+    setLoading(true);
+    getTeams({ limit: 100 })
+      .then((data) => {
+        setAllTeams(data || []);
+      })
+      .catch((err) => {
+        console.error("getTeams error:", err);
+        setAllTeams([]);
+        setTeamsError(err?.message || "Ro'yxatni yuklab bo'lmadi. Backend ishlayotganini tekshiring.");
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  useEffect(() => {
+    loadAllTeams();
+  }, [loadAllTeams]);
+
+  // Fetch my teams when authenticated
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setMyTeams([]);
+      return;
+    }
+    let cancelled = false;
+    setLoadingMy(true);
+    getMyTeams()
+      .then((data) => {
+        if (!cancelled) setMyTeams(data || []);
+      })
+      .catch(() => {
+        if (!cancelled) setMyTeams([]);
+      })
+      .finally(() => {
+        if (!cancelled) setLoadingMy(false);
+      });
+    return () => { cancelled = true; };
+  }, [isAuthenticated]);
+
+  const teamsToShow =
+    tabValue === 0
+      ? filterValue === "my"
+        ? myTeams
+        : allTeams
+      : myTeams;
+  const isLoadingList = tabValue === 0 ? (filterValue === "my" ? loadingMy : loading) : loadingMy;
 
   return (
     <>
@@ -166,17 +133,23 @@ export default function TeamPage() {
           content="Join team leagues, recruit teammates, and create your own team on KickUp."
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <Box className={styles.teamPage}>
-        {/* Quick Menu Buttons */}
+        {/* Quick Menu Buttons — press feedback + modern icon style */}
         <Container maxWidth="lg">
           <Box className={styles.quickMenu}>
             <Card className={styles.quickMenuItem} component={Link} href="/team/league">
               <CardContent className={styles.quickMenuContent}>
-                <Box className={styles.quickMenuIconWrapper}>
-                  <EmojiEventsIcon className={styles.quickMenuIcon} />
+                <Box
+                  className={styles.quickMenuIconWrapper}
+                  sx={{
+                    background: "linear-gradient(135deg, rgba(245, 158, 11, 0.18) 0%, rgba(217, 119, 6, 0.28) 100%)",
+                    border: "1px solid rgba(245, 158, 11, 0.35)",
+                    "& .MuiSvgIcon-root": { color: "#b45309" },
+                  }}
+                >
+                  <EmojiEventsIcon sx={{ fontSize: 30 }} />
                 </Box>
                 <Typography variant="body2" className={styles.quickMenuText}>
                   Team League
@@ -186,30 +159,51 @@ export default function TeamPage() {
 
             <Card className={styles.quickMenuItem} component={Link} href="/team/recruit">
               <CardContent className={styles.quickMenuContent}>
-                <Box className={styles.quickMenuIconWrapper}>
-                  <GroupAddIcon className={styles.quickMenuIcon} />
+                <Box
+                  className={styles.quickMenuIconWrapper}
+                  sx={{
+                    background: "linear-gradient(135deg, rgba(59, 130, 246, 0.18) 0%, rgba(37, 99, 235, 0.28) 100%)",
+                    border: "1px solid rgba(59, 130, 246, 0.35)",
+                    "& .MuiSvgIcon-root": { color: "#2563eb" },
+                  }}
+                >
+                  <GroupAddIcon sx={{ fontSize: 30 }} />
                 </Box>
                 <Typography variant="body2" className={styles.quickMenuText}>
-                  Recruit Teammates
+                  Member Recruit
                 </Typography>
               </CardContent>
             </Card>
 
             <Card className={styles.quickMenuItem} component={Link} href="/team/guests">
               <CardContent className={styles.quickMenuContent}>
-                <Box className={styles.quickMenuIconWrapper}>
-                  <PersonAddIcon className={styles.quickMenuIcon} />
+                <Box
+                  className={styles.quickMenuIconWrapper}
+                  sx={{
+                    background: "linear-gradient(135deg, rgba(139, 92, 246, 0.18) 0%, rgba(124, 58, 237, 0.28) 100%)",
+                    border: "1px solid rgba(139, 92, 246, 0.35)",
+                    "& .MuiSvgIcon-root": { color: "#6d28d9" },
+                  }}
+                >
+                  <PersonAddIcon sx={{ fontSize: 30 }} />
                 </Box>
                 <Typography variant="body2" className={styles.quickMenuText}>
-                  Recruit Guests
+                  Guest Recruit
                 </Typography>
               </CardContent>
             </Card>
 
             <Card className={styles.quickMenuItem} component={Link} href="/team/create">
               <CardContent className={styles.quickMenuContent}>
-                <Box className={styles.quickMenuIconWrapper}>
-                  <AddCircleIcon className={styles.quickMenuIcon} />
+                <Box
+                  className={styles.quickMenuIconWrapper}
+                  sx={{
+                    background: "linear-gradient(135deg, rgba(0, 227, 119, 0.2) 0%, rgba(0, 163, 86, 0.3) 100%)",
+                    border: "1px solid rgba(0, 227, 119, 0.4)",
+                    "& .MuiSvgIcon-root": { color: "#00a85d" },
+                  }}
+                >
+                  <AddCircleIcon sx={{ fontSize: 32 }} />
                 </Box>
                 <Typography variant="body2" className={styles.quickMenuText}>
                   Create Team
@@ -232,7 +226,7 @@ export default function TeamPage() {
                     variant="outlined"
                     className={`${styles.bannerButton} ${styles.bannerButtonViewDetails}`}
                     component={Link}
-                    href="/team/league/details"
+                    href="/team/league"
                   >
                     View Details
                   </Button>
@@ -253,182 +247,266 @@ export default function TeamPage() {
           </Box>
         </Container>
 
-        {/* Tabs Section */}
-        <Container maxWidth="lg">
-          <Box className={styles.tabsSection}>
-            <Tabs
-              value={tabValue}
-              onChange={handleTabChange}
-              className={styles.tabs}
-              indicatorColor="primary"
-              textColor="primary"
-            >
-              <Tab
-                icon={<CalendarTodayIcon />}
-                iconPosition="start"
-                label="Schedule"
-                className={styles.tab}
-              />
-              <Tab
-                icon={<AssessmentIcon />}
-                iconPosition="start"
-                label="Results"
-                className={styles.tab}
-              />
-              <Tab
-                icon={<LeaderboardIcon />}
-                iconPosition="start"
-                label="Team Rankings"
-                className={styles.tab}
-              />
-              <Tab
-                icon={<PersonIcon />}
-                iconPosition="start"
-                label="Individual Rankings"
-                className={styles.tab}
-              />
-            </Tabs>
-
-            {/* Filter */}
-            <Box className={styles.filterSection}>
-              <FormControl className={styles.filterControl}>
-                <Select
-                  value={filterValue}
-                  onChange={(e) => setFilterValue(e.target.value)}
-                  className={styles.filterSelect}
-                >
-                  <MenuItem value="all">All</MenuItem>
-                  <MenuItem value="male">Male</MenuItem>
-                  <MenuItem value="female">Female</MenuItem>
-                  <MenuItem value="mixed">Mixed</MenuItem>
-                </Select>
-              </FormControl>
+        {/* Action Buttons */}
+        <Container maxWidth="lg" sx={{ mb: 4 }}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              mb: 2,
+            }}
+          >
+            <Typography variant="h5" sx={{ fontWeight: 800 }}>
+              Team Activity
+            </Typography>
+            <Box sx={{ display: "flex", gap: 1 }}>
+              <Button
+                variant="outlined"
+                startIcon={<CalendarTodayIcon />}
+                size="small"
+                sx={{ borderRadius: 20, textTransform: "none" }}
+              >
+                Schedule
+              </Button>
+              <Button
+                variant="outlined"
+                startIcon={<AssessmentIcon />}
+                size="small"
+                sx={{ borderRadius: 20, textTransform: "none" }}
+              >
+                Stats
+              </Button>
             </Box>
           </Box>
-        </Container>
 
-        {/* Match List */}
-        <Container maxWidth="lg">
+          <Tabs
+            value={tabValue}
+            onChange={handleTabChange}
+            variant="fullWidth"
+            className={styles.teamTabs}
+            TabIndicatorProps={{
+              style: { backgroundColor: "var(--plab-black)", height: 3 },
+            }}
+          >
+            <Tab label="Teams" className={styles.teamTab} />
+            <Tab label="My Team" className={styles.teamTab} />
+            <Tab label="Rankings" className={styles.teamTab} />
+          </Tabs>
+
           <TabPanel value={tabValue} index={0}>
-            <Box className={styles.matchList}>
-              {matches.map((match) => (
-                <Card key={match.id} className={styles.matchCard} component={Link} href={`/team/match/${match.id}`}>
-                  <CardContent className={styles.matchCardContent}>
-                    <Box className={styles.matchHeader}>
-                      <Box className={styles.matchDateTime}>
-                        <Typography variant="body1" className={styles.matchDate}>
-                          {match.date}
-                        </Typography>
-                        <Typography variant="h6" className={styles.matchTime}>
-                          {match.time}
-                        </Typography>
-                      </Box>
-                      {match.status === "closed" && (
-                        <Chip
-                          label="Closed"
-                          size="small"
-                          className={styles.statusChip}
-                        />
-                      )}
-                    </Box>
-
-                    <Typography variant="h6" className={styles.matchField}>
-                      {match.field}
-                    </Typography>
-
-                    <Box className={styles.matchDetails}>
-                      <Chip
-                        icon={<WcIcon />}
-                        label={match.gender}
-                        size="small"
-                        className={styles.detailChip}
-                      />
-                      <Typography variant="body2" className={styles.detailSeparator}>
-                        ·
-                      </Typography>
-                      <Typography variant="body2" className={styles.detailText}>
-                        {match.format}
-                      </Typography>
-                      <Typography variant="body2" className={styles.detailSeparator}>
-                        ·
-                      </Typography>
-                      <Typography variant="body2" className={styles.detailText}>
-                        {match.level}
-                      </Typography>
-                      {match.parking && (
-                        <>
-                          <Typography variant="body2" className={styles.detailSeparator}>
-                            ·
-                          </Typography>
-                          <Typography variant="body2" className={styles.detailText}>
-                            {match.parking}
-                          </Typography>
-                        </>
-                      )}
-                    </Box>
-
-                    {match.teams.length > 0 && (
-                      <Box className={styles.teamsSection}>
-                        {match.teams.map((team, idx) => (
-                          <Box key={idx} className={styles.teamItem}>
-                            <Avatar
-                              src={team.logo}
-                              className={styles.teamLogo}
-                              sx={{ width: 32, height: 32 }}
-                            >
-                              {team.name[0]}
-                            </Avatar>
-                            <Typography variant="body2" className={styles.teamName}>
-                              {team.name}
-                            </Typography>
-                          </Box>
-                        ))}
-                      </Box>
-                    )}
-                  </CardContent>
-                </Card>
-              ))}
-
-              {/* Feedback Link */}
-              <Card className={styles.feedbackCard} component={Link} href="/team/feedback">
-                <CardContent className={styles.feedbackContent}>
-                  <FeedbackIcon className={styles.feedbackIcon} />
-                  <Box className={styles.feedbackText}>
-                    <Typography variant="body1" className={styles.feedbackTitle}>
-                      How is Plab Team League?
-                    </Typography>
-                    <Typography variant="body2" className={styles.feedbackSubtitle}>
-                      Send feedback to Plab
-                    </Typography>
-                  </Box>
-                </CardContent>
-              </Card>
+            <Box sx={{ mb: 2, display: "flex", alignItems: "center", gap: 2, flexWrap: "wrap" }}>
+              <FormControl size="small" sx={{ minWidth: 140 }}>
+                <Select
+                  value={filterValue}
+                  onChange={(e) => setFilterValue(e.target.value as "all" | "my")}
+                  sx={{ borderRadius: 2 }}
+                  displayEmpty
+                >
+                  <MenuItem value="all">All Teams</MenuItem>
+                  {isAuthenticated && <MenuItem value="my">My Teams</MenuItem>}
+                </Select>
+              </FormControl>
+              <Typography variant="body2" color="text.secondary">
+                {filterValue === "my" ? `${myTeams.length} team(s)` : `${allTeams.length} team(s)`}
+              </Typography>
             </Box>
+
+            {isLoadingList ? (
+              <Box sx={{ py: 6, textAlign: "center" }}>
+                <Typography color="text.secondary">Loading teams…</Typography>
+              </Box>
+            ) : teamsError ? (
+              <Box sx={{ p: 4, textAlign: "center", bgcolor: "background.paper", borderRadius: 4 }}>
+                <GroupIcon sx={{ fontSize: 60, color: "text.secondary", mb: 2 }} />
+                <Typography variant="h6" color="error.main" sx={{ mb: 1 }}>
+                  Ro'yxat yuklanmadi
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                  {teamsError}
+                </Typography>
+                <Button variant="contained" onClick={loadAllTeams} sx={{ borderRadius: 2 }}>
+                  Qayta urinish
+                </Button>
+              </Box>
+            ) : teamsToShow.length === 0 ? (
+              <Box sx={{ p: 4, textAlign: "center", bgcolor: "background.paper", borderRadius: 4 }}>
+                <GroupIcon sx={{ fontSize: 60, color: "text.secondary", mb: 2 }} />
+                <Typography variant="h6">
+                  {filterValue === "my" ? "No teams yet" : "Jamoalar hali yo'q"}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                  {filterValue === "my"
+                    ? "Sizda jamoalar yo'q. All Teams dan qo'shiling yoki yangi yarating."
+                    : "Hali hech qanday jamoa yaratilmagan. Birinchi bo'lib jamoa yarating."}
+                </Typography>
+                <Button
+                  variant="contained"
+                  startIcon={<AddIcon />}
+                  component={Link}
+                  href="/team/create"
+                  sx={{ borderRadius: 2 }}
+                >
+                  Create Team
+                </Button>
+              </Box>
+            ) : (
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                {teamsToShow.map((team) => (
+                  <Card
+                    key={team.id}
+                    className={styles.matchCard}
+                    component={Link}
+                    href={`/team/${team.id}`}
+                    sx={{
+                      textDecoration: "none",
+                      color: "inherit",
+                      transition: "box-shadow 0.2s, transform 0.2s",
+                      "&:hover": { boxShadow: 3, transform: "translateY(-2px)" },
+                    }}
+                  >
+                    <CardContent className={styles.matchCardContent}>
+                      <Box sx={{ display: "flex", alignItems: "center", gap: 2, flexWrap: "wrap" }}>
+                        <Avatar
+                          src={normalizeImageUrl(team.logo) || undefined}
+                          sx={{
+                            width: 56,
+                            height: 56,
+                            border: "1px solid",
+                            borderColor: "divider",
+                            bgcolor: "grey.200",
+                            fontSize: "1.25rem",
+                          }}
+                        >
+                          {team.name?.[0]?.toUpperCase() || "?"}
+                        </Avatar>
+                        <Box sx={{ flex: 1, minWidth: 0 }}>
+                          <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+                            {team.name}
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary" noWrap>
+                            {team.description || "No description"}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            {team.members?.length ?? 0} members
+                            {team.stats?.totalMatches != null && ` · ${team.stats.totalMatches} matches`}
+                          </Typography>
+                        </Box>
+                        <Typography variant="body2" color="primary" sx={{ fontWeight: 600 }}>
+                          View →
+                        </Typography>
+                      </Box>
+                    </CardContent>
+                  </Card>
+                ))}
+              </Box>
+            )}
           </TabPanel>
 
           <TabPanel value={tabValue} index={1}>
-            <Box className={styles.emptyState}>
-              <Typography variant="h6">No results available yet</Typography>
-              <Typography variant="body2">Check back after matches are completed</Typography>
-            </Box>
+            {loadingMy ? (
+              <Box sx={{ py: 6, textAlign: "center" }}>
+                <Typography color="text.secondary">Loading your teams…</Typography>
+              </Box>
+            ) : myTeams.length === 0 ? (
+              <Box sx={{ p: 4, textAlign: "center", bgcolor: "background.paper", borderRadius: 4 }}>
+                <GroupAddIcon sx={{ fontSize: 60, color: "var(--plab-gray)", mb: 2 }} />
+                <Typography variant="h6">No team found</Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                  You haven't joined or created any teams yet.
+                </Typography>
+                <Button
+                  variant="contained"
+                  startIcon={<AddIcon />}
+                  component={Link}
+                  href="/team/create"
+                  sx={{
+                    bgcolor: "var(--plab-black)",
+                    borderRadius: 20,
+                    "&:hover": { bgcolor: "#333" },
+                  }}
+                >
+                  Find/Create Team
+                </Button>
+              </Box>
+            ) : (
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                {myTeams.map((team) => (
+                  <Card
+                    key={team.id}
+                    component={Link}
+                    href={`/team/${team.id}`}
+                    sx={{
+                      textDecoration: "none",
+                      color: "inherit",
+                      borderRadius: 2,
+                      "&:hover": { boxShadow: 3 },
+                    }}
+                  >
+                    <CardContent sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                      <Avatar
+                        src={normalizeImageUrl(team.logo) || undefined}
+                        sx={{ width: 48, height: 48, bgcolor: "grey.300" }}
+                      >
+                        {team.name?.[0]?.toUpperCase() || "?"}
+                      </Avatar>
+                      <Box sx={{ flex: 1 }}>
+                        <Typography variant="subtitle1" fontWeight={700}>{team.name}</Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {team.members?.length ?? 0} members
+                        </Typography>
+                      </Box>
+                      <Typography variant="body2" color="primary" fontWeight={600}>View →</Typography>
+                    </CardContent>
+                  </Card>
+                ))}
+              </Box>
+            )}
           </TabPanel>
 
           <TabPanel value={tabValue} index={2}>
-            <Box className={styles.emptyState}>
+            <Box
+              sx={{
+                p: 4,
+                textAlign: "center",
+                bgcolor: "background.paper",
+                borderRadius: 4,
+              }}
+            >
+              <LeaderboardIcon
+                sx={{ fontSize: 60, color: "var(--plab-gray)", mb: 2 }}
+              />
               <Typography variant="h6">Team Rankings</Typography>
-              <Typography variant="body2">Rankings will be displayed here</Typography>
-            </Box>
-          </TabPanel>
-
-          <TabPanel value={tabValue} index={3}>
-            <Box className={styles.emptyState}>
-              <Typography variant="h6">Individual Rankings</Typography>
-              <Typography variant="body2">Individual rankings will be displayed here</Typography>
+              <Typography variant="body2" color="text.secondary">
+                Coming soon! View the top performing teams on Plab.
+              </Typography>
             </Box>
           </TabPanel>
         </Container>
       </Box>
+
+      {/* Floating Buttons */}
+      <Box
+        sx={{
+          position: "fixed",
+          bottom: 90,
+          right: 20,
+          display: "flex",
+          flexDirection: "column",
+          gap: 2,
+          zIndex: 1000,
+        }}
+      >
+        <IconButton
+          sx={{
+            bgcolor: "white",
+            boxShadow: 2,
+            "&:hover": { bgcolor: "#f5f5f5" },
+          }}
+        >
+          <FeedbackIcon sx={{ color: "var(--plab-black)" }} />
+        </IconButton>
+      </Box>
     </>
   );
 }
-

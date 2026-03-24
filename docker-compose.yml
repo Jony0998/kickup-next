@@ -1,0 +1,35 @@
+services:
+  kickup-next:
+    container_name: kickup-next
+    image: node:20-alpine
+    working_dir: /app
+    restart: unless-stopped
+
+    env_file:
+      - .env.local
+
+    environment:
+      - NODE_ENV=development
+      - NODE_OPTIONS=--dns-result-order=ipv4first
+      - PORT=3000
+      - NEXT_PUBLIC_GRAPHQL_URL=/api/graphql
+  
+      - GRAPHQL_PROXY_TARGET=http://kickup-api:3008/graphql
+
+    volumes:
+      - ./:/app
+      - /app/node_modules
+
+    ports:
+      - "4000:3000"
+
+    command: sh -c "yarn install && yarn dev -p 3000"
+
+  
+    networks:
+      - monorepo-network
+
+
+networks:
+  monorepo-network:
+    external: true

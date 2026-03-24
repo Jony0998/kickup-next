@@ -1,0 +1,54 @@
+# API + Next bir tarmoqda (host.docker.internal kerak emas).
+# Talab: ../kickup/.env ichida MONGO_DEV (yoki MONGO_PROD) to'g'ri URI.
+#
+# Ishga tushirish (kickup-next papkasida):
+#   docker compose -f docker-compose.fullstack.yml up -d --build
+#
+# Boshqa terminalda kickup alohida ishlamasin (4002 port to'qnashuvi).
+
+services:
+  kickup-api:
+    container_name: kickup-api
+    build:
+      context: ../kickup
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "4002:3008"
+    env_file:
+      - ../kickup/.env
+    environment:
+      - PORT_API=3008
+      # Dockerfile production bo'lsa ham dev DB ishlatish
+      - NODE_ENV=development
+    networks:
+      - kickup-stack
+
+  kickup-next:
+    container_name: kickup-next
+    image: node:20-alpine
+    working_dir: /app
+    restart: unless-stopped
+    depends_on:
+      - kickup-api
+    env_file:
+      - .env.local
+    environment:
+      - NODE_ENV=development
+      - NODE_OPTIONS=--dns-result-order=ipv4first
+      - PORT=3000
+      - NEXT_PUBLIC_GRAPHQL_URL=/api/graphql
+      - GRAPHQL_PROXY_TARGET=http://kickup-api:3008/graphql
+      - NEXT_PUBLIC_API_BASE_URL=http://localhost:4002
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    ports:
+      - "4000:3000"
+    command: sh -c "yarn install && yarn dev -p 3000"
+    networks:
+      - kickup-stack
+
+networks:
+  kickup-stack:
+    driver: bridge
