@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "node scripts/show-admin-api.js && next dev",
+    "dev": "node scripts/show-admin-api.js && next dev --webpack",
     "build": "next build",
     "start": "next start",
     "admin-api": "node scripts/show-admin-api.js"
