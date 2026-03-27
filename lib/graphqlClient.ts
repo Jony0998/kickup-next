@@ -16,6 +16,14 @@ export type GraphQLRequestOptions = {
   auth?: boolean;
 };
 
+function isDebugGraphql(): boolean {
+  try {
+    return process.env.NEXT_PUBLIC_DEBUG_GRAPHQL === "true";
+  } catch {
+    return false;
+  }
+}
+
 /** Eski noto‘g‘ri env: 3008 — faqat API konteyner ichida; brauzer/Next hech qachon ishlatmasin. */
 function sanitizeGraphqlEnv(raw: string | undefined): string | undefined {
   const v = raw?.trim();
@@ -96,16 +104,17 @@ export async function graphqlRequest<TData>(
     if (token) headers.Authorization = `Bearer ${token}`;
   }
 
-  console.log(`📡 Sending GraphQL request to: ${url}`);
-  console.log(`Headers:`, JSON.stringify(headers, null, 2));
-
   const body = {
     query,
     variables: options.variables ?? undefined,
     operationName: options.operationName ?? undefined,
   };
 
-  console.log(`Payload:`, JSON.stringify(body, null, 2));
+  if (isDebugGraphql()) {
+    console.log(`📡 GraphQL → ${url}`);
+    console.log(`Headers:`, JSON.stringify(headers, null, 2));
+    console.log(`Payload:`, JSON.stringify(body, null, 2));
+  }
 
   let res: Response;
   try {
@@ -115,7 +124,9 @@ export async function graphqlRequest<TData>(
       credentials: "include", // Cookie yuboradi va qabul qiladi
       body: JSON.stringify(body),
     });
-    console.log(`✅ Response status: ${res.status} ${res.statusText}`);
+    if (isDebugGraphql()) {
+      console.log(`✅ GraphQL status: ${res.status} ${res.statusText}`);
+    }
   } catch (error: unknown) {
     console.error(`❌ Fetch failed for ${url}:`, error);
     const errMsg = error instanceof Error ? error.message : String(error);

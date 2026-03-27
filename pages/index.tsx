@@ -72,15 +72,19 @@ export default function Home() {
 
   // Fetch banners
   useEffect(() => {
+    let cancelled = false;
     const fetchBanners = async () => {
       try {
         const data = await getBanners();
-        setBanners(data);
+        if (!cancelled) setBanners(data);
       } catch (error) {
         console.error("Failed to load banners", error);
       }
     };
     fetchBanners();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   // Auto-slide banners
@@ -173,6 +177,11 @@ export default function Home() {
 
   // Fetch matches from API
   useEffect(() => {
+    // Dates hali tayyor bo‘lmasa, birinchi renderda ortiqcha fetch qilmaymiz.
+    if (!mounted) return;
+    if (selectedDate >= 0 && !dates[selectedDate]) return;
+
+    let cancelled = false;
     const fetchMatches = async () => {
       setLoadingMatches(true);
       try {
@@ -184,17 +193,22 @@ export default function Home() {
         }
 
         const data = await getMatches(params);
-        setMatches(data);
-        setSearchMatches(data); // share with navbar autocomplete
+        if (!cancelled) {
+          setMatches(data);
+          setSearchMatches(data); // share with navbar autocomplete
+        }
       } catch (error) {
         console.error("Failed to load matches", error);
       } finally {
-        setLoadingMatches(false);
+        if (!cancelled) setLoadingMatches(false);
       }
     };
 
     fetchMatches();
-  }, [selectedDate, dates]);
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedDate, dates, mounted, setSearchMatches]);
 
   // Client-side filtering — all filter chips (Date, Gender, Level, Size, Location) apply here
   const filteredMatches = useMemo(() => {

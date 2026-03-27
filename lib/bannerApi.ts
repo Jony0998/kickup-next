@@ -1,5 +1,13 @@
 import { graphqlRequest } from "./graphqlClient";
 
+function isDebugGraphql(): boolean {
+    try {
+        return process.env.NEXT_PUBLIC_DEBUG_GRAPHQL === "true";
+    } catch {
+        return false;
+    }
+}
+
 export interface Banner {
     id: string;
     title: string;
@@ -22,7 +30,9 @@ interface BannerGraphQL {
  * 💡 STRICT GRAPHQL ONLY. NO MOCKS.
  */
 export async function getBanners(): Promise<Banner[]> {
-    console.log("BannerApi: getBanners called (STRICT GQL)");
+    if (isDebugGraphql()) {
+        console.log("BannerApi: getBanners called (STRICT GQL)");
+    }
 
     try {
         const data = await graphqlRequest<{ getBanners: BannerGraphQL[] }>(
