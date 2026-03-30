@@ -139,6 +139,32 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const body =
     typeof req.body === "string" ? req.body : JSON.stringify(req.body ?? {});
 
+  // Debug: match list query lar kirganda log beramiz.
+  // Frontend cache ishlasa, shu requestlar soni navigatsiya paytida kamayishi kerak.
+  try {
+    const parsed = JSON.parse(body) as { query?: string; operationName?: string };
+    const q = String(parsed.query ?? "");
+    const op = String(parsed.operationName ?? "");
+    const isMatchListQuery =
+      /\bmatches\s*\(/.test(q) ||
+      /\bmyMatches\b/.test(q) ||
+      /\bmyJoinedMatches\b/.test(q) ||
+      /\bupcomingMatches\b/.test(q) ||
+      /\bsearchMatches\b/.test(q);
+    const debug =
+      process.env.NEXT_PUBLIC_DEBUG_MATCH_LIST_CACHE === "true" ||
+      process.env.NEXT_PUBLIC_DEBUG_GRAPHQL === "true";
+    if (debug && isMatchListQuery) {
+      const now = new Date().toISOString();
+      const short = q.replace(/\s+/g, " ").slice(0, 120);
+      console.log(
+        `[GraphQL Proxy] ${now} op=${op || "(none)"} matchListQuery=${short}...`,
+      );
+    }
+  } catch {
+    // ignore debug parse errors
+  }
+
   const candidates = getBackendCandidates();
   let lastErr: unknown;
 

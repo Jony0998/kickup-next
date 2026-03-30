@@ -1,5 +1,54 @@
 import { graphqlRequest } from "./graphqlClient";
 
+// -------------------- CLIENT-SIDE TTL CACHE --------------------
+// Navigation paytida homepage qayta mont bo‘ladi va match list yana fetch bo‘lib qoladi.
+// `graphqlRequest` Apollo cache’dan foydalanmaganligi uchun, tezlikni oshirish uchun
+// shu joyda qisqa TTL bilan in-memory cache qo‘yamiz.
+const DEBUG_MATCH_LIST_CACHE =
+  process.env.NEXT_PUBLIC_DEBUG_MATCH_LIST_CACHE === "true";
+
+const MATCH_LIST_CACHE_TTL_MS = parseInt(
+  process.env.NEXT_PUBLIC_MATCH_LIST_CACHE_TTL_MS ?? "10000",
+  10
+);
+
+type CacheEntry<T> = { value: T; expiresAt: number };
+const matchListCache = new Map<string, CacheEntry<any>>();
+
+function getCache<T>(key: string): T | null {
+  const entry = matchListCache.get(key);
+  if (!entry) {
+    if (DEBUG_MATCH_LIST_CACHE) console.log(`[MatchApi cache] MISS (no entry) key=${key}`);
+    return null;
+  }
+  if (Date.now() > entry.expiresAt) {
+    matchListCache.delete(key);
+    if (DEBUG_MATCH_LIST_CACHE) console.log(`[MatchApi cache] MISS (expired) key=${key}`);
+    return null;
+  }
+  if (DEBUG_MATCH_LIST_CACHE) console.log(`[MatchApi cache] HIT key=${key}`);
+  return entry.value as T;
+}
+
+function setCache<T>(key: string, value: T): void {
+  if (DEBUG_MATCH_LIST_CACHE) console.log(`[MatchApi cache] SET key=${key} ttlMs=${MATCH_LIST_CACHE_TTL_MS}`);
+  matchListCache.set(key, { value, expiresAt: Date.now() + MATCH_LIST_CACHE_TTL_MS });
+}
+
+function clearMatchListCache(): void {
+  if (DEBUG_MATCH_LIST_CACHE) console.log(`[MatchApi cache] CLEAR all match list cache`);
+  matchListCache.clear();
+}
+
+function getAuthCacheKeyPart(): string {
+  if (typeof window === "undefined") return "";
+  try {
+    return localStorage.getItem("token") ?? "";
+  } catch {
+    return "";
+  }
+}
+
 // ==================== TYPES ====================
 
 export type MatchStatus = 'UPCOMING' | 'ONGOING' | 'COMPLETED' | 'CANCELLED';
@@ -54,7 +103,10 @@ export interface Match {
   matchType: MatchType;
   matchStatus: MatchStatus;
   fieldId: string | MatchField;
-  organizerId: string | MatchMember;
+  // Some DB records may have `organizerId` missing.
+  // Upstream GraphQL schema currently declares it non-nullable, which can break list queries.
+  // For list views we may intentionally not request it (see `MATCH_HOME_LIST`).
+  organizerId?: string | MatchMember;
   matchDate: string;
   matchTime: string;
   duration?: number;
@@ -204,13 +256,6 @@ const MATCH_HOME_LIST = `
       }
     }
   }
-  organizerId {
-    _id
-    memberNick
-    memberFullName
-    memberImage
-    memberSkillLevel
-  }
   joinedPlayers {
     _id
     memberNick
@@ -252,6 +297,10 @@ export async function getMatches(filters?: {
 }): Promise<Match[]> {
   console.log("MatchApi: getMatches called", filters);
   try {
+    const cacheKey = `getMatches:${JSON.stringify(filters ?? {})}`;
+    const cached = getCache<Match[]>(cacheKey);
+    if (cached) return cached;
+
     const data = await graphqlRequest<{ matches: Match[] }>(
       `
         query GetMatches(
@@ -285,7 +334,9 @@ export async function getMatches(filters?: {
         },
       }
     );
-    return data.matches || [];
+    const result = data.matches || [];
+    setCache(cacheKey, result);
+    return result;
   } catch (error) {
     console.error("MatchApi: Error fetching matches:", error);
     return [];
@@ -316,6 +367,10 @@ export async function getMatchDetails(matchId: string): Promise<Match> {
 
 export async function getUpcomingMatches(limit: number = 10): Promise<Match[]> {
   try {
+    const cacheKey = `upcomingMatches:${limit}`;
+    const cached = getCache<Match[]>(cacheKey);
+    if (cached) return cached;
+
     const data = await graphqlRequest<{ upcomingMatches: Match[] }>(
       `
         query GetUpcomingMatches($limit: Float) {
@@ -328,7 +383,9 @@ export async function getUpcomingMatches(limit: number = 10): Promise<Match[]> {
         variables: { limit },
       }
     );
-    return data.upcomingMatches || [];
+    const result = data.upcomingMatches || [];
+    setCache(cacheKey, result);
+    return result;
   } catch (error) {
     console.error("MatchApi: Error fetching upcoming matches:", error);
     return [];
@@ -337,6 +394,10 @@ export async function getUpcomingMatches(limit: number = 10): Promise<Match[]> {
 
 export async function getMyMatches(): Promise<Match[]> {
   try {
+    const cacheKey = `myMatches:${getAuthCacheKeyPart()}`;
+    const cached = getCache<Match[]>(cacheKey);
+    if (cached) return cached;
+
     const data = await graphqlRequest<{ myMatches: Match[] }>(
       `
         query GetMyMatches {
@@ -347,7 +408,9 @@ export async function getMyMatches(): Promise<Match[]> {
       `,
       { auth: true }
     );
-    return data.myMatches || [];
+    const result = data.myMatches || [];
+    setCache(cacheKey, result);
+    return result;
   } catch (error) {
     console.error("MatchApi: Error fetching my matches:", error);
     return [];
@@ -356,6 +419,10 @@ export async function getMyMatches(): Promise<Match[]> {
 
 export async function getMyJoinedMatches(): Promise<Match[]> {
   try {
+    const cacheKey = `myJoinedMatches:${getAuthCacheKeyPart()}`;
+    const cached = getCache<Match[]>(cacheKey);
+    if (cached) return cached;
+
     const data = await graphqlRequest<{ myJoinedMatches: Match[] }>(
       `
         query GetMyJoinedMatches {
@@ -366,7 +433,9 @@ export async function getMyJoinedMatches(): Promise<Match[]> {
       `,
       { auth: true }
     );
-    return data.myJoinedMatches || [];
+    const result = data.myJoinedMatches || [];
+    setCache(cacheKey, result);
+    return result;
   } catch (error) {
     console.error("MatchApi: Error fetching joined matches:", error);
     return [];
@@ -421,6 +490,7 @@ export async function createMatch(input: {
     }
   );
 
+  clearMatchListCache();
   return data.createMatch;
 }
 
@@ -440,6 +510,7 @@ export async function joinMatch(matchId: string): Promise<Match> {
     }
   );
 
+  clearMatchListCache();
   return data.joinMatch;
 }
 
@@ -459,6 +530,7 @@ export async function leaveMatch(matchId: string): Promise<Match> {
     }
   );
 
+  clearMatchListCache();
   return data.leaveMatch;
 }
 
@@ -479,6 +551,7 @@ export async function likeMatch(matchId: string): Promise<Match> {
     }
   );
 
+  clearMatchListCache();
   return data.likeMatch;
 }
 
@@ -495,6 +568,7 @@ export async function deleteMatch(matchId: string): Promise<boolean> {
     }
   );
 
+  clearMatchListCache();
   return data.deleteMatch;
 }
 
@@ -516,5 +590,6 @@ export async function checkIn(matchId: string, memberId: string): Promise<Match>
     }
   );
 
+  clearMatchListCache();
   return data.checkIn;
 }
