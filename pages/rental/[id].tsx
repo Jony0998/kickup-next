@@ -23,13 +23,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useErrorNotification } from "@/contexts/ErrorNotificationContext";
 import Image from "next/image";
 import styles from "@/styles/rental.module.scss";
-import { getApiBaseUrl } from "@/lib/apiBaseUrl";
-
 const MAX_IMAGES = 5;
-
-function getUploadUrl(type: "members" | "matches" | "teams" | "properties" = "properties"): string {
-    return `${getApiBaseUrl()}/uploader/image?type=${type}`;
-}
 
 export default function RentalDetailPage() {
     const router = useRouter();
@@ -95,7 +89,7 @@ export default function RentalDetailPage() {
             for (const file of toUpload) {
                 const form = new FormData();
                 form.append("file", file);
-                const res = await fetch(getUploadUrl("properties"), {
+                const res = await fetch("/api/upload-image?type=properties", {
                     method: "POST",
                     credentials: "include",
                     body: form,

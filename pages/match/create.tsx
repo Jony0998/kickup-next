@@ -25,13 +25,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useErrorNotification } from "@/contexts/ErrorNotificationContext";
 import { SKILL_LEVELS } from "@/lib/skillLevels";
 import Layout from "@/components/Layout";
-import { getApiBaseUrl } from "@/lib/apiBaseUrl";
-
 const MAX_MATCH_IMAGES = 5;
-
-function getUploadUrl(type: "members" | "matches" | "teams" | "properties" = "members"): string {
-    return `${getApiBaseUrl()}/uploader/image?type=${type}`;
-}
 
 export default function CreateMatchPage() {
     const router = useRouter();
@@ -96,7 +90,7 @@ export default function CreateMatchPage() {
             for (const file of toUpload) {
                 const form = new FormData();
                 form.append("file", file);
-                const res = await fetch(getUploadUrl("matches"), {
+                const res = await fetch("/api/upload-image?type=matches", {
                     method: "POST",
                     credentials: "include",
                     body: form,
