@@ -31,7 +31,16 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'res.cloudinary.com',
       },
-      // Backend upload rasmlari (localhost dev)
+      // Backend uploads via Nginx proxy
+      {
+        protocol: 'https',
+        hostname: 'kickup.my',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.kickup.my',
+      },
+      // Local dev
       {
         protocol: 'http',
         hostname: 'localhost',
