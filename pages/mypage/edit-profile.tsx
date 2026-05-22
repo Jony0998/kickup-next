@@ -72,17 +72,10 @@ export default function EditProfile() {
     const formData = new FormData();
     formData.append("file", file);
 
-    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
-    if (!token) {
-      setError("Login qiling yoki qayta kirish qiling.");
-      setUploading(false);
-      return;
-    }
-
     try {
       const response = await fetch("/api/upload-image?type=members", {
         method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
+        credentials: "include",
         body: formData,
       });
 

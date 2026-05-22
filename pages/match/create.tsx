@@ -92,15 +92,14 @@ export default function CreateMatchPage() {
         }
         setUploadingImage(true);
         try {
-            const token = typeof localStorage !== "undefined" ? localStorage.getItem("token") : null;
             const newUrls: string[] = [];
             for (const file of toUpload) {
                 const form = new FormData();
                 form.append("file", file);
                 const res = await fetch(getUploadUrl("matches"), {
                     method: "POST",
+                    credentials: "include",
                     body: form,
-                    headers: token ? { Authorization: `Bearer ${token}` } : {},
                 });
                 const data = await res.json();
                 if (data?.url) newUrls.push(data.url);

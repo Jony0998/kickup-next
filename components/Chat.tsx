@@ -43,7 +43,9 @@ function getSocketChatUrl(): string {
 
 function getAuthToken(): string | null {
     try {
-        return typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+        if (typeof document === 'undefined') return null;
+        const match = document.cookie.split(';').find(c => c.trim().startsWith('accessToken='));
+        return match ? decodeURIComponent(match.split('=')[1].trim()) : null;
     } catch {
         return null;
     }

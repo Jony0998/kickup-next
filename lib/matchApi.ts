@@ -41,12 +41,7 @@ function clearMatchListCache(): void {
 }
 
 function getAuthCacheKeyPart(): string {
-  if (typeof window === "undefined") return "";
-  try {
-    return localStorage.getItem("token") ?? "";
-  } catch {
-    return "";
-  }
+  return "";
 }
 
 // ==================== TYPES ====================

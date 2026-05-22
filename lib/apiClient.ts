@@ -18,31 +18,20 @@ function buildUrl(path: string): string {
   return `${base}${path}`;
 }
 
-function getAuthToken(): string | null {
-  try {
-    return localStorage.getItem("token");
-  } catch {
-    return null;
-  }
-}
-
 export async function apiRequest<T>(
   path: string,
   options: RequestInit & { auth?: boolean } = {}
 ): Promise<T> {
-  const { auth, headers, ...rest } = options;
+  const { auth: _auth, headers, ...rest } = options;
   const url = buildUrl(path);
 
   const h = new Headers(headers);
   if (!h.has("Content-Type") && rest.body) h.set("Content-Type", "application/json");
-  if (auth) {
-    const token = getAuthToken();
-    if (token) h.set("Authorization", `Bearer ${token}`);
-  }
 
   const res = await fetch(url, {
     ...rest,
     headers: h,
+    credentials: "include",
   });
 
   const contentType = res.headers.get("content-type") || "";

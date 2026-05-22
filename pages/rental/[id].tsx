@@ -95,11 +95,10 @@ export default function RentalDetailPage() {
             for (const file of toUpload) {
                 const form = new FormData();
                 form.append("file", file);
-                const token = typeof localStorage !== "undefined" ? localStorage.getItem("token") : null;
                 const res = await fetch(getUploadUrl("properties"), {
                     method: "POST",
+                    credentials: "include",
                     body: form,
-                    headers: token ? { Authorization: `Bearer ${token}` } : {},
                 });
                 const data = await res.json();
                 if (data?.url) newUrls.push(data.url);
