@@ -15,7 +15,7 @@ const DEFAULT_SEO = {
     description: 'Join local football and futsal matches, find fields, and level up your game with KickUp.',
     siteName: 'KickUp',
     url: 'https://kickup.my',
-    ogImage: 'https://kickup.my/favicon.svg',
+    ogImage: 'https://kickup.my/og-image.svg',
     twitterHandle: '@kickup_my',
 };
 

@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0e1a"/>
+      <stop offset="60%" stop-color="#0d1526"/>
+      <stop offset="100%" stop-color="#091420"/>
+    </linearGradient>
+    <linearGradient id="greenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00E377"/>
+      <stop offset="100%" stop-color="#00b85c"/>
+    </linearGradient>
+    <linearGradient id="glowLeft" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00E377" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#00E377" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="glowRight" x1="100%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#1a6bff" stop-opacity="0.13"/>
+      <stop offset="100%" stop-color="#1a6bff" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="18" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+    <filter id="softGlow">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bgGrad)"/>
+
+  <!-- Ambient glow blobs -->
+  <circle cx="200" cy="500" r="320" fill="url(#glowLeft)"/>
+  <circle cx="1050" cy="130" r="280" fill="url(#glowRight)"/>
+
+  <!-- Football field lines (subtle) -->
+  <!-- Center circle -->
+  <circle cx="600" cy="315" r="130" fill="none" stroke="#ffffff" stroke-width="1.2" stroke-opacity="0.06"/>
+  <circle cx="600" cy="315" r="6" fill="none" stroke="#ffffff" stroke-width="1.2" stroke-opacity="0.08"/>
+  <!-- Center line -->
+  <line x1="600" y1="80" x2="600" y2="550" stroke="#ffffff" stroke-width="1.2" stroke-opacity="0.05"/>
+  <!-- Outer field border -->
+  <rect x="80" y="80" width="1040" height="470" rx="4" fill="none" stroke="#ffffff" stroke-width="1.2" stroke-opacity="0.05"/>
+  <!-- Penalty boxes -->
+  <rect x="80" y="200" width="200" height="230" fill="none" stroke="#ffffff" stroke-width="1" stroke-opacity="0.05"/>
+  <rect x="920" y="200" width="200" height="230" fill="none" stroke="#ffffff" stroke-width="1" stroke-opacity="0.05"/>
+
+  <!-- Grid dots -->
+  <g fill="#ffffff" fill-opacity="0.04">
+    <circle cx="150" cy="150" r="2"/><circle cx="300" cy="150" r="2"/><circle cx="450" cy="150" r="2"/>
+    <circle cx="750" cy="150" r="2"/><circle cx="900" cy="150" r="2"/><circle cx="1050" cy="150" r="2"/>
+    <circle cx="150" cy="480" r="2"/><circle cx="300" cy="480" r="2"/><circle cx="450" cy="480" r="2"/>
+    <circle cx="750" cy="480" r="2"/><circle cx="900" cy="480" r="2"/><circle cx="1050" cy="480" r="2"/>
+  </g>
+
+  <!-- Green accent bar top -->
+  <rect x="0" y="0" width="1200" height="4" fill="url(#greenGrad)"/>
+
+  <!-- Logo box -->
+  <rect x="100" y="210" width="80" height="80" rx="16" fill="url(#greenGrad)" filter="url(#softGlow)"/>
+  <text x="140" y="267" font-family="Arial,sans-serif" font-size="42" font-weight="bold" fill="#0a0e1a" text-anchor="middle">K</text>
+
+  <!-- KickUp wordmark -->
+  <text x="200" y="267" font-family="Arial Black,Arial,sans-serif" font-size="64" font-weight="900" fill="#ffffff" dominant-baseline="auto">KickUp</text>
+
+  <!-- Green underline accent -->
+  <rect x="100" y="302" width="400" height="4" rx="2" fill="url(#greenGrad)" opacity="0.9"/>
+
+  <!-- Tagline -->
+  <text x="100" y="350" font-family="Arial,sans-serif" font-size="24" fill="#a0b0c0" letter-spacing="0.5">Find matches · Join teams · Book fields</text>
+
+  <!-- Big headline -->
+  <text x="100" y="440" font-family="Arial Black,Arial,sans-serif" font-size="48" font-weight="900" fill="#ffffff" opacity="0.95">Your Football Community</text>
+  <text x="100" y="496" font-family="Arial Black,Arial,sans-serif" font-size="48" font-weight="900" fill="url(#greenGrad)">Starts Here.</text>
+
+  <!-- Decorative soccer ball (right side) -->
+  <g transform="translate(940,260)" opacity="0.18">
+    <circle cx="120" cy="120" r="110" fill="none" stroke="#00E377" stroke-width="2"/>
+    <circle cx="120" cy="120" r="110" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="8,12"/>
+    <!-- pentagon patches -->
+    <polygon points="120,30 148,52 138,85 102,85 92,52" fill="none" stroke="#00E377" stroke-width="1.5"/>
+    <polygon points="120,210 148,188 138,155 102,155 92,188" fill="none" stroke="#00E377" stroke-width="1.5"/>
+    <polygon points="30,120 52,92 85,102 85,138 52,148" fill="none" stroke="#00E377" stroke-width="1.5"/>
+    <polygon points="210,120 188,92 155,102 155,138 188,148" fill="none" stroke="#00E377" stroke-width="1.5"/>
+  </g>
+
+  <!-- Glowing dot accent -->
+  <circle cx="100" cy="560" r="3" fill="#00E377" opacity="0.7"/>
+  <circle cx="115" cy="560" r="3" fill="#00E377" opacity="0.4"/>
+  <circle cx="130" cy="560" r="3" fill="#00E377" opacity="0.2"/>
+
+  <!-- Domain -->
+  <text x="1100" y="590" font-family="Arial,sans-serif" font-size="20" fill="#00E377" text-anchor="end" opacity="0.8">kickup.my</text>
+
+  <!-- Bottom bar -->
+  <rect x="0" y="626" width="1200" height="4" fill="url(#greenGrad)" opacity="0.5"/>
+</svg>
