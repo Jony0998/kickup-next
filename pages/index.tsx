@@ -185,7 +185,7 @@ export default function Home() {
     const fetchMatches = async () => {
       setLoadingMatches(true);
       try {
-        const params: any = { status: 'UPCOMING' };
+        const params: { status: 'UPCOMING'; date?: string } = { status: 'UPCOMING' };
 
         // Only pass date filter if user has selected a specific date
         if (selectedDate >= 0 && dates[selectedDate]) {

@@ -130,7 +130,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           return;
         }
 
-        // Try to fetch current user from backend
+        // If we already have a persisted user profile, use it immediately.
+        // This avoids "me" auth request races/timeouts that can clear token and trigger login/signup loops.
+        try {
+          const raw = localStorage.getItem('user');
+          if (raw) {
+            const parsed = JSON.parse(raw) as User;
+            if (parsed?.id && parsed?.memberType && parsed?.memberStatus) {
+              setUser(parsed);
+              setLoading(false);
+              return;
+            }
+          }
+        } catch {
+          // ignore parse errors and fall back to backend verification
+        }
+
+        // Try to fetch current user from backend (verification step)
         type MeQuery = { me: any };
         const data = await graphqlRequest<MeQuery>(
           `query Me { me { ${MEMBER_FIELDS} } }`,
@@ -154,10 +170,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
         setUser(currentUser);
         localStorage.setItem('user', JSON.stringify(currentUser));
-      } catch (error) {
-        console.warn('Auto-login failed, clearing stored data:', error);
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+      } catch (error: any) {
+        const msg = error instanceof Error ? error.message : String(error);
+
+        // Tarmoq/proxy xatosi bo'lsa, tokenni o'chirib yubormaymiz (redirect loop va qayta login so'rovini kamaytiradi).
+        // Faqat autentifikatsiya xatosi bo'lsa (token yo'q/muddat tugagan va refresh ham ishlamagan) o'chiramiz.
+        const isAuthFailure =
+          msg.toLowerCase().includes("not authenticated") ||
+          msg.toLowerCase().includes("login first") ||
+          msg.toLowerCase().includes("token is not provided") ||
+          msg.toLowerCase().includes("bearer token") ||
+          msg.toLowerCase().includes("not_authenticated") ||
+          msg.toLowerCase().includes("token_not_exist") ||
+          msg.toLowerCase().includes("you are not authenticated");
+
+        console.warn("Auto-login failed:", error?.message || error);
+
+        if (isAuthFailure) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+        }
       } finally {
         setLoading(false);
       }
@@ -329,15 +361,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // ==================== UPDATE PROFILE ====================
   const updateProfile = async (data: Record<string, any>): Promise<boolean> => {
     try {
-      const hasGraphql = !!process.env.NEXT_PUBLIC_GRAPHQL_URL;
-      if (!hasGraphql) {
-        // Mock mode: Update user in local state and localStorage
-        const updatedUser = { ...user, ...data } as User;
-        setUser(updatedUser);
-        localStorage.setItem('user', JSON.stringify(updatedUser));
-        return true;
-      }
-
       type UpdateProfileMutation = { updateProfile: any };
 
       const result = await graphqlRequest<UpdateProfileMutation>(

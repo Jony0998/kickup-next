@@ -15,8 +15,10 @@ interface MatchCardProps {
 
 export default function MatchCard({ match, onLikeToggle }: MatchCardProps) {
     const router = useRouter();
-    const { isAuthenticated } = useAuth();
-    const [liked, setLiked] = useState(false);
+    const { isAuthenticated, user } = useAuth();
+    const [liked, setLiked] = useState(() =>
+        !!(user?.id && match.likedBy?.includes(user.id))
+    );
     const [likeCount, setLikeCount] = useState(match.likes || 0);
     const [liking, setLiking] = useState(false);
 
