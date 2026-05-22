@@ -119,7 +119,7 @@ export async function graphqlRequest<TData>(
     const errMsg = error instanceof Error ? error.message : String(error);
     const msg =
       errMsg === "Failed to fetch"
-        ? `API ga ulanib bo‘lmadi: ${url}. kickup-api hostda 4002 da ishlayotganini tekshiring; Docker da GRAPHQL_PROXY_TARGET=http://host.docker.internal:4002/graphql. .next keshini o‘chiring: o‘chirib qayta docker compose up.`
+        ? `Could not connect to API at ${url}. Make sure the server is running.`
         : `Failed to connect to API at ${url}. Make sure the server is running.`;
     throw new Error(msg);
   }
@@ -188,10 +188,10 @@ export async function graphqlRequest<TData>(
       throw new Error(`API ${res.status}: ${detail}`);
     }
     const snippet =
-      rawText.length > 800 ? `${rawText.slice(0, 800)}…` : rawText || "(bo'sh javob)";
+      rawText.length > 800 ? `${rawText.slice(0, 800)}…` : rawText || "(empty response)";
     console.error(`❌ [HTTP ${res.status}] Body snippet:`, snippet);
     throw new Error(
-      `GraphQL HTTP ${res.status}: ${res.statusText}. Javob: ${snippet || "JSON emas"}. kickup-api logi va Mongo URI ni tekshiring; Docker da GRAPHQL_PROXY_TARGET porti backend bilan mos bo‘lsin.`
+      `GraphQL HTTP ${res.status}: ${res.statusText}. Response: ${snippet || "not JSON"}.`
     );
   }
 
