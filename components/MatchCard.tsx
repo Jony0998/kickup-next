@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
@@ -21,6 +21,10 @@ export default function MatchCard({ match, onLikeToggle }: MatchCardProps) {
     );
     const [likeCount, setLikeCount] = useState(match.likes || 0);
     const [liking, setLiking] = useState(false);
+
+    useEffect(() => {
+        setLiked(!!(user?.id && match.likedBy?.includes(user.id)));
+    }, [user?.id, match.likedBy]);
 
     const field = getFieldData(match);
 

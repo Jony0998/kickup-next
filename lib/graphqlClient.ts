@@ -80,14 +80,6 @@ function resolveFetchUrl(url: string): string {
   return url;
 }
 
-function getAuthToken(): string | null {
-  try {
-    return localStorage.getItem("token");
-  } catch {
-    return null;
-  }
-}
-
 export async function graphqlRequest<TData>(
   query: string,
   options: GraphQLRequestOptions = {}
@@ -98,11 +90,6 @@ export async function graphqlRequest<TData>(
     "Content-Type": "application/json",
     ...options.headers,
   };
-
-  if (options.auth) {
-    const token = getAuthToken();
-    if (token) headers.Authorization = `Bearer ${token}`;
-  }
 
   const body = {
     query,

@@ -240,6 +240,34 @@ const MATCH_WITH_RELATIONS = `
   likedBy
 `;
 
+// ==================== LIGHT FRAGMENTS ====================
+// My-page list sahifalari uchun (Application History va h.k.) UI ko'pincha faqat
+// match vaqtlari + field nomi/joylashuvini ishlatadi. Keraksiz populate'lar DB yukini oshiradi.
+const MATCH_MY_JOINED_LIST = `
+  _id
+  matchTitle
+  matchDate
+  matchTime
+  matchStatus
+  maxPlayers
+  currentPlayers
+  matchFee
+  skillLevel
+  location {
+    address
+    city
+  }
+  likes
+  fieldId {
+    _id
+    propertyName
+    location {
+      address
+      city
+    }
+  }
+`;
+
 /** Bosh sahifa ro‘yxati: kamroq maydon — backendda populate/rating xatolari bilan 500 bo‘lishini kamaytirish */
 const MATCH_HOME_LIST = `
   ${MATCH_FIELDS}
@@ -402,7 +430,7 @@ export async function getMyMatches(): Promise<Match[]> {
       `
         query GetMyMatches {
           myMatches {
-            ${MATCH_WITH_RELATIONS}
+            ${MATCH_MY_JOINED_LIST}
           }
         }
       `,
@@ -427,7 +455,7 @@ export async function getMyJoinedMatches(): Promise<Match[]> {
       `
         query GetMyJoinedMatches {
           myJoinedMatches {
-            ${MATCH_WITH_RELATIONS}
+            ${MATCH_MY_JOINED_LIST}
           }
         }
       `,

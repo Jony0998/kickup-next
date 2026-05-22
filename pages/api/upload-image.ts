@@ -34,7 +34,16 @@ export default async function handler(
     return;
   }
 
-  const token = (req.headers.authorization as string)?.replace(/^Bearer\s+/i, "")?.trim();
+  // Token: Authorization headerdan yoki cookie dan o'qiladi
+  const bearerToken = (req.headers.authorization as string)?.replace(/^Bearer\s+/i, "")?.trim();
+  const cookieHeader = req.headers.cookie || "";
+  const cookieToken = cookieHeader.split(";").reduce((acc, part) => {
+    const [k, ...v] = part.split("=");
+    if (k?.trim() === "accessToken") return decodeURIComponent(v.join("=").trim());
+    return acc;
+  }, "");
+  const token = bearerToken || cookieToken;
+
   if (!token) {
     res.status(401).json({ success: false, message: "Token kerak. Qayta login qiling." });
     return;

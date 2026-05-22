@@ -19,8 +19,7 @@ services:
       - ../kickup/.env
     environment:
       - PORT_API=3008
-      # Dockerfile production bo'lsa ham dev DB ishlatish
-      - NODE_ENV=development
+      - NODE_ENV=production
     networks:
       - kickup-stack
 
@@ -34,18 +33,18 @@ services:
     env_file:
       - .env.local
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=production
       - NODE_OPTIONS=--dns-result-order=ipv4first
       - PORT=3000
       - NEXT_PUBLIC_GRAPHQL_URL=/api/graphql
       - GRAPHQL_PROXY_TARGET=http://kickup-api:3008/graphql
-      - NEXT_PUBLIC_API_BASE_URL=http://localhost:4002
+      - NEXT_PUBLIC_API_BASE_URL=http://kickup-api:3008
     volumes:
       - ./:/app
       - /app/node_modules
     ports:
       - "4000:3000"
-    command: sh -c "yarn install && yarn dev -p 3000"
+    command: sh -c "yarn install && yarn build && yarn start -p 3000"
     networks:
       - kickup-stack
 

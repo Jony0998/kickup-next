@@ -120,18 +120,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  // Auto-login: check stored token and fetch current user
+  // Auto-login: check stored user profile, then verify with backend via cookie
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          setLoading(false);
-          return;
-        }
-
-        // If we already have a persisted user profile, use it immediately.
-        // This avoids "me" auth request races/timeouts that can clear token and trigger login/signup loops.
+        // Saqlangan profil bo'lsa, tezkor yuklash uchun ishlatamiz
         try {
           const raw = localStorage.getItem('user');
           if (raw) {
@@ -187,7 +180,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         console.warn("Auto-login failed:", error?.message || error);
 
         if (isAuthFailure) {
-          localStorage.removeItem("token");
           localStorage.removeItem("user");
         }
       } finally {
@@ -241,7 +233,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const loggedInUser = memberToUser(data.login.member);
       setUser(loggedInUser);
       localStorage.setItem('user', JSON.stringify(loggedInUser));
-      localStorage.setItem('token', data.login.accessToken);
 
       return { success: true };
     } catch (error: any) {
@@ -289,7 +280,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const loggedInUser = memberToUser(data.loginWithTelegram.member);
       setUser(loggedInUser);
       localStorage.setItem('user', JSON.stringify(loggedInUser));
-      localStorage.setItem('token', data.loginWithTelegram.accessToken);
 
       return true;
     } catch (error: any) {
@@ -347,7 +337,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const registeredUser = memberToUser(data.register.member);
       setUser(registeredUser);
       localStorage.setItem('user', JSON.stringify(registeredUser));
-      localStorage.setItem('token', data.register.accessToken);
 
       return true;
     } catch (error: any) {
@@ -394,7 +383,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     setUser(null);
     localStorage.removeItem('user');
-    localStorage.removeItem('token');
     router.push('/');
   };
 

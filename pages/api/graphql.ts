@@ -12,8 +12,7 @@ function normalizeGraphqlUrl(raw: string): string {
   return /\/graphql\/?$/i.test(t) ? t : `${t.replace(/\/$/, "")}/graphql`;
 }
 
-/** Docker ichidagi Next → bir tarmoqda kickup-api bo'lsa birinchi navbatda */
-const PROXY_TIMEOUT_MS = 12_000;
+const PROXY_TIMEOUT_MS = 10_000;
 
 function getBackendCandidates(): string[] {
   const primary =
@@ -24,16 +23,7 @@ function getBackendCandidates(): string[] {
       .filter(Boolean) || [];
 
   const p = normalizeGraphqlUrl(primary);
-  const internalFirst = process.env.GRAPHQL_TRY_INTERNAL_FIRST === "1";
-  const rest = [
-    "http://kickup-api:3008/graphql",
-    "http://host.docker.internal:4002/graphql",
-    "http://172.17.0.1:4002/graphql",
-  ];
-  const merged = internalFirst
-    ? [...new Set([...rest, p, ...extra])]
-    : [...new Set([p, ...extra, ...rest])];
-  return merged;
+  return [...new Set([p, ...extra])];
 }
 
 function flatHeaders(h: HeadersInit): Record<string, string> {
@@ -53,7 +43,7 @@ function postWithNodeHttp(
   targetUrl: string,
   bodyStr: string,
   hdrs: Record<string, string>
-): Promise<{ status: number; text: string; contentType: string }> {
+): Promise<{ status: number; text: string; contentType: string; setCookieHeaders: string[] }> {
   const u = new URL(targetUrl);
   const isHttps = u.protocol === "https:";
   const lib = isHttps ? https : http;
@@ -76,10 +66,13 @@ function postWithNodeHttp(
       const chunks: Buffer[] = [];
       upRes.on("data", (c) => chunks.push(c));
       upRes.on("end", () => {
+        const rawSetCookie = upRes.headers["set-cookie"];
+        const setCookieHeaders = Array.isArray(rawSetCookie) ? rawSetCookie : rawSetCookie ? [rawSetCookie] : [];
         resolve({
           status: upRes.statusCode || 500,
           text: Buffer.concat(chunks).toString("utf8"),
           contentType: String(upRes.headers["content-type"] || "application/json; charset=utf-8"),
+          setCookieHeaders,
         });
       });
     });
@@ -96,7 +89,7 @@ async function tryProxy(
   target: string,
   body: string,
   headers: HeadersInit
-): Promise<{ status: number; text: string; contentType: string }> {
+): Promise<{ status: number; text: string; contentType: string; setCookieHeaders: string[] }> {
   const hdr = flatHeaders(headers);
   try {
     const upstream = await fetch(target, {
@@ -111,7 +104,13 @@ async function tryProxy(
     const text = await upstream.text();
     const contentType =
       upstream.headers.get("content-type") || "application/json; charset=utf-8";
-    return { status: upstream.status, text, contentType };
+    const setCookieHeaders: string[] =
+      typeof (upstream.headers as any).getSetCookie === "function"
+        ? (upstream.headers as any).getSetCookie()
+        : upstream.headers.get("set-cookie")
+          ? [upstream.headers.get("set-cookie") as string]
+          : [];
+    return { status: upstream.status, text, contentType, setCookieHeaders };
   } catch (fetchErr) {
     console.warn("[api/graphql] fetch failed, trying node:http", target, fetchErr);
     return postWithNodeHttp(target, body, hdr);
@@ -170,9 +169,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   for (const target of candidates) {
     try {
-      const { status, text, contentType } = await tryProxy(target, body, headers);
+      const { status, text, contentType, setCookieHeaders } = await tryProxy(target, body, headers);
       res.status(status);
       res.setHeader("Content-Type", contentType);
+      if (setCookieHeaders.length > 0) {
+        res.setHeader("Set-Cookie", setCookieHeaders);
+      }
       res.send(text);
       return;
     } catch (e) {

@@ -31,6 +31,17 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'res.cloudinary.com',
       },
+      // Backend upload rasmlari (localhost dev)
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '4002',
+      },
+      {
+        protocol: 'http',
+        hostname: '127.0.0.1',
+        port: '4002',
+      },
     ],
   },
 };
