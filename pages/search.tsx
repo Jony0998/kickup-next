@@ -172,8 +172,8 @@ export default function SearchPage() {
   return (
     <>
       <Head>
-        <title>Qidirish - KickUp</title>
-        <meta name="description" content="Maydon, match va jamoalarni qidiring." />
+        <title>Search - KickUp</title>
+        <meta name="description" content="Search for fields, matches and teams." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
@@ -184,7 +184,7 @@ export default function SearchPage() {
             <Box sx={{ mb: 4 }}>
               <TextField
                 fullWidth
-                placeholder="Shahar, maydon yoki match nomi bilan qidiring"
+                placeholder="Search by city, field or match name"
                 variant="outlined"
                 size="medium"
                 value={searchQuery}
@@ -210,7 +210,7 @@ export default function SearchPage() {
             {/* Results Count */}
             {searchQuery.trim() && !loading && (
               <Typography variant="body1" sx={{ mb: 3, color: "text.secondary" }}>
-                "{searchQuery}" bo'yicha {filteredResults.length} natija topildi
+                {filteredResults.length} results for "{searchQuery}"
               </Typography>
             )}
 
@@ -223,9 +223,9 @@ export default function SearchPage() {
                   variant="scrollable"
                   scrollButtons="auto"
                 >
-                  <Tab label={`Barchasi (${resultCounts.all})`} sx={{ textTransform: "none" }} />
-                  <Tab label={`Maydonlar (${resultCounts.field})`} sx={{ textTransform: "none" }} />
-                  <Tab label={`Match'lar (${resultCounts.match})`} sx={{ textTransform: "none" }} />
+                  <Tab label={`All (${resultCounts.all})`} sx={{ textTransform: "none" }} />
+                  <Tab label={`Fields (${resultCounts.field})`} sx={{ textTransform: "none" }} />
+                  <Tab label={`Matches (${resultCounts.match})`} sx={{ textTransform: "none" }} />
                 </Tabs>
               </Box>
             )}
@@ -235,10 +235,10 @@ export default function SearchPage() {
               <Box sx={{ textAlign: "center", py: 8, color: "text.secondary" }}>
                 <SearchIcon sx={{ fontSize: 64, mb: 2, opacity: 0.5 }} />
                 <Typography variant="h6" sx={{ mb: 1 }}>
-                  Qidirishni boshlang
+                  Start searching
                 </Typography>
                 <Typography variant="body2">
-                  Maydon yoki match'larni qidiring
+                  Search for fields or matches
                 </Typography>
               </Box>
             ) : loading ? (
@@ -249,7 +249,7 @@ export default function SearchPage() {
               <Box sx={{ textAlign: "center", py: 8, color: "text.secondary" }}>
                 <SearchIcon sx={{ fontSize: 64, mb: 2, opacity: 0.5 }} />
                 <Typography variant="h6" sx={{ mb: 1 }}>
-                  Natija topilmadi
+                  No results found
                 </Typography>
                 <Typography variant="body2">
                   Try different keywords

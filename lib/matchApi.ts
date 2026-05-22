@@ -382,7 +382,7 @@ export async function getMatchDetails(matchId: string): Promise<Match> {
   );
 
   if (!data.match) {
-    throw new Error("Match topilmadi");
+    throw new Error("Match not found");
   }
 
   return data.match;

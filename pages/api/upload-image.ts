@@ -45,7 +45,7 @@ export default async function handler(
   const token = bearerToken || cookieToken;
 
   if (!token) {
-    res.status(401).json({ success: false, message: "Token kerak. Qayta login qiling." });
+    res.status(401).json({ success: false, message: "Authentication required. Please log in." });
     return;
   }
 
@@ -72,7 +72,7 @@ export default async function handler(
     if (!response.ok) {
       res.status(response.status).json({
         success: false,
-        message: (data as any)?.message || `Backend xato: ${response.status}`,
+        message: (data as any)?.message || `Upload failed: ${response.status}`,
       });
       return;
     }
@@ -81,7 +81,7 @@ export default async function handler(
     console.error("Upload proxy error:", err);
     res.status(500).json({
       success: false,
-      message: err?.message || "Server xatosi. Backend ishlayotganini tekshiring (Docker: 4002).",
+      message: err?.message || "Server error. Please try again later.",
     });
   }
 }

@@ -86,7 +86,7 @@ export default function TeamPage() {
       .catch((err) => {
         console.error("getTeams error:", err);
         setAllTeams([]);
-        setTeamsError(err?.message || "Ro'yxatni yuklab bo'lmadi. Backend ishlayotganini tekshiring.");
+        setTeamsError(err?.message || "Failed to load teams. Please try again.");
       })
       .finally(() => setLoading(false));
   }, []);
@@ -320,25 +320,25 @@ export default function TeamPage() {
               <Box sx={{ p: 4, textAlign: "center", bgcolor: "background.paper", borderRadius: 4 }}>
                 <GroupIcon sx={{ fontSize: 60, color: "text.secondary", mb: 2 }} />
                 <Typography variant="h6" color="error.main" sx={{ mb: 1 }}>
-                  Ro'yxat yuklanmadi
+                  Failed to load teams
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
                   {teamsError}
                 </Typography>
                 <Button variant="contained" onClick={loadAllTeams} sx={{ borderRadius: 2 }}>
-                  Qayta urinish
+                  Try again
                 </Button>
               </Box>
             ) : teamsToShow.length === 0 ? (
               <Box sx={{ p: 4, textAlign: "center", bgcolor: "background.paper", borderRadius: 4 }}>
                 <GroupIcon sx={{ fontSize: 60, color: "text.secondary", mb: 2 }} />
                 <Typography variant="h6">
-                  {filterValue === "my" ? "No teams yet" : "Jamoalar hali yo'q"}
+                  {filterValue === "my" ? "No teams yet" : "No teams yet"}
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
                   {filterValue === "my"
-                    ? "Sizda jamoalar yo'q. All Teams dan qo'shiling yoki yangi yarating."
-                    : "Hali hech qanday jamoa yaratilmagan. Birinchi bo'lib jamoa yarating."}
+                    ? "You haven't joined any teams. Browse All Teams or create a new one."
+                    : "No teams have been created yet. Be the first to create one."}
                 </Typography>
                 <Button
                   variant="contained"

@@ -88,11 +88,11 @@ export default function EditProfile() {
         setMemberImage(data.url);
         try {
           await updateProfile({ memberImage: data.url });
-          setSuccess("Rasm yuklandi va backendga saqlandi.");
+          setSuccess("Image uploaded and saved.");
         } catch (saveErr: any) {
           setMemberImage(data.url);
-          setSuccess("Rasm yuklandi. Profilni saqlashda xato – qayta «Save» bosing.");
-          setError(saveErr?.message || "Profil yangilanmadi.");
+          setSuccess("Image uploaded. Save error — please click Save again.");
+          setError(saveErr?.message || "Profile could not be updated.");
         }
       } else {
         throw new Error((data as any)?.message || "Error uploading image");

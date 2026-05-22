@@ -186,13 +186,13 @@ export default function TeamDetailPage() {
                     try {
                         await updateTeam(team.id, { teamLogo: data.url });
                         setTeam((prev) => (prev ? { ...prev, logo: data.url, ownerId: prev.ownerId } : null));
-                        showSuccess("Rasm yuklandi va backendga saqlandi.");
+                        showSuccess("Image uploaded and saved.");
                     } catch (saveErr: any) {
                         setEditLogoUrl(data.url);
-                        showSuccess("Rasm yuklandi. «Save» bosib profilni saqlang.");
+                        showSuccess("Image uploaded. Click Save to apply changes.");
                     }
                 } else {
-                    showSuccess("Rasm yuklandi. «Save» bosib saqlang.");
+                    showSuccess("Image uploaded. Click Save to apply changes.");
                 }
             } else {
                 throw new Error("Could not get image URL");
