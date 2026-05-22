@@ -358,7 +358,7 @@ export default function Home() {
   return (
     <>
       <SeoHead
-        description="KickUp - Futbol va futzal platformasi. O'zingizga mos match toping."
+        description="KickUp - Find local football and futsal matches. Join teams, book fields and level up your game."
       />
 
       <Box className={styles.homePage}>
